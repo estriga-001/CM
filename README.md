@@ -6,9 +6,9 @@ Este exercício reúne a resolução de três exercícios desenvolvidos em **Kot
 
 Ao longo dos três exercícios, o projeto demonstra uma abordagem progressiva à aprendizagem da linguagem. O primeiro exercício foca-se na criação e manipulação de coleções numéricas, o segundo introduz interação com o utilizador e controlo de erros através de uma calculadora em linha de comandos, e o terceiro explora a geração de sequências matemáticas com base numa regra de recorrência.
 
-## Estrutura do projeto
+## Estrutura da tarefa
 
-O projeto está organizado em três ficheiros Kotlin independentes, cada um correspondente a um exercício específico:
+A tarefa está organizado em três ficheiros Kotlin independentes, cada um correspondente a um exercício específico:
 
 ```text
 Tarefa1
