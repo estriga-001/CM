@@ -8,14 +8,14 @@ Ao longo dos três exercícios, o projeto demonstra uma abordagem progressiva à
 
 ## Estrutura da tarefa
 
-A tarefa está organizado em três ficheiros Kotlin independentes, cada um correspondente a um exercício específico:
+A tarefa está organizada em três ficheiros Kotlin independentes, cada um correspondente a um exercício específico:
 
 ```text
 Tarefa1
 │
 ├── exer_1.kt
 ├── exer_2.kt
-└── exer_3.kt
+└── exer_3.kt```
 
 # Hello World V2
 
