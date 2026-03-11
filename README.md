@@ -255,3 +255,126 @@ Ficheiro principal onde o programa é executado.
 - Contador total de livros adicionados
 
 ---
+
+# Hello World Optional
+
+## Descrição
+
+A aplicação **Hello World Optional** é um projeto Android desenvolvido em **Kotlin** com o objetivo de apresentar informações detalhadas sobre o dispositivo onde a aplicação está a ser executada. Em vez de mostrar apenas uma interface estática, esta aplicação recolhe dados do sistema através da classe `Build` e apresenta-os no ecrã de forma organizada e legível.
+
+Este projeto funciona como um exemplo introdutório de como obter informações do dispositivo em Android nativo, combinando código Kotlin com uma interface XML simples e funcional. Para além disso, demonstra boas práticas básicas como o uso de `ConstraintLayout`, `ScrollView`, separação entre lógica e interface, e ajuste automático do conteúdo às barras do sistema.
+
+## Objetivo
+
+O principal objetivo desta aplicação é explorar a recolha e apresentação de informações do dispositivo em Android. Através deste projeto, torna-se possível perceber como o sistema operativo disponibiliza dados sobre o fabricante, modelo, versão do Android e outros detalhes técnicos do equipamento.
+
+Ao mesmo tempo, o projeto permite praticar vários conceitos fundamentais do desenvolvimento Android, como:
+
+- criação de uma `Activity` em Kotlin
+- acesso a propriedades do sistema através da classe `Build`
+- apresentação dinâmica de texto num `TextView`
+- organização da interface com `ConstraintLayout`
+- utilização de `ScrollView` para conteúdos extensos
+- ajuste da interface às barras do sistema com `WindowInsets`
+
+## Estrutura da tarefa
+
+A tarefa segue a organização típica de uma aplicação Android, separando a lógica da interface e dos recursos.
+
+```text
+app/
+└── src/
+    └── main/
+        ├── java/com/example/helloworldoptional/
+        │   └── MainActivity.kt
+        ├── res/
+        │   ├── layout/
+        │   │   └── activity_main.xml
+        │   └── values/
+        │       └── strings.xml
+```
+
+## MainActivity
+
+A MainActivity é a atividade principal da aplicação e o ponto de entrada do projeto. Esta classe herda de AppCompatActivity, o que garante compatibilidade com as bibliotecas modernas de AndroidX.
+
+No método onCreate, a aplicação carrega o layout principal com setContentView(R.layout.activity_main). Depois disso, obtém uma referência para o TextView identificado como deviceInfo, que será responsável por mostrar todas as informações do dispositivo.
+
+De seguida, é construída uma string multilinha com vários dados obtidos através da classe Build e da classe Build.VERSION. Entre os valores apresentados encontram-se o fabricante do dispositivo, o modelo, a marca, o tipo de build, o utilizador associado ao sistema, a base do sistema operativo, a versão incremental, o nível de SDK, a versão do Android e o identificador de display.
+
+Essa informação é depois atribuída ao TextView, permitindo que seja apresentada diretamente no ecrã da aplicação.
+
+No final do método, é ainda configurado um listener com ViewCompat.setOnApplyWindowInsetsListener, que ajusta automaticamente o padding do contentor principal em função das barras do sistema. Isto garante que o conteúdo não fica escondido atrás da barra de estado ou da barra de navegação.
+
+## Informação apresentada sobre o dispositivo
+
+A aplicação recolhe e mostra vários dados do dispositivo Android em execução. Estes dados são obtidos diretamente através da API do sistema, com recurso à classe Build.
+
+Os campos apresentados incluem:
+
+Manufacturer – fabricante do dispositivo
+
+Model – modelo do equipamento
+
+Brand – marca comercial
+
+Type – tipo de build do sistema
+
+User – utilizador associado à compilação do sistema
+
+Base – sistema operativo base
+
+Incremental – versão incremental da build
+
+SDK – nível de API do Android
+
+Version Code – versão do Android em formato legível
+
+Display – identificador ou descrição da build instalada
+
+Estes campos permitem observar características técnicas reais do dispositivo ou emulador, sendo úteis tanto para fins académicos como para testes e diagnóstico.
+
+## Interface gráfica
+
+A aplicação recolhe e mostra vários dados do dispositivo Android em execução. Estes dados são obtidos diretamente através da API do sistema, com recurso à classe Build.
+
+Os campos apresentados incluem:
+
+Manufacturer – fabricante do dispositivo
+
+Model – modelo do equipamento
+
+Brand – marca comercial
+
+Type – tipo de build do sistema
+
+User – utilizador associado à compilação do sistema
+
+Base – sistema operativo base
+
+Incremental – versão incremental da build
+
+SDK – nível de API do Android
+
+Version Code – versão do Android em formato legível
+
+Display – identificador ou descrição da build instalada
+
+Estes campos permitem observar características técnicas reais do dispositivo ou emulador, sendo úteis tanto para fins académicos como para testes e diagnóstico.
+
+## Organização da interface
+
+A interface foi concebida para ser simples, legível e adequada a diferentes tamanhos de ecrã. A presença do cabeçalho no topo ajuda a identificar imediatamente a finalidade da aplicação, enquanto o ScrollView garante que toda a informação pode ser consultada, mesmo quando a lista de dados é extensa.
+
+O uso de um LinearLayout dentro do ScrollView facilita a organização vertical dos elementos, sendo uma escolha prática quando o número de componentes é reduzido e a prioridade é a clareza da apresentação.
+
+No conjunto, esta estrutura demonstra uma abordagem funcional à criação de interfaces Android: um cabeçalho visualmente destacado, uma área de conteúdo rolável e um elemento principal de texto para apresentar informação dinâmica.
+
+## Componentes utilizados
+
+A interface foi concebida para ser simples, legível e adequada a diferentes tamanhos de ecrã. A presença do cabeçalho no topo ajuda a identificar imediatamente a finalidade da aplicação, enquanto o ScrollView garante que toda a informação pode ser consultada, mesmo quando a lista de dados é extensa.
+
+O uso de um LinearLayout dentro do ScrollView facilita a organização vertical dos elementos, sendo uma escolha prática quando o número de componentes é reduzido e a prioridade é a clareza da apresentação.
+
+No conjunto, esta estrutura demonstra uma abordagem funcional à criação de interfaces Android: um cabeçalho visualmente destacado, uma área de conteúdo rolável e um elemento principal de texto para apresentar informação dinâmica.
+
