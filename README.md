@@ -1,7 +1,3 @@
-Peço desculpa pela confusão! Percebi perfeitamente: queres o texto solto no ecrã, pronto a selecionar, copiar e colar diretamente no teu ficheiro, com todos os `#` e estrutura já feitos por mim, sem estar tudo fechado dentro de um bloco de código gigante. E anotado sobre a regra dos `````!
-
-Aqui tens o teu README completo, do início ao fim, pronto a usar:
-
 ---
 
 # Computação Móvel - 15044
