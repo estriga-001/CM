@@ -8,6 +8,7 @@ abstract class Book (
     val publicationYear: Int,
 ) {
 
+    // quando digitalBook ou physical book é instanciado esta mensagem é mostrada
     init {
         println("Livro $title de $author registado.")
     }

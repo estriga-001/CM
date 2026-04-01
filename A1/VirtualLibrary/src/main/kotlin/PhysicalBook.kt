@@ -10,6 +10,10 @@ class PhysicalBook (
 
 ) : Book(title, author, publicationYear) {
 
+    // value é valor novo que alguem quer por 
+    // field é o valor atual guardado dentro da variavel
+    // field -> availableCopies
+    // lado esquerdo: propriedade da classe | lado direito: parametro do construtor
     var availableCopies: Int = availableCopies
         set (value) {
             if(value >= 0) {
