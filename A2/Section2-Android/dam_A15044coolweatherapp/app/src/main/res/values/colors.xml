@@ -1,0 +1,11 @@
+<resources>
+    <color name="cyber_bg">#0A0A14</color>
+    <color name="cyber_panel">#AA14142B</color>
+    <color name="cyber_panel_stroke">#6600F0FF</color>
+    <color name="cyber_cyan">#00F0FF</color>
+    <color name="cyber_magenta">#FF2BD6</color>
+    <color name="cyber_text_primary">#EAFBFF</color>
+    <color name="cyber_text_secondary">#8BE9FD</color>
+    <color name="cyber_input_bg">#CC111122</color>
+    <color name="cyber_button_bg">#A61A1A3A</color>
+</resources>

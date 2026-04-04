@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Dog Image Gallery</string>
+    <string name="refresh_images">Refresh Images</string>
+    <string name="dog_image_description">Random dog image</string>
+</resources>
