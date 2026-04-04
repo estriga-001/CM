@@ -6,206 +6,215 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/landscape_cyber"
-    android:padding="20dp"
     tools:context=".MainActivity">
 
     <TextView
         android:id="@+id/titleText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:text="@string/app_name"
         android:textColor="@color/cyber_cyan"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/rightPanel"
+        app:layout_constraintEnd_toStartOf="@id/rightPanelScroll"
         app:layout_constraintHorizontal_bias="0.5" />
 
     <ImageView
         android:id="@+id/weatherImage"
         android:layout_width="140dp"
         android:layout_height="140dp"
-        android:layout_marginTop="20dp"
         android:contentDescription="@string/app_name"
-        android:src="@android:drawable/ic_menu_compass"
+        android:src="@drawable/ic_moon"
         app:layout_constraintTop_toBottomOf="@id/titleText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/rightPanel"
+        app:layout_constraintEnd_toStartOf="@id/rightPanelScroll"
         app:layout_constraintVertical_bias="0.3"
         app:layout_constraintHorizontal_bias="0.5" />
 
-    <LinearLayout
-        android:id="@+id/rightPanel"
+    <ScrollView
+        android:id="@+id/rightPanelScroll"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:layout_height="0dp"
+        android:fillViewport="true"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/weatherImage"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginStart="24dp">
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp">
 
         <LinearLayout
-            android:id="@+id/coordsPanel"
+            android:id="@+id/rightPanel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/panel_bg"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/latitude_label"
-                android:textColor="@color/cyber_text_secondary"
-                android:textStyle="bold" />
-
-            <EditText
-                android:id="@+id/latitudeInput"
+            <LinearLayout
+                android:id="@+id/coordsPanel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:background="@drawable/input_bg"
-                android:hint="@string/latitude_hint"
-                android:inputType="numberDecimal|numberSigned"
-                android:padding="12dp"
-                android:singleLine="true"
-                android:textColor="@color/cyber_text_primary"
-                android:textColorHint="@color/cyber_text_secondary"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                android:background="@drawable/panel_bg"
+                android:orientation="vertical"
+                android:padding="16dp">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:text="@string/longitude_label"
-                android:textColor="@color/cyber_text_secondary"
-                android:textStyle="bold" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/latitude_label"
+                    android:textColor="@color/cyber_text_secondary"
+                    android:textStyle="bold" />
 
-            <EditText
-                android:id="@+id/longitudeInput"
+                <EditText
+                    android:id="@+id/latitudeInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:background="@drawable/input_bg"
+                    android:hint="@string/latitude_hint"
+                    android:inputType="numberDecimal|numberSigned"
+                    android:padding="12dp"
+                    android:singleLine="true"
+                    android:textColor="@color/cyber_text_primary"
+                    android:textColorHint="@color/cyber_text_secondary"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="@string/longitude_label"
+                    android:textColor="@color/cyber_text_secondary"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/longitudeInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:background="@drawable/input_bg"
+                    android:hint="@string/longitude_hint"
+                    android:inputType="numberDecimal|numberSigned"
+                    android:padding="12dp"
+                    android:singleLine="true"
+                    android:textColor="@color/cyber_text_primary"
+                    android:textColorHint="@color/cyber_text_secondary"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/dataPanel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:background="@drawable/input_bg"
-                android:hint="@string/longitude_hint"
-                android:inputType="numberDecimal|numberSigned"
-                android:padding="12dp"
-                android:singleLine="true"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/panel_bg"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/pressureLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/pressure_label"
+                    android:textColor="@color/cyber_magenta"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/pressureValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/dummy_pressure"
+                    android:textColor="@color/cyber_text_primary"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/windDirectionLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="@string/wind_direction_label"
+                    android:textColor="@color/cyber_magenta"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/windDirectionValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/dummy_wind_direction"
+                    android:textColor="@color/cyber_text_primary" />
+
+                <TextView
+                    android:id="@+id/windSpeedLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="@string/wind_speed_label"
+                    android:textColor="@color/cyber_magenta"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/windSpeedValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/dummy_wind_speed"
+                    android:textColor="@color/cyber_text_primary" />
+
+                <TextView
+                    android:id="@+id/temperatureLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="@string/temperature_label"
+                    android:textColor="@color/cyber_magenta"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/temperatureValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/dummy_temperature"
+                    android:textColor="@color/cyber_text_primary" />
+
+                <TextView
+                    android:id="@+id/timeLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="@string/time_label"
+                    android:textColor="@color/cyber_magenta"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/timeValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/dummy_time"
+                    android:textColor="@color/cyber_text_primary" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/updateButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/button_bg"
+                android:text="@string/update_button"
+                android:textAllCaps="true"
                 android:textColor="@color/cyber_text_primary"
-                android:textColorHint="@color/cyber_text_secondary"
-                android:textSize="16sp"
                 android:textStyle="bold" />
         </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/dataPanel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/panel_bg"
-            android:orientation="vertical"
-            android:padding="16dp">
-
-            <TextView
-                android:id="@+id/pressureLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/pressure_label"
-                android:textColor="@color/cyber_magenta"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/pressureValue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="@string/dummy_pressure"
-                android:textColor="@color/cyber_text_primary"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/windDirectionLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:text="@string/wind_direction_label"
-                android:textColor="@color/cyber_magenta"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/windDirectionValue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="@string/dummy_wind_direction"
-                android:textColor="@color/cyber_text_primary" />
-
-            <TextView
-                android:id="@+id/windSpeedLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:text="@string/wind_speed_label"
-                android:textColor="@color/cyber_magenta"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/windSpeedValue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="@string/dummy_wind_speed"
-                android:textColor="@color/cyber_text_primary" />
-
-            <TextView
-                android:id="@+id/temperatureLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:text="@string/temperature_label"
-                android:textColor="@color/cyber_magenta"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/temperatureValue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="@string/dummy_temperature"
-                android:textColor="@color/cyber_text_primary" />
-
-            <TextView
-                android:id="@+id/timeLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:text="@string/time_label"
-                android:textColor="@color/cyber_magenta"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/timeValue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="@string/dummy_time"
-                android:textColor="@color/cyber_text_primary" />
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/updateButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/button_bg"
-            android:text="@string/update_button"
-            android:textAllCaps="true"
-            android:textColor="@color/cyber_text_primary"
-            android:textStyle="bold" />
-    </LinearLayout>
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,16 +1,24 @@
 package com.example.dam_a15044coolweatherapp
 
+import android.content.res.ColorStateList
 import android.os.Bundle
+import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.content.ContextCompat
 import androidx.core.widget.ImageViewCompat
-import android.content.res.ColorStateList
+import com.google.gson.Gson
+import java.io.InputStreamReader
+import java.net.URL
 
 class MainActivity : AppCompatActivity() {
+
+    private var day = true
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -21,40 +29,90 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        val weatherImage = findViewById<ImageView>(R.id.weatherImage)
-        weatherImage.setImageResource(R.drawable.ic_sun)
+        val latitudeInput = findViewById<EditText>(R.id.latitudeInput)
+        val longitudeInput = findViewById<EditText>(R.id.longitudeInput)
+        val updateButton = findViewById<Button>(R.id.updateButton)
 
-        ImageViewCompat.setImageTintList(
-            weatherImage,
-            ColorStateList.valueOf(ContextCompat.getColor(this, R.color.cyber_cyan))
-        )
+        latitudeInput.setText("38.076")
+        longitudeInput.setText("-9.12")
 
-        val tintColor = when (weatherCode) {
-            0 -> R.color.cyber_cyan
-            1, 2, 3 -> R.color.cyber_text_secondary
-            45, 48 -> R.color.cyber_text_primary
-            51, 53, 55, 61, 63, 65, 80, 81, 82 -> R.color.cyber_cyan
-            95, 96, 99 -> R.color.cyber_magenta
-            else -> R.color.cyber_text_primary
+        fetchWeatherData(38.076, -9.12).start()
+
+        updateButton.setOnClickListener {
+            val lat = latitudeInput.text.toString().trim().toDoubleOrNull()
+            val lon = longitudeInput.text.toString().trim().toDoubleOrNull()
+
+            if (lat != null && lon != null) {
+                fetchWeatherData(lat, lon).start()
+            } else {
+                latitudeInput.error = "Valor inválido"
+                longitudeInput.error = "Valor inválido"
+            }
         }
-        ImageViewCompat.setImageTintList(
-            weatherImage,
-            ColorStateList.valueOf(ContextCompat.getColor(this, tintColor))
-        )
-        // teste manual
-        val weatherCode = 2
-
-        val iconRes = getWeatherIcon(weatherCode)
-        weatherImage.setImageResource(iconRes)
     }
-    private fun getWeatherIcon(weatherCode: Int): Int {
-        return when (weatherCode) {
-            0 -> R.drawable.ic_sun
-            1, 2, 3 -> R.drawable.ic_cloud
-            45, 48 -> R.drawable.ic_fog
-            51, 53, 55, 61, 63, 65 -> R.drawable.ic_rain
-            95, 96, 99 -> R.drawable.ic_storm
-            else -> R.drawable.ic_cloud
+
+    private fun weatherApiCall(lat: Double, lon: Double): WeatherData {
+        val reqString = buildString {
+            append("https://api.open-meteo.com/v1/forecast?")
+            append("latitude=$lat&longitude=$lon&")
+            append("current_weather=true&")
+            append("hourly=temperature_2m,weathercode,pressure_msl,windspeed_10m")
+        }
+
+        val url = URL(reqString)
+        url.openStream().use {
+            return Gson().fromJson(
+                InputStreamReader(it, "UTF-8"),
+                WeatherData::class.java
+            )
+        }
+    }
+
+    private fun fetchWeatherData(lat: Double, lon: Double): Thread {
+        return Thread {
+            try {
+                val weather = weatherApiCall(lat, lon)
+                updateUI(weather)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+    private fun updateUI(request: WeatherData) {
+        runOnUiThread {
+            val weatherImage = findViewById<ImageView>(R.id.weatherImage)
+            val pressureValue = findViewById<TextView>(R.id.pressureValue)
+            val windDirectionValue = findViewById<TextView>(R.id.windDirectionValue)
+            val windSpeedValue = findViewById<TextView>(R.id.windSpeedValue)
+            val temperatureValue = findViewById<TextView>(R.id.temperatureValue)
+            val timeValue = findViewById<TextView>(R.id.timeValue)
+
+            pressureValue.text = "${request.hourly.pressure_msl.firstOrNull() ?: "--"} hPa"
+            windDirectionValue.text = "${request.current_weather.winddirection}°"
+            windSpeedValue.text = "${request.current_weather.windspeed} km/h"
+            temperatureValue.text = "${request.current_weather.temperature} °C"
+            timeValue.text = request.current_weather.time
+
+            val weatherMap = getWeatherCodeMap()
+            val wCode = weatherMap[request.current_weather.weathercode]
+
+            val imageName = wCode?.image ?: "ic_cloud"
+            val resId = resources.getIdentifier(imageName, "drawable", packageName)
+            weatherImage.setImageResource(resId)
+
+            val tintColor = when (request.current_weather.weathercode) {
+                0 -> R.color.cyber_cyan
+                1, 2, 3 -> R.color.cyber_text_secondary
+                45, 48 -> R.color.cyber_text_primary
+                51, 53, 55, 61, 63, 65, 80, 81, 82 -> R.color.cyber_cyan
+                95, 96, 99 -> R.color.cyber_magenta
+                else -> R.color.cyber_text_primary
+            }
+
+            ImageViewCompat.setImageTintList(
+                weatherImage,
+                ColorStateList.valueOf(ContextCompat.getColor(this, tintColor))
+            )
         }
     }
 }

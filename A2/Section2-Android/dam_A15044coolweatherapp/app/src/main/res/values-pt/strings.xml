@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">Cool Weather App</string>
+    <string name="latitude_label">Latitude</string>
+    <string name="longitude_label">Longitude</string>
+    <string name="pressure_label">Pressão ao Nível do Mar</string>
+    <string name="wind_direction_label">Direção do Vento</string>
+    <string name="wind_speed_label">Velocidade do Vento</string>
+    <string name="temperature_label">Temperatura</string>
+    <string name="time_label">Hora</string>
+    <string name="update_button">ATUALIZAR</string>
+
+    <string name="latitude_hint">38.076</string>
+    <string name="longitude_hint">-9.12</string>
+
+    <string name="dummy_pressure">1016.4 hPa</string>
+    <string name="dummy_wind_direction">214°</string>
+    <string name="dummy_wind_speed">13.0 km/h</string>
+    <string name="dummy_temperature">15.9 °C</string>
+    <string name="dummy_time">2023-03-10T12:00</string>
+</resources>
