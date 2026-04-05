@@ -5,7 +5,7 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/portrait_cyber"
+    android:background="?android:windowBackground"
     android:padding="16dp"
     tools:context=".MainActivity">
 
@@ -14,7 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/app_name"
-        android:textColor="@color/cyber_cyan"
+        android:textColor="?attr/colorPrimary"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintTop_toTopOf="parent"
@@ -48,7 +48,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/latitude_label"
-            android:textColor="@color/cyber_text_secondary"
+            android:textColor="?android:textColorSecondary"
             android:textStyle="bold" />
 
         <EditText
@@ -63,15 +63,15 @@
             android:textSize="16sp"
             android:textStyle="bold"
             android:singleLine="true"
-            android:textColor="@color/cyber_text_primary"
-            android:textColorHint="@color/cyber_text_secondary" />
+            android:textColor="?android:textColor"
+            android:textColorHint="?android:textColorHint" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:text="@string/longitude_label"
-            android:textColor="@color/cyber_text_secondary"
+            android:textColor="?android:textColorSecondary"
             android:textStyle="bold" />
 
         <EditText
@@ -83,8 +83,8 @@
             android:hint="@string/longitude_hint"
             android:inputType="numberDecimal|numberSigned"
             android:padding="12dp"
-            android:textColor="@color/cyber_text_primary"
-            android:textColorHint="@color/cyber_text_secondary" />
+            android:textColor="?android:textColor"
+            android:textColorHint="?android:textColorHint" />
     </LinearLayout>
 
     <LinearLayout
@@ -104,7 +104,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/pressure_label"
-            android:textColor="@color/cyber_magenta"
+            android:textColor="?attr/colorSecondary"
             android:textStyle="bold" />
 
         <TextView
@@ -113,7 +113,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:text="@string/dummy_pressure"
-            android:textColor="@color/cyber_text_primary"
+            android:textColor="?android:textColor"
             android:textStyle="bold" />
 
         <TextView
@@ -122,7 +122,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:text="@string/wind_direction_label"
-            android:textColor="@color/cyber_magenta"
+            android:textColor="?attr/colorSecondary"
             android:textStyle="bold" />
 
         <TextView
@@ -131,7 +131,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:text="@string/dummy_wind_direction"
-            android:textColor="@color/cyber_text_primary" />
+            android:textColor="?android:textColor" />
 
         <TextView
             android:id="@+id/windSpeedLabel"
@@ -139,7 +139,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:text="@string/wind_speed_label"
-            android:textColor="@color/cyber_magenta"
+            android:textColor="?attr/colorSecondary"
             android:textStyle="bold" />
 
         <TextView
@@ -148,7 +148,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:text="@string/dummy_wind_speed"
-            android:textColor="@color/cyber_text_primary" />
+            android:textColor="?android:textColor" />
 
         <TextView
             android:id="@+id/temperatureLabel"
@@ -156,7 +156,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:text="@string/temperature_label"
-            android:textColor="@color/cyber_magenta"
+            android:textColor="?attr/colorSecondary"
             android:textStyle="bold" />
 
         <TextView
@@ -165,7 +165,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:text="@string/dummy_temperature"
-            android:textColor="@color/cyber_text_primary" />
+            android:textColor="?android:textColor" />
 
         <TextView
             android:id="@+id/timeLabel"
@@ -173,7 +173,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:text="@string/time_label"
-            android:textColor="@color/cyber_magenta"
+            android:textColor="?attr/colorSecondary"
             android:textStyle="bold" />
 
         <TextView
@@ -182,7 +182,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:text="@string/dummy_time"
-            android:textColor="@color/cyber_text_primary" />
+            android:textColor="?android:textColor" />
     </LinearLayout>
 
     <Button
@@ -193,7 +193,7 @@
         android:background="@drawable/button_bg"
         android:text="@string/update_button"
         android:textAllCaps="true"
-        android:textColor="@color/cyber_text_primary"
+        android:textColor="?attr/weatherButtonText"
         android:textStyle="bold"
         app:layout_constraintTop_toBottomOf="@id/dataPanel"
         app:layout_constraintStart_toStartOf="parent"

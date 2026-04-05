@@ -18,8 +18,8 @@ import java.net.URL
 
 class MainActivity : AppCompatActivity() {
 
-    private var day = true
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Remove the manual setTheme calls to allow the system to handle it
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
@@ -29,6 +29,7 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
         val latitudeInput = findViewById<EditText>(R.id.latitudeInput)
         val longitudeInput = findViewById<EditText>(R.id.longitudeInput)
         val updateButton = findViewById<Button>(R.id.updateButton)
@@ -45,8 +46,8 @@ class MainActivity : AppCompatActivity() {
             if (lat != null && lon != null) {
                 fetchWeatherData(lat, lon).start()
             } else {
-                latitudeInput.error = "Valor inválido"
-                longitudeInput.error = "Valor inválido"
+                latitudeInput.error = getString(R.string.invalid_value)
+                longitudeInput.error = getString(R.string.invalid_value)
             }
         }
     }
@@ -78,6 +79,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
     private fun updateUI(request: WeatherData) {
         runOnUiThread {
             val weatherImage = findViewById<ImageView>(R.id.weatherImage)
@@ -100,13 +102,16 @@ class MainActivity : AppCompatActivity() {
             val resId = resources.getIdentifier(imageName, "drawable", packageName)
             weatherImage.setImageResource(resId)
 
+            // Determine if the current theme is night
+            val isNightTheme = (resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK) == android.content.res.Configuration.UI_MODE_NIGHT_YES
+
             val tintColor = when (request.current_weather.weathercode) {
-                0 -> R.color.cyber_cyan
-                1, 2, 3 -> R.color.cyber_text_secondary
-                45, 48 -> R.color.cyber_text_primary
-                51, 53, 55, 61, 63, 65, 80, 81, 82 -> R.color.cyber_cyan
-                95, 96, 99 -> R.color.cyber_magenta
-                else -> R.color.cyber_text_primary
+                0 -> if (!isNightTheme) R.color.day_primary else R.color.night_primary
+                1, 2, 3 -> if (!isNightTheme) R.color.day_text_secondary else R.color.night_text_secondary
+                45, 48 -> if (!isNightTheme) R.color.day_text_primary else R.color.night_text_primary
+                51, 53, 55, 61, 63, 65, 80, 81, 82 -> if (!isNightTheme) R.color.day_primary else R.color.night_primary
+                95, 96, 99 -> if (!isNightTheme) R.color.day_secondary else R.color.night_secondary
+                else -> if (!isNightTheme) R.color.day_text_primary else R.color.night_text_primary
             }
 
             ImageViewCompat.setImageTintList(

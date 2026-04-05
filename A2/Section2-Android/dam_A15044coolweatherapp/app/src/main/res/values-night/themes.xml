@@ -1,7 +1,21 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.Dam_A15044coolweatherapp" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+
+    <style name="Theme.CoolWeatherApp" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+
+        <!-- Cores Modo Noite -->
+        <item name="colorPrimary">@color/night_primary</item>
+        <item name="colorSecondary">@color/night_secondary</item>
+        <item name="android:statusBarColor">@color/night_surface</item>
+        <item name="android:textColor">@color/night_text_primary</item>
+        <item name="android:windowBackground">@drawable/bg_night_portrait</item>
+
+        <item name="weatherPanelBg">@color/night_surface</item>
+        <item name="weatherPanelStroke">@color/night_surface_stroke</item>
+        <item name="weatherInputBg">@color/night_input_bg</item>
+        <item name="weatherButtonBg">@color/night_button_bg</item>
+        <item name="weatherButtonText">@color/night_button_text</item>
     </style>
+
 </resources>

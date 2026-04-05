@@ -1,9 +1,23 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.Dam_A15044coolweatherapp" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+
+    <style name="Theme.CoolWeatherApp" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+
+        <!-- Default values (Day) -->
+        <item name="colorPrimary">@color/day_primary</item>
+        <item name="colorSecondary">@color/day_secondary</item>
+        <item name="android:statusBarColor">@color/day_primary</item>
+        <item name="android:textColor">@color/day_text_primary</item>
+        <item name="android:textColorSecondary">@color/day_text_secondary</item>
+        <item name="android:textColorHint">@color/day_text_secondary</item>
+        <item name="android:windowBackground">@drawable/bg_day_portrait</item>
+
+        <item name="weatherPanelBg">@color/day_surface</item>
+        <item name="weatherPanelStroke">@color/day_surface_stroke</item>
+        <item name="weatherInputBg">@color/day_input_bg</item>
+        <item name="weatherButtonBg">@color/day_button_bg</item>
+        <item name="weatherButtonText">@color/day_button_text</item>
     </style>
 
-    <style name="Theme.Dam_A15044coolweatherapp" parent="Base.Theme.Dam_A15044coolweatherapp" />
 </resources>

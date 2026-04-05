@@ -1,11 +1,28 @@
 <resources>
-    <color name="cyber_bg">#0A0A14</color>
-    <color name="cyber_panel">#AA14142B</color>
-    <color name="cyber_panel_stroke">#6600F0FF</color>
-    <color name="cyber_cyan">#00F0FF</color>
-    <color name="cyber_magenta">#FF2BD6</color>
-    <color name="cyber_text_primary">#EAFBFF</color>
-    <color name="cyber_text_secondary">#8BE9FD</color>
-    <color name="cyber_input_bg">#CC111122</color>
-    <color name="cyber_button_bg">#A61A1A3A</color>
+    <!-- Day -->
+    <color name="day_bg">#F5F7FB</color>
+    <color name="day_surface">#FFFFFFFF</color>
+    <color name="day_surface_stroke">#D9E2EC</color>
+    <color name="day_primary">#4A90E2</color>
+    <color name="day_secondary">#7FB3FF</color>
+    <color name="day_text_primary">#1F2A37</color>
+    <color name="day_text_secondary">#5B6B7A</color>
+    <color name="day_input_bg">#FFFFFFFF</color>
+    <color name="day_button_bg">#4A90E2</color>
+    <color name="day_button_text">#FFFFFFFF</color>
+
+    <!-- Night -->
+    <color name="night_bg">#0F1722</color>
+    <color name="night_surface">#182230</color>
+    <color name="night_surface_stroke">#253244</color>
+    <color name="night_primary">#7CB7FF</color>
+    <color name="night_secondary">#A5CFFF</color>
+    <color name="night_text_primary">#EAF1F8</color>
+    <color name="night_text_secondary">#A9B7C6</color>
+    <color name="night_input_bg">#1D2938</color>
+    <color name="night_button_bg">#7CB7FF</color>
+    <color name="night_button_text">#0F1722</color>
+
+    <color name="white">#FFFFFFFF</color>
+    <color name="black">#FF000000</color>
 </resources>

@@ -1,7 +1,7 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="@color/cyber_button_bg"/>
+    <solid android:color="?attr/weatherButtonBg"/>
     <corners android:radius="16dp"/>
     <stroke
         android:width="2dp"
-        android:color="@color/cyber_magenta"/>
+        android:color="?attr/colorPrimary"/>
 </shape>
