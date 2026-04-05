@@ -6,8 +6,7 @@ A estrutura está concebida para integrar múltiplos Assignments (**A1**, **A2**
 ## 📌 Índice de Assignments
 
 * [Assignment 1 (A1)](#assignment-1-a1)
-<!-- Quando houver um A2, basta descomentar e adaptar: -->
-<!-- * [Assignment 2 (A2)](#assignment-2-a2) -->
+* [Assignment 2 (A2)](#assignment-2-a2)
 
 ---
 
@@ -124,4 +123,124 @@ A1/CityMoodScanner/
 │   │   │   ├── model/ (ex: AirQualityResponse.kt, EnvironmentData.kt...)
 │   │   │   ├── remote/ (ApiServices.kt, RetrofitClient.kt)
 │   │   │   └── repository/EnvironmentRepository.kt
+```
+
+---
+
+## Assignment 2 (A2)
+
+Este segundo bloco de trabalhos introduz e aprofunda conceitos avançados de **Kotlin** e estende a construção de aplicações nativas em **Android** utilizando arquiteturas e padrões como MVVM e DataBinding.
+
+### Índice de Tarefas (A2)
+1. [Section1 - Kotlin Events](#1-section1---kotlin-events)
+2. [Section1.2 - Kotlin Cache Generics](#2-section12---kotlin-cache-generics)
+3. [Section1.3 - Kotlin DSL Pipeline](#3-section13---kotlin-dsl-pipeline)
+4. [Section1.4 - Kotlin Operator Overloading](#4-section14---kotlin-operator-overloading)
+5. [Section2 - Cool Weather App](#5-section2---cool-weather-app)
+6. [Section3 - Dog Images App](#6-section3---dog-images-app)
+
+---
+
+### 1. Section1 - Kotlin Events
+
+**Explicação do Código:**  
+A `Section1-Kotlin` demonstra a modelação de um sistema de Gestão de Eventos orientado a objetos com coleções. O código tira partido de Classes de Dados (`Login`, `Purchase`, `Logout` derivadas da interface genérica/classe abstraída `Event`) para mapear os dados em memória. Utiliza funções de ordem superior (`processEvents`) que iteram sob as coleções dos eventos aplicando processamento personalizado por via de lambdas e manipulação de fluxos (filtragens com `.filter()`).
+
+**Estrutura de Ficheiros:**
+```text
+A2/Section1-Kotlin/
+├── src/main/kotlin/
+│   ├── Event.kt
+│   └── Main.kt
+└── pom.xml
+```
+
+---
+
+### 2. Section1.2 - Kotlin Cache Generics
+
+**Explicação do Código:**  
+A `Section1_2-Kotlin` tem como foco o uso de **Genéricos (Generics)** aplicados a estruturas de dados personalizadas, em específico numa estrutura de Memória Cache (Chave-Valor) flexível. A classe `Cache<K, V>` demonstra métodos fundamentais de acesso como `getOrPut` (utilizando lambdas de inicialização diferida), mutações dinâmicas através de funções como `transform` e limpezas controladas de memória com operações como `evict()`.
+
+**Estrutura de Ficheiros:**
+```text
+A2/Section1_2-Kotlin/
+├── src/main/kotlin/
+│   ├── Cache.kt
+│   └── Main.kt
+└── pom.xml
+```
+
+---
+
+### 3. Section1.3 - Kotlin DSL Pipeline
+
+**Explicação do Código:**  
+A `Section1_3-Kotlin` foca-se na elaboração de uma arquitetura limpa de Processamento em Lote (Pipeline) alavancada pela criação de uma **DSL (Domain-Specific Language)** fluida combinada com padrões estendidos baseados em *Builder Pattern*. A função `buildPipeline` constrói encadeamentos com diversas "fases" configuráveis (stages, trimming, filters) que transformam logs e erros. A solução ilustra ainda a gestão avançada de bifurcações e paralelismo estrutural contendo forks dinâmicos de sub-pipelines.
+
+**Estrutura de Ficheiros:**
+```text
+A2/Section1_3-Kotlin/
+├── src/main/kotlin/
+│   ├── Main.kt
+│   └── Pipeline.kt
+└── pom.xml
+```
+
+---
+
+### 4. Section1.4 - Kotlin Operator Overloading
+
+**Explicação do Código:**  
+A `Section1_4-Kotlin` foi exclusivamente programada para demonstrar **Sobrecarga de Operadores (Operator Overloading)** em Kotlin, estendendo-se através do desenho de Vetores Bi-Dimensionais (`Vec2`). Redefine métodos elementares (utilizando a keyword `operator fun`) simulando comportamentos algébricos diretos: adição (`+`), subtração (`-`), multiplicação escalar (`*`), indexador posicional dinâmico (`a[x]`) e as respetivas rotinas lógicas subjacentes à interface `Comparable` (tais como `<`, `>`).
+
+**Estrutura de Ficheiros:**
+```text
+A2/Section1_4-Kotlin/
+├── src/main/kotlin/
+│   ├── Main.kt
+│   └── Vec2.kt
+└── pom.xml
+```
+
+---
+
+### 5. Section2 - Cool Weather App
+
+**Explicação do Código:**  
+Este projeto Android constitui uma aplicação meteorológica (`dam_A15044coolweatherapp`) que alavanca vigorosamente a arquitetura **MVVM** suportada de ponta a ponta. Através da `MainActivity`, orquestra o layout visual por intermédio de `DataBinding` observando estados emitidos a partir do seu ViewModel. A app tem particular relevância por tratar variações nativas de modo de ecrã (Dark/Light Mode) com manipulação de tonalidades (*Tint List* combinada com resoluções de sufixo no `getIdentifier`), adaptação fluida com `WindowInsetsListener` (edge-to-edge), e processamento granular de permissões de *Geolocalização* (`Manifest.permission.ACCESS_FINE_LOCATION`) durante o runtime.
+
+**Estrutura de Ficheiros:**
+```text
+A2/Section2-Android/
+└── dam_A15044coolweatherapp/
+    └── app/src/main/
+        ├── java/com/example/dam_a15044coolweatherapp/
+        │   ├── MainActivity.kt
+        │   ├── WeatherData.kt
+        │   └── WeatherViewModel.kt
+        └── res/
+            └── layout/activity_main.xml
+```
+
+---
+
+### 6. Section3 - Dog Images App
+
+**Explicação do Código:**  
+A `Section3-Android` exibe um cenário primário virado para a comunicação síncrona/assíncrona baseada em pedidos HTTP. Enaltece metodologias modernas para consumo de APIs remotas através da biblioteca **Retrofit**, requisitando imagens aleatórias. Todas as entidades extraídas são acomodadas uniformemente em memória sob a alçada de um `ImageRepository` orquestrado num `MainViewModel`. Em termos visuais, a aplicação serve-se de uma `RecyclerView` unida intrinsecamente ao seu `ImageAdapter`, providenciando reações interativas através da gestão de `SwipeRefreshLayout` (pull-to-refresh) e elementos correlacionados.
+
+**Estrutura de Ficheiros:**
+```text
+A2/Section3-Android/
+└── Android/app/src/main/
+    ├── java/com/example/section3_android/
+    │   ├── MainActivity.kt
+    │   ├── adapter/ImageAdapter.kt
+    │   ├── api/ (DogApiService.kt, RetrofitClient.kt)
+    │   ├── model/ImageItem.kt
+    │   ├── repository/ImageRepository.kt
+    │   └── viewmodel/MainViewModel.kt
+    └── res/
+        └── layout/ (activity_main.xml, item_image.xml)
 ```
