@@ -4,11 +4,7 @@ plugins {
 
 android {
     namespace = "com.example.dam_a15044coolweatherapp"
-    compileSdk {
-        version = release(36) {
-            minorApiLevel = 1
-        }
-    }
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.dam_a15044coolweatherapp"
@@ -33,6 +29,12 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+    // kotlinOptions {
+    //     jvmTarget = "11"
+    // }
+    buildFeatures {
+        dataBinding = true
+    }
 }
 
 dependencies {
@@ -41,8 +43,14 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.4")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.4")
+    implementation("androidx.activity:activity-ktx:1.9.1")
+    implementation("com.google.android.gms:play-services-location:21.3.0")
+    implementation("com.google.code.gson:gson:2.10.1")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    implementation("com.google.code.gson:gson:2.10.1")
 }

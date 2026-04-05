@@ -1,123 +1,98 @@
 package com.example.dam_a15044coolweatherapp
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.os.Bundle
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.ImageViewCompat
-import com.google.gson.Gson
-import java.io.InputStreamReader
-import java.net.URL
+import androidx.databinding.DataBindingUtil
+import com.example.dam_a15044coolweatherapp.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        // Remove the manual setTheme calls to allow the system to handle it
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_main)
+    private val viewModel: WeatherViewModel by viewModels()
+    private lateinit var binding: ActivityMainBinding
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.container)) { v, insets ->
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        
+        // Use DataBinding
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        binding.lifecycleOwner = this
+        binding.viewModel = viewModel
+
+        enableEdgeToEdge()
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.container) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
-        val latitudeInput = findViewById<EditText>(R.id.latitudeInput)
-        val longitudeInput = findViewById<EditText>(R.id.longitudeInput)
-        val updateButton = findViewById<Button>(R.id.updateButton)
+        // Observe weather code and image name to update the icon manually
+        viewModel.weatherImageName.observe(this) { imageName ->
+            updateWeatherIcon(imageName, viewModel.weatherCode.value ?: 0)
+        }
 
-        latitudeInput.setText("38.076")
-        longitudeInput.setText("-9.12")
+        checkLocationPermissions()
+    }
 
-        fetchWeatherData(38.076, -9.12).start()
-
-        updateButton.setOnClickListener {
-            val lat = latitudeInput.text.toString().trim().toDoubleOrNull()
-            val lon = longitudeInput.text.toString().trim().toDoubleOrNull()
-
-            if (lat != null && lon != null) {
-                fetchWeatherData(lat, lon).start()
-            } else {
-                latitudeInput.error = getString(R.string.invalid_value)
-                longitudeInput.error = getString(R.string.invalid_value)
+    private fun checkLocationPermissions() {
+        val requestPermissionLauncher = registerForActivityResult(
+            ActivityResultContracts.RequestMultiplePermissions()
+        ) { permissions ->
+            if (permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
+                permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true) {
+                // Re-init location in ViewModel if needed or it will auto-retry
             }
+        }
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) 
+            != PackageManager.PERMISSION_GRANTED) {
+            requestPermissionLauncher.launch(arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ))
         }
     }
 
-    private fun weatherApiCall(lat: Double, lon: Double): WeatherData {
-        val reqString = buildString {
-            append("https://api.open-meteo.com/v1/forecast?")
-            append("latitude=$lat&longitude=$lon&")
-            append("current_weather=true&")
-            append("hourly=temperature_2m,weathercode,pressure_msl,windspeed_10m")
+    private fun updateWeatherIcon(imageName: String, code: Int) {
+        val isNightTheme = (resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK) == android.content.res.Configuration.UI_MODE_NIGHT_YES
+        val day = !isNightTheme
+
+        val res = resources
+        val packageName = packageName
+        
+        // Try to find day/night specific version
+        val suffix = if (day) "_day" else "_night"
+        var resID = res.getIdentifier(imageName + suffix, "drawable", packageName)
+        
+        if (resID == 0) {
+            resID = res.getIdentifier(imageName, "drawable", packageName)
         }
 
-        val url = URL(reqString)
-        url.openStream().use {
-            return Gson().fromJson(
-                InputStreamReader(it, "UTF-8"),
-                WeatherData::class.java
-            )
+        if (resID != 0) {
+            binding.weatherImage.setImageResource(resID)
         }
-    }
 
-    private fun fetchWeatherData(lat: Double, lon: Double): Thread {
-        return Thread {
-            try {
-                val weather = weatherApiCall(lat, lon)
-                updateUI(weather)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+        // Apply tint based on weather (optional logic)
+        val tintColor = when (code) {
+            0 -> if (day) R.color.day_primary else R.color.night_primary
+            1, 2, 3 -> if (day) R.color.day_text_secondary else R.color.night_text_secondary
+            45, 48 -> if (day) R.color.day_text_primary else R.color.night_text_primary
+            else -> if (day) R.color.day_primary else R.color.night_primary
         }
-    }
 
-    private fun updateUI(request: WeatherData) {
-        runOnUiThread {
-            val weatherImage = findViewById<ImageView>(R.id.weatherImage)
-            val pressureValue = findViewById<TextView>(R.id.pressureValue)
-            val windDirectionValue = findViewById<TextView>(R.id.windDirectionValue)
-            val windSpeedValue = findViewById<TextView>(R.id.windSpeedValue)
-            val temperatureValue = findViewById<TextView>(R.id.temperatureValue)
-            val timeValue = findViewById<TextView>(R.id.timeValue)
-
-            pressureValue.text = "${request.hourly.pressure_msl.firstOrNull() ?: "--"} hPa"
-            windDirectionValue.text = "${request.current_weather.winddirection}°"
-            windSpeedValue.text = "${request.current_weather.windspeed} km/h"
-            temperatureValue.text = "${request.current_weather.temperature} °C"
-            timeValue.text = request.current_weather.time
-
-            val weatherMap = getWeatherCodeMap()
-            val wCode = weatherMap[request.current_weather.weathercode]
-
-            val imageName = wCode?.image ?: "ic_cloud"
-            val resId = resources.getIdentifier(imageName, "drawable", packageName)
-            weatherImage.setImageResource(resId)
-
-            // Determine if the current theme is night
-            val isNightTheme = (resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK) == android.content.res.Configuration.UI_MODE_NIGHT_YES
-
-            val tintColor = when (request.current_weather.weathercode) {
-                0 -> if (!isNightTheme) R.color.day_primary else R.color.night_primary
-                1, 2, 3 -> if (!isNightTheme) R.color.day_text_secondary else R.color.night_text_secondary
-                45, 48 -> if (!isNightTheme) R.color.day_text_primary else R.color.night_text_primary
-                51, 53, 55, 61, 63, 65, 80, 81, 82 -> if (!isNightTheme) R.color.day_primary else R.color.night_primary
-                95, 96, 99 -> if (!isNightTheme) R.color.day_secondary else R.color.night_secondary
-                else -> if (!isNightTheme) R.color.day_text_primary else R.color.night_text_primary
-            }
-
-            ImageViewCompat.setImageTintList(
-                weatherImage,
-                ColorStateList.valueOf(ContextCompat.getColor(this, tintColor))
-            )
-        }
+        ImageViewCompat.setImageTintList(
+            binding.weatherImage,
+            ColorStateList.valueOf(ContextCompat.getColor(this, tintColor))
+        )
     }
 }

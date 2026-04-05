@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="weather_codes">
+        <item>0|Céu Limpo|ic_sun</item>
+        <item>1|Principalmente Limpo|ic_cloud</item>
+        <item>2|Parcialmente Nublado|ic_cloud</item>
+        <item>3|Encoberto|ic_cloud</item>
+        <item>45|Nevoeiro|ic_fog</item>
+        <item>48|Nevoeiro com Geada|ic_fog</item>
+        <item>51|Chuvisco Ligeiro|ic_rain</item>
+        <item>53|Chuvisco Moderado|ic_rain</item>
+        <item>55|Chuvisco Denso|ic_rain</item>
+        <item>61|Chuva Fraca|ic_rain</item>
+        <item>63|Chuva Moderada|ic_rain</item>
+        <item>65|Chuva Forte|ic_rain</item>
+        <item>95|Trovoada|ic_storm</item>
+    </string-array>
+</resources>
