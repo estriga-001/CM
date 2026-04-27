@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <bytecodeTargetLevel target="23" />
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="GreetingProcessorProject.app" options="-proc:none" />
+      <module name="GreetingProcessorProject.app.main" options="-proc:none" />
+      <module name="GreetingProcessorProject.app.test" options="-proc:none" />
+      <module name="GreetingProcessorProject.processor" options="-proc:none" />
+      <module name="GreetingProcessorProject.processor.main" options="-proc:none" />
+      <module name="GreetingProcessorProject.processor.test" options="-proc:none" />
+    </option>
+  </component>
+</project>
