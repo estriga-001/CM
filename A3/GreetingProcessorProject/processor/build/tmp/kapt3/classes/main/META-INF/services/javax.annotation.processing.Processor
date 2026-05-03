@@ -1,1 +1,2 @@
-processor.GreetingProcessor
+org.example.processor.GreetingProcessor
+org.example.processor.RegexProcessor
