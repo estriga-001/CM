@@ -1,0 +1,23 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="Theme.CoolWeatherApp" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+
+        <!-- Cores Modo Noite -->
+        <item name="colorPrimary">@color/night_primary</item>
+        <item name="colorSecondary">@color/night_secondary</item>
+        <item name="android:statusBarColor">@color/night_surface</item>
+        <item name="android:textColor">@color/night_text_primary</item>
+        <item name="android:textColorSecondary">@color/night_text_secondary</item>
+        <item name="android:textColorHint">@color/night_text_secondary</item>
+        <item name="android:windowBackground">@drawable/bg_night_portrait</item>
+
+        <item name="weatherPanelBg">@color/night_surface</item>
+        <item name="weatherPanelStroke">@color/night_surface_stroke</item>
+        <item name="weatherInputBg">@color/night_input_bg</item>
+        <item name="weatherButtonBg">@color/night_button_bg</item>
+        <item name="weatherButtonText">@color/night_button_text</item>
+    </style>
+
+</resources>
