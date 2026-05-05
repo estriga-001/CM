@@ -1,9 +1,29 @@
 package com.example.dam_a15044coolweatherapp.ui
 
+import android.Manifest
+import android.annotation.SuppressLint
+import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -12,14 +32,27 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dam_a15044coolweatherapp.R
 import com.example.dam_a15044coolweatherapp.data.WMOWeatherCode
 import com.example.dam_a15044coolweatherapp.data.getWeatherCodeMap
 import com.example.dam_a15044coolweatherapp.viewmodel.WeatherViewModel
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
+import androidx.compose.runtime.key
 
 @Composable
 fun WeatherUI(weatherViewModel: WeatherViewModel = viewModel()) {
+
+    var showMap by remember { mutableStateOf(false) }
+
+    val context = LocalContext.current
+
+    val fusedLocationClient = remember {
+        LocationServices.getFusedLocationProviderClient(context)
+    }
+
     val weatherUIState by weatherViewModel.uiState.collectAsState()
 
     val latitude = weatherUIState.latitude
@@ -31,19 +64,115 @@ fun WeatherUI(weatherViewModel: WeatherViewModel = viewModel()) {
     val seaLevelPressure = weatherUIState.seaLevelPressure
     val time = weatherUIState.time
 
+    fun hasLocationPermission(): Boolean {
+        val fineLocationGranted = ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+
+        val coarseLocationGranted = ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+
+        return fineLocationGranted || coarseLocationGranted
+    }
+
+    @SuppressLint("MissingPermission")
+    fun updateToCurrentLocationAndOpenMap() {
+        fusedLocationClient
+            .getCurrentLocation(Priority.PRIORITY_BALANCED_POWER_ACCURACY, null)
+            .addOnSuccessListener { location ->
+                if (location != null) {
+                    weatherViewModel.updateLatitude(location.latitude.toFloat())
+                    weatherViewModel.updateLongitude(location.longitude.toFloat())
+
+                } else {
+                    Toast.makeText(
+                        context,
+                        "Não foi possível obter a localização atual.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+
+                showMap = true
+            }
+            .addOnFailureListener {
+                Toast.makeText(
+                    context,
+                    "Erro ao obter a localização.",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                showMap = true
+            }
+    }
+
+    val locationPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val permissionGranted =
+            permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
+                    permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
+
+        if (permissionGranted) {
+            updateToCurrentLocationAndOpenMap()
+        } else {
+            Toast.makeText(
+                context,
+                "Permissão de localização recusada.",
+                Toast.LENGTH_SHORT
+            ).show()
+
+            showMap = true
+        }
+    }
+
+    fun openMapWithCurrentLocation() {
+        if (hasLocationPermission()) {
+            updateToCurrentLocationAndOpenMap()
+        } else {
+            locationPermissionLauncher.launch(
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            )
+        }
+    }
+
+    if (showMap) {
+        WeatherMapScreen(
+            latitude = latitude,
+            longitude = longitude,
+            onBackClick = {
+                showMap = false
+            },
+            onLocationSelected = { newLatitude, newLongitude ->
+                weatherViewModel.updateLatitude(newLatitude)
+                weatherViewModel.updateLongitude(newLongitude)
+                weatherViewModel.fetchWeather()
+                showMap = false
+            }
+        )
+
+        return
+    }
+
     val configuration = LocalConfiguration.current
-    val day = true // Can be derived from time in future
+    val day = true
 
     val mapt = getWeatherCodeMap()
     val wCode = mapt[weathercode]
+
     val wImage = when (wCode) {
         WMOWeatherCode.CLEAR_SKY,
         WMOWeatherCode.MAINLY_CLEAR,
         WMOWeatherCode.PARTLY_CLOUDY -> if (day) "ic_sun" else "ic_moon"
+
         else -> wCode?.image ?: "ic_cloud"
     }
 
-    val context = LocalContext.current
     val resolved = context.resources.getIdentifier(wImage, "drawable", context.packageName)
     val wIcon = if (resolved != 0) resolved else R.drawable.ic_cloud
 
@@ -58,9 +187,22 @@ fun WeatherUI(weatherViewModel: WeatherViewModel = viewModel()) {
             weathercode = weathercode,
             seaLevelPressure = seaLevelPressure,
             time = time,
-            onLatitudeChange = { newValue -> newValue.toFloatOrNull()?.let { weatherViewModel.updateLatitude(it) } },
-            onLongitudeChange = { newValue -> newValue.toFloatOrNull()?.let { weatherViewModel.updateLongitude(it) } },
-            onUpdateButtonClick = { weatherViewModel.fetchWeather() }
+            onLatitudeChange = { newValue ->
+                newValue.toFloatOrNull()?.let {
+                    weatherViewModel.updateLatitude(it)
+                }
+            },
+            onLongitudeChange = { newValue ->
+                newValue.toFloatOrNull()?.let {
+                    weatherViewModel.updateLongitude(it)
+                }
+            },
+            onUpdateButtonClick = {
+                weatherViewModel.fetchWeather()
+            },
+            onOpenMapButtonClick = {
+                openMapWithCurrentLocation()
+            }
         )
     } else {
         PortraitWeatherUI(
@@ -73,9 +215,22 @@ fun WeatherUI(weatherViewModel: WeatherViewModel = viewModel()) {
             weathercode = weathercode,
             seaLevelPressure = seaLevelPressure,
             time = time,
-            onLatitudeChange = { newValue -> newValue.toFloatOrNull()?.let { weatherViewModel.updateLatitude(it) } },
-            onLongitudeChange = { newValue -> newValue.toFloatOrNull()?.let { weatherViewModel.updateLongitude(it) } },
-            onUpdateButtonClick = { weatherViewModel.fetchWeather() }
+            onLatitudeChange = { newValue ->
+                newValue.toFloatOrNull()?.let {
+                    weatherViewModel.updateLatitude(it)
+                }
+            },
+            onLongitudeChange = { newValue ->
+                newValue.toFloatOrNull()?.let {
+                    weatherViewModel.updateLongitude(it)
+                }
+            },
+            onUpdateButtonClick = {
+                weatherViewModel.fetchWeather()
+            },
+            onOpenMapButtonClick = {
+                openMapWithCurrentLocation()
+            }
         )
     }
 }
@@ -94,6 +249,7 @@ fun PortraitWeatherUI(
     onLatitudeChange: (String) -> Unit,
     onLongitudeChange: (String) -> Unit,
     onUpdateButtonClick: () -> Unit,
+    onOpenMapButtonClick: () -> Unit
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
@@ -102,6 +258,7 @@ fun PortraitWeatherUI(
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop
         )
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -109,20 +266,28 @@ fun PortraitWeatherUI(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.height(24.dp))
+
             Image(
                 painter = painterResource(id = wIcon),
                 contentDescription = stringResource(R.string.weather_image_desc),
                 modifier = Modifier.size(120.dp)
             )
+
             Spacer(modifier = Modifier.height(16.dp))
-            CoordinatesCard(
-                latitude = latitude,
-                longitude = longitude,
-                onLatitudeChange = onLatitudeChange,
-                onLongitudeChange = onLongitudeChange,
-                onUpdateButtonClick = onUpdateButtonClick
-            )
+            key(latitude, longitude) {
+                CoordinatesCard(
+                    latitude = latitude,
+                    longitude = longitude,
+                    onLatitudeChange = onLatitudeChange,
+                    onLongitudeChange = onLongitudeChange,
+                    onUpdateButtonClick = onUpdateButtonClick,
+                    onOpenMapClick = onOpenMapButtonClick
+                )
+            }
+
+
             Spacer(modifier = Modifier.height(8.dp))
+
             WeatherCard(
                 temperature = temperature,
                 windSpeed = windSpeed,
@@ -149,6 +314,7 @@ fun LandscapeWeatherUI(
     onLatitudeChange: (String) -> Unit,
     onLongitudeChange: (String) -> Unit,
     onUpdateButtonClick: () -> Unit,
+    onOpenMapButtonClick: () -> Unit
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
@@ -157,6 +323,7 @@ fun LandscapeWeatherUI(
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop
         )
+
         Row(
             modifier = Modifier
                 .fillMaxSize()
@@ -175,15 +342,21 @@ fun LandscapeWeatherUI(
                     contentDescription = stringResource(R.string.weather_image_desc),
                     modifier = Modifier.size(100.dp)
                 )
+
                 Spacer(modifier = Modifier.height(8.dp))
-                CoordinatesCard(
-                    latitude = latitude,
-                    longitude = longitude,
-                    onLatitudeChange = onLatitudeChange,
-                    onLongitudeChange = onLongitudeChange,
-                    onUpdateButtonClick = onUpdateButtonClick
-                )
+                key(latitude, longitude) {
+                    CoordinatesCard(
+                        latitude = latitude,
+                        longitude = longitude,
+                        onLatitudeChange = onLatitudeChange,
+                        onLongitudeChange = onLongitudeChange,
+                        onUpdateButtonClick = onUpdateButtonClick,
+                        onOpenMapClick = onOpenMapButtonClick
+                    )
+                }
+
             }
+
             Column(
                 modifier = Modifier
                     .weight(1f)

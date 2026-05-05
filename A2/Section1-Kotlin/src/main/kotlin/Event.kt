@@ -36,7 +36,7 @@ fun List<Event>.filterByUser(username: String) : List<Event> {
     return result // retornamos uma List<Event>
 }
 
-fun List<Event>.totalSpent( username: String): Double {
+fun List<Event>.totalSpent(username: String): Double {
     val compras = this.filterIsInstance<Purchase>()
     val userCompras = mutableListOf<Double>()
 

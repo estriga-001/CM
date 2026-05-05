@@ -22,4 +22,6 @@
 
     <string name="invalid_value">Valor inválido</string>
     <string name="weather_image_desc">Ícone meteorológico</string>
+
+    <string name="open_map_button">Abrir mapa</string>
 </resources>

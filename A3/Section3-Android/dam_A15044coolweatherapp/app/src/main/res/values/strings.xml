@@ -23,4 +23,6 @@
 
     <string name="invalid_value">Invalid value</string>
     <string name="weather_image_desc">Weather icon</string>
+
+    <string name="open_map_button">Open map</string>
 </resources>

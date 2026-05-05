@@ -29,7 +29,8 @@ class WeatherViewModel(application: Application) : AndroidViewModel(application)
     val uiState: StateFlow<WeatherUiState> = _uiState.asStateFlow()
 
     init {
-        getUserLocation()
+        //getUserLocation()
+        fetchWeather()
     }
 
     fun updateLatitude(value: Float) {

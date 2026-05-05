@@ -1,7 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
-    id("org.jetbrains.kotlin.plugin.compose")
-    id("org.jetbrains.kotlin.plugin.serialization")
+    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.maps.secrets)
 }
 
 android {
@@ -36,6 +37,7 @@ android {
     // }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -71,4 +73,9 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    // maps
+    implementation("com.google.android.gms:play-services-maps:20.0.0")
+    implementation("com.google.maps.android:maps-compose:6.12.0")
+
 }
