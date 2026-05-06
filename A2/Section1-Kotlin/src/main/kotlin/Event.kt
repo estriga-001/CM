@@ -13,6 +13,7 @@ class Logout(val username: String, val timeStamp: Long) : Event()
 fun List<Event>.filterByUser(username: String) : List<Event> {
     val result = mutableListOf<Event>() // criamos uma lista de resultados de Objetos Event
 
+    // this é List<Event>, event é um objeto do tipo Event, e para cada evento, verificamos se é do tipo Login, Purchase ou Logout
     for(event in this) {
         if(event is Login) { // se o evento for login
             if(event.username == username) { // verifica se o username esta a associado
