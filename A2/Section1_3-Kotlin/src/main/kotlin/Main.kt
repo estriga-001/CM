@@ -12,6 +12,7 @@ fun main() {
         " ERROR : connection timeout "
     )
 
+    // as lambdas sao o transform
     val pipeline = buildPipeline {
         addStage("Trim") { lines ->
             lines.map { it.trim() }
@@ -42,11 +43,13 @@ fun main() {
     // -------------------------
 
     val pipeline1 = buildPipeline {
+        // trim e filtra a lista so com erros
         addStage("Trim") { lines -> lines.map { it.trim() } }
         addStage("Only errors") { lines -> lines.filter { "ERROR" in it } }
     }
 
     val pipeline2 = buildPipeline {
+        // da trim e da map (ou seja, mantem a lista original) e faz uppercase)
         addStage("Trim") { lines -> lines.map { it.trim() } }
         addStage("Uppercase") { lines -> lines.map { it.uppercase() } }
     }
