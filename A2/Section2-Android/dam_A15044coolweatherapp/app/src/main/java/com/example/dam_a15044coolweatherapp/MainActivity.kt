@@ -15,18 +15,30 @@ import androidx.core.widget.ImageViewCompat
 import androidx.databinding.DataBindingUtil
 import com.example.dam_a15044coolweatherapp.databinding.ActivityMainBinding
 
+/*
+MainActivity é a classe principal da aplicação. É o ecrã que o utilizador vê
+LIga o XML ao user
+associa o weatherViewModel ao layout
+pede permissoes ao user
+observa alterações no icone do tempo
+atualiza manualmente a imagem do estado meteorologico
+ */
+
+
 class MainActivity : AppCompatActivity() {
 
-    private val viewModel: WeatherViewModel by viewModels()
+    private val viewModel: WeatherViewModel by viewModels() // isto liga o viewmodel à activity
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
         // Use DataBinding
+
+        /*DataBinding - O databinding permite ligar diretamente elementos do xml a variaveis do viewmodel */
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         binding.lifecycleOwner = this
-        binding.viewModel = viewModel
+        binding.viewModel = viewModel // permite que o xml aceda diretamente aos dados e metodos do VM
 
         enableEdgeToEdge()
 

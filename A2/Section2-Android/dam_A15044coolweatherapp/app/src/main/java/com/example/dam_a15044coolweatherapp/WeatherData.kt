@@ -1,5 +1,8 @@
 package com.example.dam_a15044coolweatherapp
 
+// este ficheiro contem o modelo de dados
+// a API devolve JSON, O GSON transforma esse JSON em objetos kotlin
+
 data class WeatherData (
     val latitude: Double,
     val longitude: Double,
@@ -24,6 +27,8 @@ data class Hourly (
     val windspeed_10m: ArrayList<Double>
 )
 
+// associa codigos meteorologicos a icones para ilustrar o tempo atual
+// ou seja, se a API devolver codigo 0, a app sabe que é ceu limpo e usa o icone do sol
 enum class WMOWeatherCode(val code: Int, val image: String) {
     CLEAR_SKY(0, "ic_sun"),
     MAINLY_CLEAR(1, "ic_cloud"),

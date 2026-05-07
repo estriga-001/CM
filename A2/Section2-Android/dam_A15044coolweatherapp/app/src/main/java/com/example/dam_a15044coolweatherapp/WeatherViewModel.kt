@@ -13,13 +13,23 @@ import kotlinx.coroutines.launch
 import java.io.InputStreamReader
 import java.net.URL
 
+/*
+Um viewmodel é uma classe usada para guardar e gerir os dados da interface de forma separada
+da activity
+
+Neste caso guardamos dados como temperature, windSpeed etc
+Basicamente tiramos a logica da meteorologia, da api ou da localização ao mainactivity
+e no mainactivity fica mais focado na parte visual. 
+*/ 
+
 class WeatherViewModel(application: Application) : AndroidViewModel(application) {
 
+    // por default as coords sao em lisboa
     val latitude = MutableLiveData<String>("38.7223")
     val longitude = MutableLiveData<String>("-9.1393")
 
-    private val _pressure = MutableLiveData<String>()
-    val pressure: LiveData<String> = _pressure
+    private val _pressure = MutableLiveData<String>() // isto pode ser alterado dentro do viewmodel apenas
+    val pressure: LiveData<String> = _pressure // isto é o que é exposto para a interface apenas observar
 
     private val _windDirection = MutableLiveData<String>()
     val windDirection: LiveData<String> = _windDirection
@@ -43,6 +53,7 @@ class WeatherViewModel(application: Application) : AndroidViewModel(application)
         getUserLocation()
     }
 
+    // obter a localização do user
     private fun getUserLocation() {
         val fusedLocationClient = LocationServices.getFusedLocationProviderClient(getApplication<Application>())
         try {
@@ -53,7 +64,7 @@ class WeatherViewModel(application: Application) : AndroidViewModel(application)
                         longitude.value = location.longitude.toString()
                         fetchWeather()
                     } else {
-                        fetchWeather() // Fallback to default
+                        fetchWeather() // se nao conseguir a loc, usa valores por defeito
                     }
                 }
                 .addOnFailureListener {
