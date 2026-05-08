@@ -80,8 +80,8 @@ class WeatherViewModel(application: Application) : AndroidViewModel(application)
     }
 
     private fun fetchWeather() {
-        val lat = latitude.value?.toDoubleOrNull() ?: 38.7223
-        val lon = longitude.value?.toDoubleOrNull() ?: -9.1393
+        val lat = latitude.value?.toDoubleOrNull() ?: 38.7223 // se for null usa o 38
+        val lon = longitude.value?.toDoubleOrNull() ?: -9.1393 // se for null usa o -9
 
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -94,12 +94,14 @@ class WeatherViewModel(application: Application) : AndroidViewModel(application)
     }
 
     private fun weatherApiCall(lat: Double, lon: Double): WeatherData {
+        // este URL devolve um json
         val reqString = buildString {
             append("https://api.open-meteo.com/v1/forecast?")
             append("latitude=$lat&longitude=$lon&")
             append("current_weather=true&")
             append("hourly=temperature_2m,weathercode,pressure_msl,windspeed_10m")
         }
+        // recebemos o url na app e lemos com GSON e convertemos o JSON para objeto kotlin
         val url = URL(reqString)
         url.openStream().use {
             return Gson().fromJson(InputStreamReader(it, "UTF-8"), WeatherData::class.java)
