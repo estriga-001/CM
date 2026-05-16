@@ -1,0 +1,3 @@
+[submodule "A4/s1"]
+	path = A4/s1
+	url = https://github.com/kotlin-hands-on/intro-coroutines

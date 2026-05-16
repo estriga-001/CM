@@ -57,8 +57,9 @@ class WeatherViewModel(application: Application) : AndroidViewModel(application)
     private fun getUserLocation() {
         val fusedLocationClient = LocationServices.getFusedLocationProviderClient(getApplication<Application>())
         try {
+            // cria um objeto que permite pedir a localização do user
             fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
-                .addOnSuccessListener { location ->
+                .addOnSuccessListener { location -> // location é o parametro da lambda
                     if (location != null) {
                         latitude.value = location.latitude.toString()
                         longitude.value = location.longitude.toString()

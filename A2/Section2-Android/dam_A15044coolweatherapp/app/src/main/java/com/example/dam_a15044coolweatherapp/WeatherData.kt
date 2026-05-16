@@ -3,6 +3,8 @@ package com.example.dam_a15044coolweatherapp
 // este ficheiro contem o modelo de dados
 // a API devolve JSON, O GSON transforma esse JSON em objetos kotlin
 
+
+// as diferentes classes tem a ver com a estrutura do json devolvido pela API
 data class WeatherData (
     val latitude: Double,
     val longitude: Double,
