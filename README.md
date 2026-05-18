@@ -7,6 +7,7 @@ A estrutura está concebida para integrar múltiplos Assignments (**A1**, **A2**
 
 * [Assignment 1 (A1)](#assignment-1-a1)
 * [Assignment 2 (A2)](#assignment-2-a2)
+* [Assignment 3 (A3)](#assignment-3-a3)
 
 ---
 
@@ -243,4 +244,57 @@ A2/Section3-Android/
     │   └── viewmodel/MainViewModel.kt
     └── res/
         └── layout/ (activity_main.xml, item_image.xml)
+
+---
+
+## Assignment 3 (A3)
+
+Este terceiro bloco de trabalhos foca-se na introdução a metaprogramação e *Annotation Processors* no ecossistema **Kotlin**, e avança para a refatorização de aplicações **Android** recorrendo a arquiteturas e paradigmas modernos com **Jetpack Compose** e **StateFlow**.
+
+### Índice de Tarefas (A3)
+1. [Greeting Processor Project](#1-greeting-processor-project)
+2. [Section3 - Cool Weather App (Compose Refactor)](#2-section3---cool-weather-app-compose-refactor)
+
+---
+
+### 1. Greeting Processor Project
+
+**Explicação do Código:**  
+Este projeto ilustra a implementação prática de processadores de anotações (*Annotation Processors*) customizados em Kotlin, dividindo-se em dois utilitários principais:
+- **GreetingProcessor:** Utiliza a biblioteca `KotlinPoet` em conjunto com KAPT para intercetar, em tempo de compilação, os métodos marcados com a anotação `@Greeting`. O seu papel consiste em auto-gerar classes *wrapper* de composição, que invocam a impressão de uma saudação customizável antes de executarem o método original da classe base.
+- **RegexProcessor:** Foca-se em injetar lógica de extração padronizada. Classes abstratas que detenham métodos sinalizados com a anotação `@Extract` (a qual recebe uma `regex` em parâmetro) originam classes que estendem o seu comportamento. Os métodos passam a aplicar dinamicamente a Expressão Regular instanciada a um parâmetro de `input` herdado e devolvem o primeiro grupo capturado.
+
+**Estrutura de Ficheiros:**
+```text
+A3/GreetingProcessorProject/
+├── annotations/src/main/kotlin/annotations/
+│   ├── Extract.kt
+│   └── Greeting.kt
+├── app/src/main/kotlin/app/
+│   ├── DataProcessorExtractor.kt
+│   └── MyClass.kt
+└── processor/src/main/kotlin/processor/
+    ├── GreetingProcessor.kt
+    └── RegexProcessor.kt
+```
+
+---
+
+### 2. Section3 - Cool Weather App (Compose Refactor)
+
+**Explicação do Código:**  
+Constitui uma modernização direta da aplicação meteorológica consolidada na A2. O sistema UI foi completamente refatorizado para abandonar o paradigma imperativo (baseado em XML Layouts e DataBinding) a favor das mais recentes *guidelines* de UI declarativa impostas pelo **Jetpack Compose**.
+A `MainActivity` converte-se essencialmente num recetáculo agnóstico, apenas invocando o Compose através de funções como `setContent` e encaminhando a composição raíz com a grelha estruturada de funções `@Composable` (por exemplo, os componentes encapsulados no diretório de interface como `WeatherScreen.kt` ou `WeatherCard.kt`). Em paralelo, efetuou-se uma robusta transição do padrão LiveData para a biblioteca **StateFlow**, de forma a garantir uma reatividade reestruturada com os fluxos contínuos de dados e de interações entre a *View* e a *ViewModel*.
+
+**Estrutura de Ficheiros:**
+```text
+A3/Section3-Android/
+└── dam_A15044coolweatherapp/
+    └── app/src/main/
+        └── java/com/example/dam_a15044coolweatherapp/
+            ├── MainActivity.kt
+            ├── ui/ (WeatherScreen.kt, WeatherCard.kt, etc.)
+            ├── data/WeatherData.kt
+            └── viewmodel/WeatherViewModel.kt
+```
 ```
