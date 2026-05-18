@@ -91,8 +91,8 @@ A1/VirtualLibrary/
 ### 4. Hello World Optional
 
 **Explicação do Código:**  
-Esta aplicação Android foca-se na obtenção programática de metadados inerentes ao dispositivo onde se encontra atualmente escalada, utilizando as diversas flags expostas pela API `Build` do Android.
-Na `MainActivity`, todo o processo de levantamento deste perfil (propriedades `Build.BRAND`, `Build.MODEL`, `Build.VERSION.RELEASE`, `Build.VERSION.SDK_INT`, etc.) ocorre no ciclo `onCreate`, compondo depois progressivamente toda a estrutura numa só variável iterável. Para possibilitar ao utilizador acesso universal a toda essa grande listagem concatenada, no Layout XML injeta-se e insere-se um `TextView` no interior de um `ScrollView`. O ajuste ao layout com o `ViewCompat` garante que a informação nunca colpare ou invada "safe zones".
+Esta aplicação Android foca-se na obtenção programática de metadados inerentes ao dispositivo onde se encontra atualmente em execução, utilizando as diversas flags expostas pela API `Build` do Android.
+Na `MainActivity`, todo o processo de levantamento deste perfil (propriedades `Build.BRAND`, `Build.MODEL`, `Build.VERSION.RELEASE`, `Build.VERSION.SDK_INT`, etc.) ocorre no ciclo `onCreate`, compondo depois progressivamente toda a estrutura numa só variável iterável. Para possibilitar ao utilizador acesso universal a toda essa listagem concatenada, no Layout XML injeta-se um `TextView` no interior de um `ScrollView`. O ajuste ao layout com o `ViewCompat` garante que a informação nunca se sobrepõe ou invade as "safe zones".
 
 **Estrutura de Ficheiros:**
 ```text
@@ -111,7 +111,7 @@ A1/helloWorldOptional/
 
 **Explicação do Código:**  
 Este é um projeto avançado no âmbito de A1 que se foca em demonstrar o potencial da stack de aplicações Kotlin contemporâneo (Android). O sistema arquitetura-se maioritariamente num padrão *MVVM (Model-View-ViewModel)*.
-A `MainActivity` funciona em estrita ligação com o ViewModel (`MapViewModel`), processando intenções através de repositórios como o `EnvironmentRepository` para coordenar acessos sem expor a interface local aos pedidos. Utiliza o `Retrofit` (configurado em `RetrofitClient`) para invocar APIs Web e solicitar dados sobre poluição, geolocalização exata, clima e ruído do respetivo local. As entidades obtidas nos endpoints REST são seguidamente refletidas para Data Classes concretas adaptadas a estas APIs (como `AirQualityResponse`, `WeatherResponse`, etc.).
+A `MainActivity` funciona em estrita ligação com o ViewModel (`MapViewModel`), processando intenções através de repositórios como o `EnvironmentRepository` para coordenar acessos sem expor a interface local aos pedidos. Utiliza o `Retrofit` (configurado em `RetrofitClient`) para invocar APIs Web e solicitar dados sobre poluição, geolocalização exata, clima e ruído do respetivo local. As entidades obtidas nos endpoints REST são seguidamente convertidas para Data Classes concretas adaptadas a estas APIs (como `AirQualityResponse`, `WeatherResponse`, etc.).
 
 **Estrutura de Ficheiros:**
 ```text
@@ -244,12 +244,13 @@ A2/Section3-Android/
     │   └── viewmodel/MainViewModel.kt
     └── res/
         └── layout/ (activity_main.xml, item_image.xml)
+```
 
 ---
 
 ## Assignment 3 (A3)
 
-Este terceiro bloco de trabalhos foca-se na introdução a metaprogramação e *Annotation Processors* no ecossistema **Kotlin**, e avança para a refatorização de aplicações **Android** recorrendo a arquiteturas e paradigmas modernos com **Jetpack Compose** e **StateFlow**.
+Este terceiro bloco de trabalhos foca-se na exploração profunda de metaprogramação através de **Annotation Processors** no ecossistema **Kotlin**, e avança de forma significativa na modernização de aplicações **Android** recorrendo a arquiteturas e paradigmas contemporâneos como **Jetpack Compose** e **StateFlow** para reatividade declarativa.
 
 ### Índice de Tarefas (A3)
 1. [Greeting Processor Project](#1-greeting-processor-project)
@@ -260,22 +261,33 @@ Este terceiro bloco de trabalhos foca-se na introdução a metaprogramação e *
 ### 1. Greeting Processor Project
 
 **Explicação do Código:**  
-Este projeto ilustra a implementação prática de processadores de anotações (*Annotation Processors*) customizados em Kotlin, dividindo-se em dois utilitários principais:
-- **GreetingProcessor:** Utiliza a biblioteca `KotlinPoet` em conjunto com KAPT para intercetar, em tempo de compilação, os métodos marcados com a anotação `@Greeting`. O seu papel consiste em auto-gerar classes *wrapper* de composição, que invocam a impressão de uma saudação customizável antes de executarem o método original da classe base.
-- **RegexProcessor:** Foca-se em injetar lógica de extração padronizada. Classes abstratas que detenham métodos sinalizados com a anotação `@Extract` (a qual recebe uma `regex` em parâmetro) originam classes que estendem o seu comportamento. Os métodos passam a aplicar dinamicamente a Expressão Regular instanciada a um parâmetro de `input` herdado e devolvem o primeiro grupo capturado.
+Este projeto constitui uma demonstração prática e robusta de processadores de anotações (*Annotation Processors*) customizados em Kotlin, organizado numa arquitetura modular que compreende três módulos interdependentes:
+
+- **Módulo `annotations`:** Define as anotações `@Greeting` e `@Extract` que atuam como marcadores para elementos de código (especificamente funções) que devem ser processadas em tempo de compilação. Ambas anotações recebem **parâmetros configuráveis** (respetivamente `message` e `regex`) que alimentam a lógica geradora de código.
+
+- **Módulo `processor`:** Implementa dois processadores distintos que herdam de `AbstractProcessor` e registam-se automaticamente com o serviço de compilação através da anotação `@AutoService`:
+  - **GreetingProcessor:** Interceita métodos marcados com `@Greeting` e, aproveitando a biblioteca **KotlinPoet**, gera dinamicamente classes *wrapper* de encapsulamento. Estas classes delegam invocações, emitindo a saudação customizável (parametrizada em `message`) antes de executarem a lógica original. A geração ocorre exclusivamente durante a compilação através de **KAPT (Kotlin Annotation Processing Tool)**.
+  - **RegexProcessor:** Processa métodos anotados com `@Extract`, gerando classes que estendem (via `superclass`) a classe original. Os métodos gerados aplicam a Expressão Regular instanciada (recebida como parâmetro) a um campo `input` herdado, capturando e retornando o primeiro grupo assinalado.
+
+- **Módulo `app`:** Compreende a aplicação cliente que declara `MyClass` com métodos candidatos a processamento. Após compilação, o KAPT executa os processadores definidos, injetando as classes geradas automaticamente no classpath.
+
+A solução ilustra conceitos avançados: **reflexão em tempo de compilação** (compile-time reflection), **geração de código** (code generation), e o padrão **Service Provider Interface (SPI)** do Java.
 
 **Estrutura de Ficheiros:**
 ```text
 A3/GreetingProcessorProject/
-├── annotations/src/main/kotlin/annotations/
-│   ├── Extract.kt
-│   └── Greeting.kt
+├── annotations/src/main/kotlin/org/example/annotations/
+│   ├── Greeting.kt
+│   └── Extract.kt
+├── processor/src/main/kotlin/org/example/processor/
+│   ├── GreetingProcessor.kt
+│   └── RegexProcessor.kt
 ├── app/src/main/kotlin/app/
-│   ├── DataProcessorExtractor.kt
-│   └── MyClass.kt
-└── processor/src/main/kotlin/processor/
-    ├── GreetingProcessor.kt
-    └── RegexProcessor.kt
+│   ├── MyClass.kt
+│   └── DataProcessorExtractor.kt
+├── build.gradle.kts
+├── settings.gradle.kts
+└── gradle.properties
 ```
 
 ---
@@ -283,18 +295,41 @@ A3/GreetingProcessorProject/
 ### 2. Section3 - Cool Weather App (Compose Refactor)
 
 **Explicação do Código:**  
-Constitui uma modernização direta da aplicação meteorológica consolidada na A2. O sistema UI foi completamente refatorizado para abandonar o paradigma imperativo (baseado em XML Layouts e DataBinding) a favor das mais recentes *guidelines* de UI declarativa impostas pelo **Jetpack Compose**.
-A `MainActivity` converte-se essencialmente num recetáculo agnóstico, apenas invocando o Compose através de funções como `setContent` e encaminhando a composição raíz com a grelha estruturada de funções `@Composable` (por exemplo, os componentes encapsulados no diretório de interface como `WeatherScreen.kt` ou `WeatherCard.kt`). Em paralelo, efetuou-se uma robusta transição do padrão LiveData para a biblioteca **StateFlow**, de forma a garantir uma reatividade reestruturada com os fluxos contínuos de dados e de interações entre a *View* e a *ViewModel*.
+Esta versão modernizada da aplicação meteorológica constitui uma refatorização completa e integral da abordagem apresentada em A2, migrando integralmente do paradigma imperativo baseado em *XML Layouts* e **DataBinding** para a mais recente arquitetura **Jetpack Compose** com UI declarativa.
+
+A `MainActivity` transforma-se essencialmente num contentor agnóstico, delegando toda a composição visual através de `setContent()` que alimenta uma hierarquia de funções `@Composable`. O sistema UI descentraliza-se em componentes modulares e reutilizáveis (armazenados em `ui/`): `WeatherScreen.kt` atua como orquestrador raíz, enquanto `WeatherCard.kt`, `WeatherRow.kt`, e `CoordinatesCard.kt` encapsulam especificidades de apresentação. A `WeatherMapScreen.kt` oferece ainda funcionalidades de visualização geolocalizada.
+
+A gestão de estado sofre uma transição decisiva: abandona-se completamente o modelo **LiveData** a favor da biblioteca reativa **StateFlow**, garantindo emissão contínua de estados (`WeatherUiState`) que a camada de apresentação observa e sincroniza de forma reativa através do operador `collectAsState()`. O `WeatherViewModel`, herança de `AndroidViewModel`, expõe `_uiState` privado e `uiState` público (transformado através de `asStateFlow()`), permitindo mutações controladas com `update { }`.
+
+A integração com permissões de localização (`Manifest.permission.ACCESS_FINE_LOCATION`) foi modernizada recorrendo a `ActivityResultContracts.RequestMultiplePermissions()` em detrimento de fragmentos obsoletos. O `WeatherApiClient` (em `data/`) continua a orquestrar requisições REST através de **Retrofit**, alimentando o `WeatherViewModel` com dados meteorológicos em tempo real.
+
+A aplicação mantém suporte robusto para múltiplos idiomas (ficheiros em `values-pt/`, `values-night/`) e orientações de ecrã diversificadas (`layout-land/`), garantindo adaptabilidade universal através de **Material Design 3** e ajustes de insets com `WindowInsetsListener`.
 
 **Estrutura de Ficheiros:**
 ```text
 A3/Section3-Android/
-└── dam_A15044coolweatherapp/
+└── dam_a15044coolweatherapp/
     └── app/src/main/
-        └── java/com/example/dam_a15044coolweatherapp/
-            ├── MainActivity.kt
-            ├── ui/ (WeatherScreen.kt, WeatherCard.kt, etc.)
-            ├── data/WeatherData.kt
-            └── viewmodel/WeatherViewModel.kt
-```
+        ├── java/com/example/dam_a15044coolweatherapp/
+        │   ├── MainActivity.kt
+        │   ├── data/
+        │   │   ├── WeatherData.kt
+        │   │   └── WeatherApiClient.kt
+        │   ├── ui/
+        │   │   ├── WeatherScreen.kt
+        │   │   ├── WeatherCard.kt
+        │   │   ├── WeatherRow.kt
+        │   │   ├── CoordinatesCard.kt
+        │   │   └── WeatherMapScreen.kt
+        │   └── viewmodel/
+        │       └── WeatherViewModel.kt
+        └── res/
+            ├── layout/
+            ├── layout-land/
+            ├── values/
+            ├── values-night/
+            ├── values-pt/
+            ├── drawable/
+            ├── mipmap-*/
+            └── xml/
 ```
