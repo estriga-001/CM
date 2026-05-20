@@ -1,0 +1,107 @@
+Computa¸ c˜ ao M´ ovel
+Mobile Computing
+CM
+Tutorial4-Flows&Firebase
+Pedro Fazenda
+pedrofazenda@enautica.pt
+Carlos Gon¸ calves
+carlosgoncalves@enautica.ptAbstract
+This tutorial introduces students to Kotlin Flows and
+coroutines for reactive programming, demonstrates how
+to access AI language models (such as OpenAI’s GPTs
+and Google Gemini) using Kotlin, and provides an
+overview of the Google Firebase platform.
+Deadline:June 1st, 2026
+Kotlin Flows, AI LLMs and Firebase
+Friday, April 24th, 2026Tutorial 4 - Kotlin Flows, AI LLMs and Firebase
+Contents
+1 Introduction 1
+1.1 Assignment Overview . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1
+1.2 Learning Objectives . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1
+2 Kotlin Flows 1
+2.1 Introduction to coroutines/flows . . . . . . . . . . . . . . . . . . . . . . . . 1
+2.2 Step 1: Kotlin Coroutines/Flows Tutorial . . . . . . . . . . . . . . . . . . . 2
+2.3 Step 2: DIY, a more reactive handling of loading states . . . . . . . . . . 2
+2.3.1 Task 1: Add a LoadingStateData data class . . . . . . . . . . . . . 3
+2.3.2 Task 2: Add StateFlow and MutableStateFlow . . . . . . . . . . . . 3
+2.3.3 Task 3: Update methods to use StateFlow in loading status . . . . 4
+2.4 Step 3: DIY, a more robust way to progress updates . . . . . . . . . . . . 5
+2.4.1 Using channels when calling updateRequest . . . . . . . . . . . . . 6
+3 Accessing AI LLMs 6
+3.1 Task 1: Put the AISimpleCall project to work and test it . . . . . . . . . . 7
+3.2 Task 2: Temperature and max tokens defined as properties . . . . . . . . . 7
+3.3 Task 3: Temperature tests . . . . . . . . . . . . . . . . . . . . . . . . . . . 7
+3.4 Task 4: Sentiment analysis . . . . . . . . . . . . . . . . . . . . . . . . . . . 8
+3.5 Task 5: Android LLM Imagem processing . . . . . . . . . . . . . . . . . . 8
+4 Firebase 8
+4.1 Firebase very short introduction . . . . . . . . . . . . . . . . . . . . . . . . 8
+4.2 Codelab Friendly chat . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 9
+4.3 Notes Pro tutorial . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 10Tutorial 4 - Kotlin Flows, AI LLMs and Firebase
+1 Introduction
+In this tutorial, you will explore Kotlin Fows, access to LLM’s API and Google Fire-
+base.
+1.1 Assignment Overview
+It is about Kotlin Fows, access to LLM’s API and Google Firebase.
+1.2 Learning Objectives
+By completing this assignment, you will have the following experience:
+•in threading and asynchronous code (threads, callbacks, coroutines, flows, chan-
+nels);
+•accessing OpenAI GPT and Google Gemini LLMs (you will make calls, regulate
+calls temperature and other parameters, and do sentiment analysis); and
+•with Google Firebase.
+2 Kotlin Flows
+2.1 Introduction to coroutines/flows
+Kotlin Flows are a powerful tool for handling asynchronous data streams in a reactive
+and declarative way. Introduced as part of Kotlin’s coroutines framework, Flows repre-
+sent a cold asynchronous stream of values that are computed lazily. Unlike traditional
+callbacks or LiveData, Flows provide a consistent and structured approach to managing
+asynchronous sequences — making them ideal for modern Android development.
+A typical use case for Flows is observing changes in data over time, such as updates
+from a database, network responses, or user input events. A Flow emits multiple values
+sequentially, and consumers collect these values using the collect function, which is itself
+a suspend function —meaning it must be called within a co-routine.
+Flows are cold by default, meaning the code inside the flow builder doesn’t run un-
+til the Flow is collected. This makes them efficient and predictable. Flows can also be
+transformed using operators like map, filter, combine, and flatMapLatest, allowing de-
+velopers to build complex data pipelines in a concise and readable manner.
+Error handling is built in through operators such as catch and onEach, while Flow can-
+cellation is automatic when the collecting co-routine is canceled, preventing memory
+leaks.
+In Android, Kotlin Flows integrates well with Jetpack libraries like Room and View-
+Model. For example, a Room DAO can return a Flow<List<Item>>that automati-
+cally updates the UI whenever the database changes. Paired with StateFlow or Shared-
+Flow — which are hot variants of Flow — you can handle state and events more explic-
+itly.
+Overall, Kotlin Flows promote a clean and reactive programming model. They replace
+callback-heavy designs with structured and testable code, making apps more responsive
+1Tutorial 4 - Kotlin Flows, AI LLMs and Firebase
+and easier to maintain. For any Android developer using co-routines, understanding
+and using Flows is an essential skill.
+2.2 Step 1: Kotlin Coroutines/Flows Tutorial
+Execute the “Coroutines and channels - tutorial” located in:
+https://kotlinlang.org/docs/coroutines-and-channels.html.
+[Text extracted from the tutorial]
+In this tutorial, you will learn how to use coroutines to perform network requests with-
+out blocking the underlying thread or callbacks.
+You will learn:
+•Why and how to use suspending functions to perform network requests;
+•How to send requests concurrently using co-routines;
+•How to share information between different co-routines using channels.
+For network requests, you will need the Retrofit library, but the approach shown in this
+tutorial works similarly for any other libraries that support coroutines.
+[End of extracted text]
+The tutorial guides you through transforming a blocking network request application
+into a responsive, concurrent one using coroutines and channels, in an application with
+a java Swing interface. Here is an overview of the code experiments in the tutorial:
+•Blocking - using the same thread for UI and requests - freezes UI
+•Background - using a background thread - better but resource intensive
+•Callbacks - using callback - error-prone
+•Suspend - using suspend functions and coroutines
+•Concurrent - with concurrent execution
+•Not cancelable - understanding coroutine cancellation
+•Progress - displaying intermediate results
+•Channels - using channels
+2.3 Step 2: DIY, a more reactive handling of loading states
+Start by making a copy of the project, name the directory intro-coroutinesV2, and exe-
+cute the following tasks on that copy.
+2
