@@ -1,8 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    AndroidManifest for DrivePulse.
+    Declares all permissions, Activities, services and meta-data.
+-->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Network -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!-- Location -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <!-- Foreground Service for run tracking -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+
+    <!-- Notifications (Android 13+) -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!-- Media -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+
     <application
+        android:name=".DrivePulseApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -10,16 +35,51 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.FinalProject">
+        android:theme="@style/Theme.DrivePulse"
+        tools:targetApi="34">
+
+        <!-- Google Maps API Key from local.properties -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="${MAPS_API_KEY}" />
+
+        <!-- AuthActivity — entry point / launcher -->
         <activity
-            android:name=".MainActivity"
-            android:exported="true">
+            android:name=".feature.auth.AuthActivity"
+            android:exported="true"
+            android:theme="@style/Theme.DrivePulse">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- MainActivity — main navigation host -->
+        <activity
+            android:name=".feature.main.MainActivity"
+            android:exported="false"
+            android:theme="@style/Theme.DrivePulse" />
+
+        <!-- RunRecorderActivity — GPS tracking during a run -->
+        <activity
+            android:name=".feature.run.RunRecorderActivity"
+            android:exported="false"
+            android:theme="@style/Theme.DrivePulse"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
+
+        <!-- RouteDetailActivity — view route details -->
+        <activity
+            android:name=".feature.routedetail.RouteDetailActivity"
+            android:exported="false"
+            android:theme="@style/Theme.DrivePulse" />
+
+        <!-- Tracking Foreground Service -->
+        <service
+            android:name=".core.location.TrackingForegroundService"
+            android:exported="false"
+            android:foregroundServiceType="location" />
+
     </application>
 
 </manifest>

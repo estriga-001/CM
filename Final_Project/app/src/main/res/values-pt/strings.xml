@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">DrivePulse</string>
+    
+    <!-- Navigation -->
+    <string name="nav_home">Início</string>
+    <string name="nav_map">Mapa</string>
+    <string name="nav_run">Run</string>
+    <string name="nav_community">Comunidade</string>
+    <string name="nav_profile">Perfil</string>
+    
+    <!-- Auth & General -->
+    <string name="login">Entrar</string>
+    <string name="register">Registar</string>
+    <string name="logout">Sair</string>
+    <string name="cancel">Cancelar</string>
+    <string name="retry">Tentar novamente</string>
+    <string name="continue_as_guest">Continuar como Visitante</string>
+    
+    <!-- AuthGate Dialog -->
+    <string name="auth_required_title">Autenticação Necessária</string>
+    <string name="auth_required_message">Precisas de iniciar sessão ou criar uma conta para usar esta funcionalidade. Queres entrar agora?</string>
+    
+    <!-- Mock Screen Titles -->
+    <string name="title_home">Início</string>
+    <string name="title_map">Mapa</string>
+    <string name="title_community">Comunidade</string>
+    <string name="title_profile">Perfil</string>
+    <string name="title_settings">Definições</string>
+    <string name="title_help">Ajuda</string>
+    <string name="title_about">Sobre</string>
+    <string name="title_premium">Drive Clubs &amp; Events Premium</string>
+    <string name="title_create_post">Criar Publicação</string>
+    <string name="title_run_recorder">A Gravar Run</string>
+    <string name="title_route_detail">Detalhes da Rota</string>
+    
+</resources>

@@ -1,15 +1,87 @@
-*.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+# Gradle
+.gradle/
+build/
+*/build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Local configuration
 local.properties
+.env
+.env.*
+!.env.example
+
+# Android Studio / IntelliJ
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Kotlin
+.kotlin/
+
+# Android generated
+app/release/
+app/debug/
+app/*.apk
+app/*.aab
+app/outputs/
+app/.cxx/
+
+# Firebase / Google services
+google-services.json
+app/google-services.json
+GoogleService-Info.plist
+
+# Keystores and signing
+*.jks
+*.keystore
+*.p12
+*.pem
+keystore.properties
+signing.properties
+
+# Secrets
+secrets.properties
+apikey.properties
+firebase-debug.log
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+logs/
+
+# Test reports
+test-results/
+reports/
+
+# Media/cache
+*.mp4
+*.mov
+*.avi
+*.webm
+*.jpg
+*.jpeg
+*.png
+*.heic
+*.gif
+!docs/**/*.png
+!docs/**/*.jpg
+
+# Node/Cloud Functions if used
+functions/node_modules/
+functions/.env
+functions/lib/
+functions/.runtimeconfig.json
+
+# Misc
+*.tmp
+*.bak
+*.swp
