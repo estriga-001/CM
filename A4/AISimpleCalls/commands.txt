@@ -1,0 +1,75 @@
+================================================================================
+                    LLM ASSISTANT - USEFUL COMMANDS REFERENCE
+================================================================================
+
+This file contains the most useful commands to run, test, clean, and build
+the AISimpleCalls project using Gradle.
+
+Execute these commands from the root directory of the project:
+d:\CM\CM\A4\AISimpleCalls
+
+--------------------------------------------------------------------------------
+1. RUNNING THE CHAT APPLICATION
+--------------------------------------------------------------------------------
+
+To start the interactive chat application (which reads keyboard input and interacts
+with the AI model specified in config.properties):
+
+  * PowerShell (Windows VS Code Terminal):
+    .\gradlew run
+
+  * Command Prompt (cmd.exe):
+    gradlew run
+
+  * Unix / macOS:
+    ./gradlew run
+
+--------------------------------------------------------------------------------
+2. RUNNING THE AUTOMATED TESTS
+--------------------------------------------------------------------------------
+
+To run the JUnit 5 tests (including the temperature comparison test) fresh and
+prevent Gradle from skipping them as "UP-TO-DATE":
+
+  * PowerShell (Windows VS Code Terminal):
+    .\gradlew cleanTest test --info
+
+  * Command Prompt (cmd.exe):
+    gradlew cleanTest test --info
+
+  * Unix / macOS:
+    ./gradlew cleanTest test --info
+
+NOTE: The '--info' flag is required if you want to see the generated AI outputs
+(such as the poems generated at different temperatures) directly in the console.
+
+To run only a specific test class (e.g., just the TemperatureTest):
+  .\gradlew cleanTest test --tests "dam.TemperatureTest" --info
+
+--------------------------------------------------------------------------------
+3. CLEANING AND REBUILDING
+--------------------------------------------------------------------------------
+
+If you change configurations or dependencies and want a fresh build:
+
+  * PowerShell (Windows VS Code Terminal):
+    .\gradlew clean build
+
+  * Command Prompt (cmd.exe):
+    gradlew clean build
+
+  * Unix / macOS:
+    ./gradlew clean build
+
+--------------------------------------------------------------------------------
+4. VIEWING THE TEST REPORT (HTML)
+--------------------------------------------------------------------------------
+
+After running the tests, Gradle automatically generates a beautiful interactive
+HTML report showing all passes, failures, and execution times.
+
+You can find the report at:
+d:\CM\CM\A4\AISimpleCalls\build\reports\tests\test\index.html
+
+Double-click the index.html file to open it in your web browser.
+================================================================================
