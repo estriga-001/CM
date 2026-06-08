@@ -23,6 +23,7 @@ import com.drivepulse.feature.help.HelpScreen
 import com.drivepulse.feature.home.HomeScreen
 import com.drivepulse.feature.map.MapScreen
 import com.drivepulse.feature.premium.PremiumScreen
+import com.drivepulse.feature.profile.EditProfileScreen
 import com.drivepulse.feature.profile.ProfileScreen
 import com.drivepulse.feature.settings.SettingsScreen
 
@@ -72,6 +73,9 @@ fun MainNavGraph(
 
         composable(AppDestination.PROFILE) {
             ProfileScreen(
+                onEditProfileClick = {
+                    navController.navigate(AppDestination.EDIT_PROFILE)
+                },
                 onSettingsClick = {
                     navController.navigate(AppDestination.SETTINGS)
                 },
@@ -85,6 +89,12 @@ fun MainNavGraph(
                     navController.navigate(AppDestination.PREMIUM)
                 },
                 onLoginClick = onNavigateToAuth
+            )
+        }
+
+        composable(AppDestination.EDIT_PROFILE) {
+            EditProfileScreen(
+                onBackClick = { navController.popBackStack() }
             )
         }
 

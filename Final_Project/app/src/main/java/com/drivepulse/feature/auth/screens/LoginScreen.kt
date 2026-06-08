@@ -68,6 +68,7 @@ import com.drivepulse.feature.auth.state.AuthState
 fun LoginScreen(
     onNavigateToMain: (SessionMode) -> Unit,
     onNavigateToRegister: () -> Unit,
+    onNavigateToSetup: () -> Unit,
     viewModel: AuthViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -82,8 +83,17 @@ fun LoginScreen(
     val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(uiState) {
-        if (uiState is AuthState.Success) {
-            onNavigateToMain(SessionMode.AUTHENTICATED)
+        when (val state = uiState) {
+            is AuthState.Success -> {
+                // Manual login just completed — check if onboarding is done.
+                if (state.user.username.isNotEmpty()) {
+                    onNavigateToMain(SessionMode.AUTHENTICATED)
+                } else {
+                    onNavigateToSetup()
+                }
+            }
+            // SessionRestored is handled in AuthNavGraph before this screen renders.
+            else -> Unit
         }
     }
 

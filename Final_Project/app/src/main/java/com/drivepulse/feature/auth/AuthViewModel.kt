@@ -9,6 +9,7 @@ package com.drivepulse.feature.auth
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.drivepulse.core.common.AppResult
+import com.drivepulse.domain.usecase.auth.CheckSessionUseCase
 import com.drivepulse.domain.usecase.auth.LoginUseCase
 import com.drivepulse.domain.usecase.auth.RegisterUseCase
 import com.drivepulse.domain.usecase.auth.GoogleSignInUseCase
@@ -22,13 +23,37 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
+    private val checkSessionUseCase: CheckSessionUseCase,
     private val loginUseCase: LoginUseCase,
     private val registerUseCase: RegisterUseCase,
     private val googleSignInUseCase: GoogleSignInUseCase
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow<AuthState>(AuthState.Idle)
+    private val _uiState = MutableStateFlow<AuthState>(AuthState.Loading) // Starts Loading while checking session
     val uiState: StateFlow<AuthState> = _uiState.asStateFlow()
+
+    init {
+        checkSession()
+    }
+
+    private fun checkSession() {
+        viewModelScope.launch {
+            when (val result = checkSessionUseCase()) {
+                is AppResult.Success -> {
+                    if (result.data != null) {
+                        // Use SessionRestored so the NavGraph knows this is an auto-login,
+                        // not a manual login — it will bypass the Login UI entirely.
+                        _uiState.value = AuthState.SessionRestored(result.data)
+                    } else {
+                        _uiState.value = AuthState.Idle
+                    }
+                }
+                is AppResult.Error -> {
+                    _uiState.value = AuthState.Idle
+                }
+            }
+        }
+    }
 
     fun login(email: String, password: String) {
         if (!validateInputs(email, password)) return
