@@ -33,8 +33,8 @@ class AuthRepositoryImpl @Inject constructor(
             val result = firebaseAuth.signInWithEmailAndPassword(email, password).await()
             val firebaseUser = result.user
             if (firebaseUser != null) {
-                ensureUserDocument(firebaseUser)
-                AppResult.Success(firebaseUser.toDomainUser())
+                val userProfile = ensureUserDocumentAndGetProfile(firebaseUser)
+                AppResult.Success(userProfile)
             } else {
                 AppResult.Error(AppError("User not found after login"))
             }
@@ -48,8 +48,8 @@ class AuthRepositoryImpl @Inject constructor(
             val result = firebaseAuth.createUserWithEmailAndPassword(email, password).await()
             val firebaseUser = result.user
             if (firebaseUser != null) {
-                ensureUserDocument(firebaseUser)
-                AppResult.Success(firebaseUser.toDomainUser())
+                val userProfile = ensureUserDocumentAndGetProfile(firebaseUser)
+                AppResult.Success(userProfile)
             } else {
                 AppResult.Error(AppError("Failed to create user"))
             }
@@ -64,8 +64,8 @@ class AuthRepositoryImpl @Inject constructor(
             val result = firebaseAuth.signInWithCredential(credential).await()
             val firebaseUser = result.user
             if (firebaseUser != null) {
-                ensureUserDocument(firebaseUser)
-                AppResult.Success(firebaseUser.toDomainUser())
+                val userProfile = ensureUserDocumentAndGetProfile(firebaseUser)
+                AppResult.Success(userProfile)
             } else {
                 AppResult.Error(AppError("Google Sign-In failed: No user returned"))
             }
@@ -76,6 +76,20 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun logout() {
         firebaseAuth.signOut()
+    }
+
+    override suspend fun checkCurrentSession(): AppResult<User?> {
+        return try {
+            val firebaseUser = firebaseAuth.currentUser
+            if (firebaseUser != null) {
+                val userProfile = ensureUserDocumentAndGetProfile(firebaseUser)
+                AppResult.Success(userProfile)
+            } else {
+                AppResult.Success(null)
+            }
+        } catch (e: Exception) {
+            AppResult.Error(mapFirebaseError(e))
+        }
     }
 
     override fun observeAuthState(): Flow<User?> = callbackFlow {
@@ -90,31 +104,33 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     /**
-     * Ensures the users/{uid} document exists in Firestore.
-     * If not, creates a base profile using UserDto.
+     * Ensures the users/{uid} document exists in Firestore and returns the mapped User.
+     * If not, creates a base profile using UserDto with an empty username.
      */
-    private suspend fun ensureUserDocument(firebaseUser: FirebaseUser) {
-        try {
-            val userRef = firestore.collection("users").document(firebaseUser.uid)
-            val snapshot = userRef.get().await()
-            
-            if (!snapshot.exists()) {
-                val username = firebaseUser.displayName ?: firebaseUser.email?.substringBefore("@") ?: "Driver_${firebaseUser.uid.take(5)}"
-                val newUserDto = UserDto(
-                    id = firebaseUser.uid,
-                    email = firebaseUser.email ?: "",
-                    username = username,
-                    displayName = firebaseUser.displayName ?: "",
-                    profileImageUrl = firebaseUser.photoUrl?.toString(),
-                    createdAt = System.currentTimeMillis(),
-                    updatedAt = System.currentTimeMillis()
-                )
-                userRef.set(newUserDto).await()
+    private suspend fun ensureUserDocumentAndGetProfile(firebaseUser: FirebaseUser): User {
+        val userRef = firestore.collection("users").document(firebaseUser.uid)
+        val snapshot = userRef.get().await()
+        
+        if (snapshot.exists()) {
+            val dto = snapshot.toObject(UserDto::class.java)
+            if (dto != null) {
+                return dto.toDomain()
             }
-        } catch (e: Exception) {
-            // Log but don't crash auth flow if Firestore init fails
-            e.printStackTrace()
         }
+        
+        // If it doesn't exist or is invalid, create a new one.
+        // We leave username empty to force the Onboarding flow.
+        val newUserDto = UserDto(
+            id = firebaseUser.uid,
+            email = firebaseUser.email ?: "",
+            username = "",
+            displayName = firebaseUser.displayName ?: "",
+            profileImageUrl = firebaseUser.photoUrl?.toString(),
+            createdAt = System.currentTimeMillis(),
+            updatedAt = System.currentTimeMillis()
+        )
+        userRef.set(newUserDto).await()
+        return newUserDto.toDomain()
     }
 
     /**

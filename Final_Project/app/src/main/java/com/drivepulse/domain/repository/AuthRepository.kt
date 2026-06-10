@@ -43,6 +43,13 @@ interface AuthRepository {
     suspend fun signInWithGoogle(idToken: String): AppResult<User>
     
     /**
+     * Checks if there is an active session and returns the current user profile.
+     *
+     * @return AppResult containing the User if logged in, or null if not logged in.
+     */
+    suspend fun checkCurrentSession(): AppResult<User?>
+    
+    /**
      * Signs out the current user.
      */
     suspend fun logout()

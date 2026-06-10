@@ -72,6 +72,7 @@ fun RegisterScreen(
 
     LaunchedEffect(uiState) {
         if (uiState is AuthState.Success) {
+            // Registration success — NavGraph will route to Setup since username is empty.
             onNavigateToMain(SessionMode.AUTHENTICATED)
         }
     }

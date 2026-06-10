@@ -23,6 +23,10 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.ktx.storage
+import com.drivepulse.domain.repository.UserRepository
+import com.drivepulse.data.repository.UserRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -53,6 +57,21 @@ object DataModule {
     @Singleton
     fun provideFirebaseFirestore(): FirebaseFirestore {
         return Firebase.firestore
+    }
+
+    @Provides
+    @Singleton
+    fun provideFirebaseStorage(): FirebaseStorage {
+        return Firebase.storage
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserRepository(
+        firestore: FirebaseFirestore,
+        storage: FirebaseStorage
+    ): UserRepository {
+        return UserRepositoryImpl(firestore, storage)
     }
 
     @Provides

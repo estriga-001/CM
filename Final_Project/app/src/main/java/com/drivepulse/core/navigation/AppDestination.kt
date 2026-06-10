@@ -15,6 +15,7 @@ object AppDestination {
     const val RUN_ENTRY = "run_entry"
     const val COMMUNITY = "community"
     const val PROFILE = "profile"
+    const val EDIT_PROFILE = "edit_profile"
     const val SETTINGS = "settings"
     const val HELP = "help"
     const val ABOUT = "about"
