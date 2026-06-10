@@ -25,6 +25,8 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
+import com.drivepulse.domain.repository.PostRepository
+import com.drivepulse.data.repository.PostRepositoryImpl
 import com.drivepulse.domain.repository.UserRepository
 import com.drivepulse.data.repository.UserRepositoryImpl
 import dagger.Module
@@ -127,5 +129,17 @@ object DataModule {
         runRepositoryImpl: RunRepositoryImpl
     ): RunRepository {
         return runRepositoryImpl
+    }
+
+    // -------------------------------------------------------------------------
+    // Post Repository
+    // -------------------------------------------------------------------------
+
+    @Provides
+    @Singleton
+    fun providePostRepository(
+        postRepositoryImpl: PostRepositoryImpl
+    ): PostRepository {
+        return postRepositoryImpl
     }
 }

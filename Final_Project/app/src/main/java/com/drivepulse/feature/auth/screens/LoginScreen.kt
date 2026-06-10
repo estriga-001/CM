@@ -120,7 +120,7 @@ fun LoginScreen(
             OutlinedTextField(
                 value = email,
                 onValueChange = { email = it },
-                label = { Text("Email") },
+                label = { Text(stringResource(R.string.field_email)) },
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 colors = OutlinedTextFieldDefaults.colors(
@@ -137,7 +137,7 @@ fun LoginScreen(
             OutlinedTextField(
                 value = password,
                 onValueChange = { password = it },
-                label = { Text("Password") },
+                label = { Text(stringResource(R.string.field_password)) },
                 modifier = Modifier.fillMaxWidth(),
                 visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -189,7 +189,7 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(Spacing.lg))
             
             Text(
-                text = "Don't have an account? Register",
+                text = stringResource(R.string.link_no_account),
                 color = DpTextPrimary,
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.clickable { 
@@ -200,7 +200,7 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(Spacing.xxl))
             
-            Text(text = "OU", color = DpTextSecondary, style = MaterialTheme.typography.bodySmall)
+            Text(text = stringResource(R.string.divider_or), color = DpTextSecondary, style = MaterialTheme.typography.bodySmall)
             
             Spacer(modifier = Modifier.height(Spacing.md))
             
@@ -208,7 +208,7 @@ fun LoginScreen(
                 CircularProgressIndicator(color = DpPrimaryRed)
             } else {
                 DrivePulseOutlinedButton(
-                    text = "Continuar com Google",
+                    text = stringResource(R.string.btn_continue_google),
                     onClick = {
                         coroutineScope.launch {
                             googleError = null
@@ -234,14 +234,14 @@ fun LoginScreen(
                                         GoogleIdTokenCredential.createFrom(credential.data)
                                     viewModel.googleSignIn(googleIdTokenCredential.idToken)
                                 } else {
-                                    googleError = "Credencial Google inválida. Tenta novamente."
+                                    googleError = context.getString(R.string.error_invalid_google_credential)
                                 }
                             } catch (e: androidx.credentials.exceptions.GetCredentialCancellationException) {
-                                // Utilizador cancelou — não mostrar erro
+                                // User cancelled — don't show error
                             } catch (e: androidx.credentials.exceptions.NoCredentialException) {
-                                googleError = "Nenhuma conta Google encontrada neste dispositivo. Adiciona uma conta nas Definições do Android."
+                                googleError = context.getString(R.string.error_no_google_account)
                             } catch (e: Exception) {
-                                googleError = "Erro Google Sign-In: ${e.localizedMessage ?: "Verifica a ligação à internet."}."
+                                googleError = context.getString(R.string.error_google_signin, e.localizedMessage ?: context.getString(R.string.error_check_connection))
                             } finally {
                                 isGoogleLoading = false
                             }

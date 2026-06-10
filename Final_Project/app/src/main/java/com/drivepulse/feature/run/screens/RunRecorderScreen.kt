@@ -56,6 +56,9 @@ import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.rememberCameraPositionState
 
+import androidx.compose.ui.res.stringResource
+import com.drivepulse.R
+
 /**
  * HUD de gravação de run.
  *
@@ -140,14 +143,14 @@ private fun IdleContent(onStartRun: () -> Unit) {
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = "Pronto para gravar",
+            text = stringResource(R.string.run_ready_to_record),
             color = DpTextPrimary,
             fontSize = 22.sp,
             fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "Pressiona Start para iniciar o rastreio GPS",
+            text = stringResource(R.string.run_press_start_hint),
             color = DpTextSecondary,
             fontSize = 14.sp,
             textAlign = TextAlign.Center,
@@ -238,7 +241,7 @@ private fun TrackingContent(
                         .padding(horizontal = 24.dp, vertical = 12.dp)
                 ) {
                     Text(
-                        text = "⏸ PAUSADO",
+                        text = stringResource(R.string.run_paused),
                         color = Color.White,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold
@@ -291,7 +294,7 @@ private fun FinishedContent(
         Text(text = "✅", fontSize = 64.sp)
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = if (state.isPublished) "Run Publicada!" else "Run Guardada Localmente",
+            text = if (state.isPublished) stringResource(R.string.run_published) else stringResource(R.string.run_saved_locally),
             color = DpTextPrimary,
             fontSize = 26.sp,
             fontWeight = FontWeight.Bold,
@@ -307,9 +310,9 @@ private fun FinishedContent(
                 .padding(24.dp)
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                SummaryRow("Distância", "%.2f km".format(state.distanceMeters / 1000f))
-                SummaryRow("Duração", formatDuration(state.durationSeconds))
-                SummaryRow("Vel. Média", "%.1f km/h".format(state.avgSpeedKmh))
+                SummaryRow(stringResource(R.string.stat_distance), "%.2f km".format(state.distanceMeters / 1000f))
+                SummaryRow(stringResource(R.string.stat_duration), formatDuration(state.durationSeconds))
+                SummaryRow(stringResource(R.string.stat_avg_speed), "%.1f km/h".format(state.avgSpeedKmh))
             }
         }
 
@@ -321,7 +324,7 @@ private fun FinishedContent(
                 colors = ButtonDefaults.buttonColors(containerColor = DpPrimaryRed),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Publicar no Feed da Comunidade", color = Color.White, fontWeight = FontWeight.Bold)
+                Text(stringResource(R.string.btn_publish_to_feed), color = Color.White, fontWeight = FontWeight.Bold)
             }
             Spacer(modifier = Modifier.height(8.dp))
             Button(
@@ -329,7 +332,7 @@ private fun FinishedContent(
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Apenas Guardar", color = DpTextSecondary)
+                Text(stringResource(R.string.btn_save_only), color = DpTextSecondary)
             }
         } else {
             Button(
@@ -337,7 +340,7 @@ private fun FinishedContent(
                 colors = ButtonDefaults.buttonColors(containerColor = DpPrimaryRed),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Voltar à Home", color = Color.White, fontWeight = FontWeight.Bold)
+                Text(stringResource(R.string.btn_back_to_home), color = Color.White, fontWeight = FontWeight.Bold)
             }
         }
     }
@@ -364,7 +367,7 @@ private fun PermissionRationaleContent() {
         Text(text = "📍", fontSize = 48.sp)
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = "Permissão de Localização",
+            text = stringResource(R.string.location_permission_title),
             color = DpTextPrimary,
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
@@ -372,7 +375,7 @@ private fun PermissionRationaleContent() {
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "O DrivePulse precisa de acesso à tua localização para gravar o percurso.",
+            text = stringResource(R.string.location_permission_desc),
             color = DpTextSecondary,
             fontSize = 14.sp,
             textAlign = TextAlign.Center
@@ -390,14 +393,14 @@ private fun PermissionDeniedContent(onNavigateBack: () -> Unit) {
         Text(text = "🚫", fontSize = 48.sp)
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = "Acesso Negado",
+            text = stringResource(R.string.access_denied_title),
             color = DpTextPrimary,
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "Sem permissão de localização não é possível gravar runs. Ativa nas definições da app.",
+            text = stringResource(R.string.location_permission_denied_desc),
             color = DpTextSecondary,
             fontSize = 14.sp,
             textAlign = TextAlign.Center
@@ -407,7 +410,7 @@ private fun PermissionDeniedContent(onNavigateBack: () -> Unit) {
             onClick = onNavigateBack,
             colors = ButtonDefaults.buttonColors(containerColor = DpPrimaryRed)
         ) {
-            Text("Voltar", color = Color.White)
+            Text(stringResource(R.string.btn_back), color = Color.White)
         }
     }
 }
@@ -425,7 +428,7 @@ private fun ErrorContent(
     ) {
         Text(text = "⚠️", fontSize = 48.sp)
         Spacer(modifier = Modifier.height(16.dp))
-        Text(text = "Algo correu mal", color = DpTextPrimary, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+        Text(text = stringResource(R.string.error_something_went_wrong), color = DpTextPrimary, fontSize = 20.sp, fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.height(8.dp))
         Text(text = message, color = DpTextSecondary, fontSize = 14.sp, textAlign = TextAlign.Center)
         Spacer(modifier = Modifier.height(24.dp))
@@ -434,7 +437,7 @@ private fun ErrorContent(
             colors = ButtonDefaults.buttonColors(containerColor = DpPrimaryRed),
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Tentar novamente", color = Color.White)
+            Text(stringResource(R.string.retry), color = Color.White)
         }
         Spacer(modifier = Modifier.height(8.dp))
         Button(
@@ -442,7 +445,7 @@ private fun ErrorContent(
             colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Cancelar", color = DpTextSecondary)
+            Text(stringResource(R.string.cancel), color = DpTextSecondary)
         }
     }
 }

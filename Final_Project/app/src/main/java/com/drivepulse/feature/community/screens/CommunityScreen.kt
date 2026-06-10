@@ -27,19 +27,34 @@ import com.drivepulse.core.designsystem.theme.DpPrimaryRed
 import com.drivepulse.core.designsystem.theme.DpTextPrimary
 import com.drivepulse.core.designsystem.theme.DpTextSecondary
 import com.drivepulse.feature.community.CommunityUiState
-import com.drivepulse.feature.community.screens.components.RunCard
+import com.drivepulse.feature.community.CommunityViewModel
+import com.drivepulse.feature.community.screens.components.PostCard
+
+import android.content.Intent
+import androidx.compose.ui.platform.LocalContext
+import com.drivepulse.core.common.Constants
+import com.drivepulse.feature.routedetail.RouteDetailActivity
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+
+import androidx.compose.ui.res.stringResource
+import com.drivepulse.R
 
 @Composable
 fun CommunityScreen(
     uiState: CommunityUiState,
+    viewModel: CommunityViewModel,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+    val likedPostIds by viewModel.likedPostIds.collectAsState()
+
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(DpBackground)
     ) {
-        DrivePulseTopBar(title = "Comunidade")
+        DrivePulseTopBar(title = stringResource(R.string.title_community))
 
         when (uiState) {
             is CommunityUiState.Loading -> {
@@ -59,20 +74,20 @@ fun CommunityScreen(
             }
 
             is CommunityUiState.Success -> {
-                if (uiState.runs.isEmpty()) {
+                if (uiState.posts.isEmpty()) {
                     Box(modifier = Modifier.fillMaxSize().padding(32.dp), contentAlignment = Alignment.Center) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(text = "🌍", fontSize = 48.sp)
                             Spacer(modifier = Modifier.height(16.dp))
                             Text(
-                                text = "O feed está vazio",
+                                text = stringResource(R.string.feed_empty_title),
                                 color = DpTextPrimary,
                                 fontSize = 20.sp,
                                 fontWeight = FontWeight.Bold
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
-                                text = "Sê o primeiro a gravar e publicar uma rota para toda a comunidade ver!",
+                                text = stringResource(R.string.feed_empty_desc),
                                 color = DpTextSecondary,
                                 textAlign = TextAlign.Center
                             )
@@ -84,8 +99,19 @@ fun CommunityScreen(
                         contentPadding = PaddingValues(16.dp),
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        items(uiState.runs, key = { it.id }) { run ->
-                            RunCard(run = run)
+                        items(uiState.posts, key = { it.id }) { post ->
+                            PostCard(
+                                post = post,
+                                hasLiked = likedPostIds.contains(post.id),
+                                onLikeClick = { viewModel.toggleLike(post.id) },
+                                onCommentClick = { /* TODO: Show comments sheet */ },
+                                onClick = {
+                                    val intent = Intent(context, RouteDetailActivity::class.java).apply {
+                                        putExtra(Constants.EXTRA_ROUTE_ID, post.id)
+                                    }
+                                    context.startActivity(intent)
+                                }
+                            )
                         }
                         
                         // Add some space at the bottom for the BottomBar

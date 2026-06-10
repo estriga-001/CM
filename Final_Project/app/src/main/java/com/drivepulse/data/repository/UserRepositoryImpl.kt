@@ -13,6 +13,7 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
+import java.io.ByteArrayOutputStream
 import java.util.UUID
 import javax.inject.Inject
 
@@ -70,23 +71,18 @@ class UserRepositoryImpl @Inject constructor(
 
     override suspend fun uploadProfileImage(userId: String, imageBytes: ByteArray): AppResult<String> {
         return try {
-            val storageRef = storage.reference
-            val imageRef = storageRef.child("profile_images/$userId/${UUID.randomUUID()}.jpg")
+            // Resize and compress the image to max 300px for avatar, keeping it extremely small and fast
+            val compressedBytes = compressAndResizeImage(imageBytes, 300)
+            val base64String = "data:image/jpeg;base64," + android.util.Base64.encodeToString(compressedBytes, android.util.Base64.NO_WRAP)
             
-            // Upload the image
-            imageRef.putBytes(imageBytes).await()
-            
-            // Get the download URL
-            val downloadUrl = imageRef.downloadUrl.await().toString()
-            
-            // Update the user's profile with the new image URL
+            // Update the user's profile with the new image URL (Base64 string)
             val userRef = usersCollection.document(userId)
             userRef.update(
-                "profileImageUrl", downloadUrl,
+                "profileImageUrl", base64String,
                 "updatedAt", System.currentTimeMillis()
             ).await()
             
-            AppResult.Success(downloadUrl)
+            AppResult.Success(base64String)
         } catch (e: Exception) {
             AppResult.Error(AppError(e.localizedMessage ?: "Failed to upload image", e))
         }
@@ -160,6 +156,54 @@ class UserRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             val message = e.localizedMessage ?: "Failed to complete onboarding"
             AppResult.Error(AppError(message, e))
+        }
+    }
+
+    private fun compressAndResizeImage(imageBytes: ByteArray, maxDimension: Int): ByteArray {
+        return try {
+            val options = android.graphics.BitmapFactory.Options().apply {
+                inJustDecodeBounds = true
+            }
+            android.graphics.BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size, options)
+
+            var sampleSize = 1
+            if (options.outWidth > maxDimension || options.outHeight > maxDimension) {
+                val halfWidth = options.outWidth / 2
+                val halfHeight = options.outHeight / 2
+                while ((halfWidth / sampleSize) >= maxDimension && (halfHeight / sampleSize) >= maxDimension) {
+                    sampleSize *= 2
+                }
+            }
+
+            val decodeOptions = android.graphics.BitmapFactory.Options().apply {
+                inSampleSize = sampleSize
+            }
+            val bitmap = android.graphics.BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size, decodeOptions) ?: return imageBytes
+
+            // Scale precisely to maxDimension
+            val scaledBitmap = if (bitmap.width > maxDimension || bitmap.height > maxDimension) {
+                val ratio = bitmap.width.toFloat() / bitmap.height.toFloat()
+                val (width, height) = if (ratio > 1) {
+                    maxDimension to (maxDimension / ratio).toInt()
+                } else {
+                    (maxDimension * ratio).toInt() to maxDimension
+                }
+                android.graphics.Bitmap.createScaledBitmap(bitmap, width, height, true)
+            } else {
+                bitmap
+            }
+
+            val outputStream = java.io.ByteArrayOutputStream()
+            scaledBitmap.compress(android.graphics.Bitmap.CompressFormat.JPEG, 60, outputStream)
+            
+            if (scaledBitmap != bitmap) {
+                scaledBitmap.recycle()
+            }
+            bitmap.recycle()
+
+            outputStream.toByteArray()
+        } catch (e: Exception) {
+            imageBytes
         }
     }
 }

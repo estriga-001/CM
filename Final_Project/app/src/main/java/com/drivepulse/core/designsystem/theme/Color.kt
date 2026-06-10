@@ -7,24 +7,57 @@
  */
 package com.drivepulse.core.designsystem.theme
 
+import androidx.compose.runtime.Composable
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.graphics.Color
 
-// --- Backgrounds ---
-val DpBackground = Color(0xFF09090B)
-val DpSurface = Color(0xFF121216)
-val DpSurfaceVariant = Color(0xFF1A1A20)
-val DpCard = Color(0xFF121216)
-val DpCardElevated = Color(0xFF1A1A20)
+// --- Static Colors (internal to theme definitions) ---
+val DpBackground_Static = Color(0xFF09090B)
+val DpSurface_Static = Color(0xFF121216)
+val DpSurfaceVariant_Static = Color(0xFF1A1A20)
+val DpCard_Static = Color(0xFF121216)
+val DpCardElevated_Static = Color(0xFF1A1A20)
+val DpTextPrimary_Static = Color(0xFFF5F5F5)
+val DpTextSecondary_Static = Color(0xFFA1A1AA)
+val DpTextMuted_Static = Color(0xFF737373)
+
+// --- Dynamic Colors (resolved using current theme context) ---
+val DpBackground: Color
+    @Composable
+    get() = MaterialTheme.colorScheme.background
+
+val DpSurface: Color
+    @Composable
+    get() = MaterialTheme.colorScheme.surface
+
+val DpSurfaceVariant: Color
+    @Composable
+    get() = MaterialTheme.colorScheme.surfaceVariant
+
+val DpCard: Color
+    @Composable
+    get() = MaterialTheme.colorScheme.surfaceVariant
+
+val DpCardElevated: Color
+    @Composable
+    get() = MaterialTheme.colorScheme.surfaceVariant
+
+val DpTextPrimary: Color
+    @Composable
+    get() = MaterialTheme.colorScheme.onBackground
+
+val DpTextSecondary: Color
+    @Composable
+    get() = MaterialTheme.colorScheme.onSurfaceVariant
+
+val DpTextMuted: Color
+    @Composable
+    get() = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
 
 // --- Primary Red ---
 val DpPrimaryRed = Color(0xFFE50914)
 val DpPrimaryRedDark = Color(0xFF8B0000)
 val DpPrimaryRedSoft = Color(0xFFFF3B3B)
-
-// --- Text ---
-val DpTextPrimary = Color(0xFFF5F5F5)
-val DpTextSecondary = Color(0xFFA1A1AA)
-val DpTextMuted = Color(0xFF737373)
 
 // --- Semantic ---
 val DpSuccess = Color(0xFF22C55E)

@@ -1,5 +1,6 @@
 package com.drivepulse.data.remote.dto
 
+import com.drivepulse.domain.model.Coordinate
 import com.drivepulse.domain.model.MediaType
 import com.drivepulse.domain.model.Post
 
@@ -10,6 +11,10 @@ data class PostDto(
     val userProfileImage: String? = null,
     val description: String = "",
     val runId: String? = null,
+    val distanceMeters: Float = 0f,
+    val durationSeconds: Long = 0L,
+    val avgSpeedKmh: Float = 0f,
+    val runCoordinates: List<Coordinate> = emptyList(),
     val mediaUrl: String? = null,
     val mediaType: String? = null,
     val likesCount: Int = 0,
@@ -25,6 +30,10 @@ fun PostDto.toDomain(): Post {
         userProfileImage = userProfileImage,
         description = description,
         runId = runId,
+        distanceMeters = distanceMeters,
+        durationSeconds = durationSeconds,
+        avgSpeedKmh = avgSpeedKmh,
+        runCoordinates = runCoordinates,
         mediaUrl = mediaUrl,
         mediaType = mediaType?.let {
             try {
@@ -47,6 +56,10 @@ fun Post.toDto(): PostDto {
         userProfileImage = userProfileImage,
         description = description,
         runId = runId,
+        distanceMeters = distanceMeters,
+        durationSeconds = durationSeconds,
+        avgSpeedKmh = avgSpeedKmh,
+        runCoordinates = runCoordinates,
         mediaUrl = mediaUrl,
         mediaType = mediaType?.name,
         likesCount = likesCount,

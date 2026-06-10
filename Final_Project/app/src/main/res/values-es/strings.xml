@@ -20,6 +20,9 @@
     <!-- AuthGate Dialog -->
     <string name="auth_required_title">Autenticación Requerida</string>
     <string name="auth_required_message">Debes iniciar sesión o crear una cuenta para usar esta función. ¿Quieres iniciar sesión ahora?</string>
+    <string name="auth_gate_title">Acceso Restringido</string>
+    <string name="auth_gate_message">Para acceder a esta función (como iniciar carreras o publicar), debes crear una cuenta gratuita o iniciar sesión.</string>
+    <string name="btn_login_register">Iniciar sesión / Registrarse</string>
     
     <!-- Mock Screen Titles -->
     <string name="title_home">Inicio</string>
@@ -34,4 +37,128 @@
     <string name="title_run_recorder">Grabando Run</string>
     <string name="title_route_detail">Detalles de Ruta</string>
     
+    <!-- Settings Screen -->
+    <string name="settings_title">Ajustes</string>
+    <string name="settings_theme">Tema</string>
+    <string name="settings_theme_light">Claro</string>
+    <string name="settings_theme_dark">Oscuro</string>
+    <string name="settings_theme_system">Sistema</string>
+    <string name="settings_language">Idioma</string>
+    <string name="settings_account">Cuenta</string>
+    <string name="settings_change_password">Cambiar contraseña</string>
+    <string name="settings_send_reset_email">Enviar email de restablecimiento</string>
+    <string name="settings_logout">Cerrar sesión</string>
+
+    <!-- General Stats -->
+    <string name="stat_distance">Distancia</string>
+    <string name="stat_duration">Duración</string>
+    <string name="stat_avg_speed">Vel. Media</string>
+    <string name="stat_runs">Carreras</string>
+    <string name="stat_km">Km</string>
+    <string name="stat_followers">Seguidores</string>
+    <string name="unknown">Desconocido</string>
+
+    <!-- Community & Feed -->
+    <string name="feed_empty_title">El feed está vacío</string>
+    <string name="feed_empty_desc">¡Sé el primero en grabar y publicar una ruta para que la vea toda la comunidad!</string>
+    
+    <!-- Profile & Edit Profile -->
+    <string name="error_loading_profile">Error al cargar el perfil</string>
+    <string name="btn_edit_profile">Editar Perfil</string>
+    <string name="btn_settings">Ajustes</string>
+    <string name="btn_premium">Premium</string>
+    <string name="btn_logout">Cerrar Sesión</string>
+    <string name="my_posts">Mis Publicaciones</string>
+    <string name="profile_no_posts_yet">Aún no has publicado ninguna ruta.\n¡Graba una carrera y compártela con la comunidad!</string>
+    <string name="error_loading_posts">Error al cargar las publicaciones.</string>
+    <string name="title_edit_profile">Editar Perfil</string>
+    <string name="tap_to_add_photo">Toca para añadir foto</string>
+    <string name="field_display_name">Nombre de Mostrar</string>
+    <string name="field_bio">Biografía</string>
+    <string name="field_car_brand">Marca del Coche</string>
+    <string name="field_car_model">Modelo del Coche</string>
+    <string name="field_car_year">Año del Coche</string>
+    <string name="btn_save_changes">Guardar Cambios</string>
+    <string name="toast_photo_updated">¡Foto actualizada!</string>
+    <string name="toast_photo_update_error">Error al actualizar la foto. Comprueba la conexión o el tamaño de la imagen.</string>
+    
+    <!-- Run Recorder -->
+    <string name="run_ready_to_record">Listo para grabar</string>
+    <string name="run_press_start_hint">Presiona Start para iniciar el rastreio GPS</string>
+    <string name="run_paused">⏸ PAUSADO</string>
+    <string name="run_published">¡Carrera Publicada!</string>
+    <string name="run_saved_locally">Carrera Guardada Localmente</string>
+    <string name="btn_publish_to_feed">Publicar en el Feed de la Comunidad</string>
+    <string name="btn_save_only">Solo Guardar</string>
+    <string name="btn_back_to_home">Volver a la Home</string>
+    <string name="location_permission_title">Permiso de Ubicación</string>
+    <string name="location_permission_desc">DrivePulse necesita acceso a tu ubicación para grabar la ruta.</string>
+    <string name="access_denied_title">Acceso Denegado</string>
+    <string name="location_permission_denied_desc">Sin permiso de ubicación no es posible grabar carreras. Actívalo en los ajustes de la app.</string>
+    <string name="btn_back">Volver</string>
+    <string name="error_something_went_wrong">Algo salió mal</string>
+
+    <!-- Create Post & Route Detail -->
+    <string name="field_description">Descripción</string>
+    <string name="placeholder_describe_route">Describe tu ruta...</string>
+    <string name="field_photo_optional">Foto (opcional)</string>
+    <string name="publishing">Publicando...</string>
+    <string name="btn_publish">Publicar</string>
+    <string name="no_map_available">No hay mapa disponible para esta ruta</string>
+
+    <!-- Content Descriptions -->
+    <string name="cd_back">Volver</string>
+    <string name="cd_profile_picture">Foto de Perfil</string>
+    <string name="cd_preview">Vista previa</string>
+    <string name="cd_add_photo">Añadir foto</string>
+    <string name="cd_avatar">Avatar</string>
+    <string name="cd_post_image">Imagen de la Publicación</string>
+    <string name="cd_like">Me gusta</string>
+    <string name="cd_comment">Comentario</string>
+    
+    <!-- Onboarding / Profile Setup -->
+    <string name="title_setup_profile">Configurar tu Perfil</string>
+    <string name="welcome_to_drivepulse">Bienvenido a DrivePulse</string>
+    <string name="setup_profile_desc">Vamos a configurar tu perfil para entrar en la comunidad.</string>
+    <string name="personal_info_section">Información Personal</string>
+    <string name="field_first_name">Primer Nombre</string>
+    <string name="field_last_name">Apellido</string>
+    <string name="car_info_section">Tu Máquina</string>
+    <string name="field_car_brand_hint">Marca (ej: Porsche)</string>
+    <string name="field_car_model_hint">Modelo (ej: 911 GT3)</string>
+    <string name="field_car_year_hint">Año (ej: 2023)</string>
+    <string name="btn_start_driving">Empezar a Conducir</string>
+    <string name="cd_available">Disponible</string>
+    <string name="cd_unavailable">No disponible</string>
+
+    <!-- Auth Screen fields & navigation links -->
+    <string name="field_email">Correo electrónico</string>
+    <string name="field_password">Contraseña</string>
+    <string name="field_confirm_password">Confirmar Contraseña</string>
+    <string name="link_no_account">¿No tienes cuenta? Regístrate</string>
+    <string name="link_have_account">¿Ya tienes cuenta? Iniciar sesión</string>
+    <string name="divider_or">O</string>
+    <string name="btn_continue_google">Continuar con Google</string>
+    <string name="error_invalid_google_credential">Credencial de Google no válida. Inténtalo de nuevo.</string>
+    <string name="error_no_google_account">No se encontró ninguna cuenta de Google en este dispositivo. Añade una cuenta en los ajustes de Android.</string>
+    <string name="error_google_signin">Error de Google Sign-In: %1$s</string>
+    <string name="error_check_connection">Comprueba tu conexión a internet.</string>
+    
+    <!-- Route Detail stats -->
+    <string name="stat_runs_count">Carreras</string>
+    <string name="format_km">%.2f km</string>
+    <string name="format_speed">%.1f km/h</string>
+
+    <!-- Run Control Buttons -->
+    <string name="cd_start_run">Iniciar Carrera</string>
+    <string name="cd_resume_run">Reanudar Carrera</string>
+    <string name="cd_pause_run">Pausar Carrera</string>
+    <string name="cd_stop_run">Detener Carrera</string>
+
+    <!-- Foreground Service Notification -->
+    <string name="notification_tracking_title">DrivePulse</string>
+    <string name="notification_tracking_recording">Grabando ruta…</string>
+    <string name="notification_tracking_paused">En pausa — toca para reanudar</string>
+    <string name="notification_channel_name">Seguimiento de Ruta</string>
+    <string name="notification_channel_desc">Notificación activa mientras se graba una ruta de conducción</string>
 </resources>

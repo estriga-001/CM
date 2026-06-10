@@ -21,6 +21,8 @@ import androidx.compose.ui.text.font.FontWeight
 import com.drivepulse.core.designsystem.theme.DpBackground
 import com.drivepulse.core.designsystem.theme.DpPrimaryRed
 import com.drivepulse.core.designsystem.theme.DpTextPrimary
+import androidx.compose.ui.res.stringResource
+import com.drivepulse.R
 
 /**
  * Standard top app bar with DrivePulse styling.
@@ -53,7 +55,7 @@ fun DrivePulseTopBar(
                 IconButton(onClick = onBackClick) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Back",
+                        contentDescription = stringResource(R.string.cd_back),
                         tint = DpTextPrimary
                     )
                 }

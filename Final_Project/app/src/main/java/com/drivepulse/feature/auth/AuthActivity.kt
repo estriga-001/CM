@@ -9,7 +9,7 @@ package com.drivepulse.feature.auth
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.compose.setContent
 import com.drivepulse.core.common.Constants
 import com.drivepulse.core.common.SessionMode
@@ -18,7 +18,7 @@ import com.drivepulse.feature.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class AuthActivity : ComponentActivity() {
+class AuthActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

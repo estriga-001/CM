@@ -17,7 +17,7 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
-import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -43,7 +43,7 @@ import javax.inject.Inject
  * 4. Ao terminar → serviço parado, resultado devolvido ao MainActivity.
  */
 @AndroidEntryPoint
-class RunRecorderActivity : ComponentActivity() {
+class RunRecorderActivity : AppCompatActivity() {
 
     @Inject
     lateinit var firebaseAuth: FirebaseAuth
@@ -98,16 +98,15 @@ class RunRecorderActivity : ComponentActivity() {
                     onFinish = {
                         viewModel.onFinishRun()
                         stopTrackingService()
-                        // Devolve resultado ao MainActivity (run gravada com sucesso)
-                        setResult(RESULT_OK, Intent().apply {
-                            putExtra(
-                                Constants.EXTRA_RUN_STATUS,
-                                Constants.RUN_STATUS_DRAFT
-                            )
-                        })
                     },
                     onPublish = {
-                        viewModel.onPublishRun()
+                        // Navega para o CreatePostScreen com o runId
+                        val currentRunId = (viewModel.uiState.value as? RunRecorderUiState.Finished)?.runId
+                        setResult(RESULT_OK, Intent().apply {
+                            putExtra(Constants.EXTRA_RUN_STATUS, Constants.RUN_STATUS_DRAFT)
+                            putExtra(Constants.EXTRA_RUN_ID, currentRunId ?: "")
+                        })
+                        finish()
                     },
                     onNavigateBack = { finish() }
                 )

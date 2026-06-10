@@ -36,6 +36,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.DrivePulse"
+        android:localeConfig="@xml/locales_config"
         tools:targetApi="34">
 
         <!-- Google Maps API Key from local.properties -->
@@ -79,6 +80,16 @@
             android:name=".core.location.TrackingForegroundService"
             android:exported="false"
             android:foregroundServiceType="location" />
+
+        <!-- Sync locales for backward compatibility with older devices -->
+        <service
+            android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"
+            android:enabled="false"
+            android:exported="false">
+            <meta-data
+                android:name="autoStoreLocales"
+                android:value="true" />
+        </service>
 
     </application>
 

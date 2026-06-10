@@ -38,6 +38,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.drivepulse.core.designsystem.theme.DpPrimaryRed
 import com.drivepulse.core.designsystem.theme.DpSurfaceVariant
+import androidx.compose.ui.res.stringResource
+import com.drivepulse.R
 
 /**
  * Conjunto de botões de controlo de gravação.
@@ -77,7 +79,7 @@ fun RunControlButtons(
             ) {
                 Icon(
                     imageVector = Icons.Default.PlayArrow,
-                    contentDescription = "Iniciar Run",
+                    contentDescription = stringResource(R.string.cd_start_run),
                     tint = Color.White,
                     modifier = Modifier.size(40.dp)
                 )
@@ -94,7 +96,7 @@ fun RunControlButtons(
                 ) {
                     Icon(
                         imageVector = Icons.Default.PlayArrow,
-                        contentDescription = "Retomar Run",
+                        contentDescription = stringResource(R.string.cd_resume_run),
                         tint = Color.White,
                         modifier = Modifier.size(36.dp)
                     )
@@ -109,7 +111,7 @@ fun RunControlButtons(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Pause,
-                        contentDescription = "Pausar Run",
+                        contentDescription = stringResource(R.string.cd_pause_run),
                         tint = Color.White,
                         modifier = Modifier.size(36.dp)
                     )
@@ -127,7 +129,7 @@ fun RunControlButtons(
             ) {
                 Icon(
                     imageVector = Icons.Default.Stop,
-                    contentDescription = "Terminar Run",
+                    contentDescription = stringResource(R.string.cd_stop_run),
                     tint = Color.White,
                     modifier = Modifier.size(30.dp)
                 )

@@ -11,6 +11,10 @@ data class Post(
     val userProfileImage: String?,
     val description: String,
     val runId: String?, // Se null, é apenas um post normal sem run associada
+    val distanceMeters: Float = 0f,
+    val durationSeconds: Long = 0L,
+    val avgSpeedKmh: Float = 0f,
+    val runCoordinates: List<Coordinate> = emptyList(), // Compressed or sampled polyline
     val mediaUrl: String?,
     val mediaType: MediaType?,
     val likesCount: Int = 0,

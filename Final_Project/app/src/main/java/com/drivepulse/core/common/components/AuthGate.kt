@@ -12,6 +12,8 @@ import com.drivepulse.core.common.LocalSessionMode
 import com.drivepulse.core.common.SessionMode
 import com.drivepulse.core.designsystem.theme.DpPrimaryRed
 import com.drivepulse.core.designsystem.theme.DpTextPrimary
+import androidx.compose.ui.res.stringResource
+import com.drivepulse.R
 
 /**
  * AuthGate is a headless component that provides an interceptor function.
@@ -39,11 +41,11 @@ fun AuthGate(
         AlertDialog(
             onDismissRequest = { showDialog = false },
             title = {
-                Text(text = "Acesso Restrito", color = DpTextPrimary)
+                Text(text = stringResource(R.string.auth_gate_title), color = DpTextPrimary)
             },
             text = {
                 Text(
-                    text = "Para aceder a esta funcionalidade (como iniciar runs ou publicar), precisas de criar uma conta gratuita ou fazer login.",
+                    text = stringResource(R.string.auth_gate_message),
                     color = DpTextPrimary
                 )
             },
@@ -52,12 +54,12 @@ fun AuthGate(
                     showDialog = false
                     onNavigateToAuth()
                 }) {
-                    Text("Fazer Login / Registo", color = DpPrimaryRed)
+                    Text(stringResource(R.string.btn_login_register), color = DpPrimaryRed)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDialog = false }) {
-                    Text("Cancelar", color = DpTextPrimary)
+                    Text(stringResource(R.string.cancel), color = DpTextPrimary)
                 }
             },
             containerColor = com.drivepulse.core.designsystem.theme.DpSurface,

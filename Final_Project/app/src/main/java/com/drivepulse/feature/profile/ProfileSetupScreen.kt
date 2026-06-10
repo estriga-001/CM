@@ -22,6 +22,8 @@ import androidx.compose.ui.unit.sp
 import com.drivepulse.core.designsystem.theme.DpBackground
 import com.drivepulse.core.designsystem.theme.DpPrimaryRed
 import com.drivepulse.core.designsystem.theme.DpTextPrimary
+import androidx.compose.ui.res.stringResource
+import com.drivepulse.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,12 +50,12 @@ fun ProfileSetupScreen(
         topBar = {
             if (onCancel != null) {
                 TopAppBar(
-                    title = { Text("Configura o teu Perfil", color = DpTextPrimary) },
+                    title = { Text(stringResource(R.string.title_setup_profile), color = DpTextPrimary) },
                     navigationIcon = {
                         IconButton(onClick = onCancel) {
                             Icon(
                                 Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Voltar",
+                                contentDescription = stringResource(R.string.cd_back),
                                 tint = DpTextPrimary
                             )
                         }
@@ -73,7 +75,7 @@ fun ProfileSetupScreen(
         ) {
             Spacer(modifier = Modifier.height(32.dp))
             Text(
-                text = "Bem-vindo ao DrivePulse",
+                text = stringResource(R.string.welcome_to_drivepulse),
                 color = DpTextPrimary,
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
@@ -81,7 +83,7 @@ fun ProfileSetupScreen(
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Vamos configurar o teu perfil para entrares na comunidade.",
+                text = stringResource(R.string.setup_profile_desc),
                 color = DpTextPrimary.copy(alpha = 0.7f),
                 textAlign = TextAlign.Center
             )
@@ -89,7 +91,7 @@ fun ProfileSetupScreen(
 
             // --- Informação Pessoal ---
             Text(
-                text = "Informação Pessoal",
+                text = stringResource(R.string.personal_info_section),
                 color = DpTextPrimary,
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.fillMaxWidth(),
@@ -110,8 +112,8 @@ fun ProfileSetupScreen(
                 trailingIcon = {
                     when (usernameState) {
                         is UsernameState.Checking -> CircularProgressIndicator(modifier = Modifier.size(24.dp), strokeWidth = 2.dp)
-                        is UsernameState.Available -> Icon(Icons.Default.CheckCircle, contentDescription = "Available", tint = Color(0xFF22C55E)) // DpSuccess
-                        is UsernameState.Unavailable -> Icon(Icons.Default.Warning, contentDescription = "Unavailable", tint = DpPrimaryRed)
+                        is UsernameState.Available -> Icon(Icons.Default.CheckCircle, contentDescription = stringResource(R.string.cd_available), tint = Color(0xFF22C55E)) // DpSuccess
+                        is UsernameState.Unavailable -> Icon(Icons.Default.Warning, contentDescription = stringResource(R.string.cd_unavailable), tint = DpPrimaryRed)
                         else -> {}
                     }
                 },
@@ -133,7 +135,7 @@ fun ProfileSetupScreen(
                 OutlinedTextField(
                     value = firstName,
                     onValueChange = { firstName = it },
-                    label = { Text("Primeiro Nome") },
+                    label = { Text(stringResource(R.string.field_first_name)) },
                     modifier = Modifier.weight(1f),
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
@@ -147,7 +149,7 @@ fun ProfileSetupScreen(
                 OutlinedTextField(
                     value = lastName,
                     onValueChange = { lastName = it },
-                    label = { Text("Apelido") },
+                    label = { Text(stringResource(R.string.field_last_name)) },
                     modifier = Modifier.weight(1f),
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
@@ -164,7 +166,7 @@ fun ProfileSetupScreen(
 
             // --- A Tua Máquina ---
             Text(
-                text = "A Tua Máquina",
+                text = stringResource(R.string.car_info_section),
                 color = DpTextPrimary,
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.fillMaxWidth(),
@@ -175,7 +177,7 @@ fun ProfileSetupScreen(
             OutlinedTextField(
                 value = brand,
                 onValueChange = { brand = it },
-                label = { Text("Marca (ex: Porsche)") },
+                label = { Text(stringResource(R.string.field_car_brand_hint)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
@@ -191,7 +193,7 @@ fun ProfileSetupScreen(
             OutlinedTextField(
                 value = model,
                 onValueChange = { model = it },
-                label = { Text("Modelo (ex: 911 GT3)") },
+                label = { Text(stringResource(R.string.field_car_model_hint)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
@@ -207,7 +209,7 @@ fun ProfileSetupScreen(
             OutlinedTextField(
                 value = yearStr,
                 onValueChange = { yearStr = it },
-                label = { Text("Ano (ex: 2023)") },
+                label = { Text(stringResource(R.string.field_car_year_hint)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
@@ -245,7 +247,7 @@ fun ProfileSetupScreen(
                 if (uiState is OnboardingUiState.Loading) {
                     CircularProgressIndicator(modifier = Modifier.size(24.dp), color = Color.White, strokeWidth = 2.dp)
                 } else {
-                    Text("Começar a Conduzir", color = Color.White, fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.btn_start_driving), color = Color.White, fontWeight = FontWeight.Bold)
                 }
             }
 

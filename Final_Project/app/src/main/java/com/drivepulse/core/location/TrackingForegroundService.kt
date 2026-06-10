@@ -107,11 +107,11 @@ class TrackingForegroundService : Service() {
             ACTION_PAUSE -> {
                 Timber.d("⏸ TrackingService: PAUSE")
                 // O tracking continua mas não guardamos coordenadas (implementado no ViewModel)
-                updateNotification("Pausado — toca para retomar")
+                updateNotification(getString(R.string.notification_tracking_paused))
             }
             ACTION_RESUME -> {
                 Timber.d("▶ TrackingService: RESUME")
-                updateNotification("A gravar percurso…")
+                updateNotification(getString(R.string.notification_tracking_recording))
             }
             ACTION_STOP -> {
                 Timber.d("⏹ TrackingService: STOP")
@@ -176,8 +176,8 @@ class TrackingForegroundService : Service() {
             }
 
         return NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
-            .setContentTitle("DrivePulse")
-            .setContentText("A gravar percurso…")
+            .setContentTitle(getString(R.string.notification_tracking_title))
+            .setContentText(getString(R.string.notification_tracking_recording))
             .setSmallIcon(R.drawable.ic_run_notification)
             .setOngoing(true) // Não pode ser dispensada pelo utilizador
             .setContentIntent(openAppIntent)
@@ -187,7 +187,7 @@ class TrackingForegroundService : Service() {
     private fun updateNotification(text: String) {
         val manager = getSystemService(NotificationManager::class.java)
         val notification = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
-            .setContentTitle("DrivePulse")
+            .setContentTitle(getString(R.string.notification_tracking_title))
             .setContentText(text)
             .setSmallIcon(R.drawable.ic_run_notification)
             .setOngoing(true)
@@ -198,10 +198,10 @@ class TrackingForegroundService : Service() {
     private fun createNotificationChannel() {
         val channel = NotificationChannel(
             NOTIFICATION_CHANNEL_ID,
-            "Rastreio de Percurso",
+            getString(R.string.notification_channel_name),
             NotificationManager.IMPORTANCE_LOW // LOW = sem som, sem vibração
         ).apply {
-            description = "Notificação ativa durante a gravação de um percurso de condução"
+            description = getString(R.string.notification_channel_desc)
         }
         val manager = getSystemService(NotificationManager::class.java)
         manager.createNotificationChannel(channel)

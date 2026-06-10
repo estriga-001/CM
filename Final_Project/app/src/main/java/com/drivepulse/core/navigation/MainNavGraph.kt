@@ -67,7 +67,8 @@ fun MainNavGraph(
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
             
             CommunityScreen(
-                uiState = uiState
+                uiState = uiState,
+                viewModel = viewModel
             )
         }
 

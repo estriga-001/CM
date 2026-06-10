@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Base application theme for Jetpack Compose. -->
-    <style name="Theme.DrivePulse" parent="android:Theme.DeviceDefault.NoActionBar">
+    <style name="Theme.DrivePulse" parent="Theme.AppCompat.DayNight.NoActionBar">
         <!-- Status bar color -->
         <item name="android:statusBarColor">#09090B</item>
         <item name="android:windowBackground">#09090B</item>

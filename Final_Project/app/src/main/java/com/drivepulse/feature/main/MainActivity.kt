@@ -8,10 +8,14 @@ package com.drivepulse.feature.main
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -26,25 +30,57 @@ import com.drivepulse.core.navigation.AppDestination
 import com.drivepulse.core.navigation.BottomNavItem
 import com.drivepulse.core.navigation.MainNavGraph
 import androidx.compose.runtime.CompositionLocalProvider
+import com.drivepulse.data.preferences.AppTheme
 import com.drivepulse.feature.auth.AuthActivity
 import com.drivepulse.feature.run.RunRecorderActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
+
+    private val mainViewModel: MainViewModel by viewModels()
+
+    /** Guarda referência ao NavController para navegação pós-result. */
+    private var navControllerRef: androidx.navigation.NavHostController? = null
+
+    /**
+     * Launcher que recebe o resultado da RunRecorderActivity.
+     * Se o utilizador carregou em "Publicar", recebemos o runId
+     * e navegamos para o CreatePostScreen.
+     */
+    private val runActivityLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == RESULT_OK) {
+            val runId = result.data?.getStringExtra(Constants.EXTRA_RUN_ID) ?: ""
+            if (runId.isNotBlank()) {
+                navControllerRef?.navigate(AppDestination.createPostRoute(runId))
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
+
         val sessionModeString = intent.getStringExtra(Constants.EXTRA_SESSION_MODE) ?: SessionMode.GUEST.name
         val sessionMode = SessionMode.valueOf(sessionModeString)
 
         setContent {
-            DrivePulseTheme {
+            // Observe theme preference from DataStore and resolve it to a Boolean
+            val appTheme by mainViewModel.appTheme.collectAsState()
+            val systemDark = isSystemInDarkTheme()
+            val isDarkTheme = when (appTheme) {
+                AppTheme.DARK   -> true
+                AppTheme.LIGHT  -> false
+                AppTheme.SYSTEM -> systemDark
+            }
+
+            DrivePulseTheme(darkTheme = isDarkTheme) {
                 val navController = rememberNavController()
+                navControllerRef = navController
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
                 val currentRoute = navBackStackEntry?.destination?.route ?: AppDestination.HOME
-                
+
                 // Show bottom bar only on the 4 main tabs
                 val showBottomBar = BottomNavItem.items.any { it.route == currentRoute }
 
@@ -89,7 +125,7 @@ class MainActivity : ComponentActivity() {
         val intent = Intent(this, RunRecorderActivity::class.java).apply {
             putExtra(Constants.EXTRA_PRIVACY_MODE, "PRIVATE")
         }
-        startActivity(intent)
+        runActivityLauncher.launch(intent)
     }
 
     private fun navigateToAuth() {

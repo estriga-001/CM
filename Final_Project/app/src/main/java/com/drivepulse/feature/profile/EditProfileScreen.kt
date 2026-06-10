@@ -19,10 +19,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import coil.request.CachePolicy
 import com.drivepulse.core.designsystem.components.DrivePulseButton
 import com.drivepulse.core.designsystem.theme.DpBackground
 import com.drivepulse.core.designsystem.theme.DpPrimaryRed
 import com.drivepulse.core.designsystem.theme.DpTextPrimary
+
+import com.drivepulse.core.common.Constants
+
+import androidx.compose.ui.res.stringResource
+import com.drivepulse.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -61,9 +68,9 @@ fun EditProfileScreen(
                 viewModel.uploadImage(bytes) { success ->
                     isLoading = false
                     if (success) {
-                        android.widget.Toast.makeText(context, "Foto atualizada!", android.widget.Toast.LENGTH_SHORT).show()
+                        android.widget.Toast.makeText(context, context.getString(R.string.toast_photo_updated), android.widget.Toast.LENGTH_SHORT).show()
                     } else {
-                        android.widget.Toast.makeText(context, "Erro a atualizar foto. Verifica a ligação ou o tamanho da imagem.", android.widget.Toast.LENGTH_LONG).show()
+                        android.widget.Toast.makeText(context, context.getString(R.string.toast_photo_update_error), android.widget.Toast.LENGTH_LONG).show()
                     }
                 }
             } else {
@@ -75,10 +82,10 @@ fun EditProfileScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Edit Profile", color = DpTextPrimary) },
+                title = { Text(stringResource(R.string.title_edit_profile), color = DpTextPrimary) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = DpTextPrimary)
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.cd_back), tint = DpTextPrimary)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -105,13 +112,17 @@ fun EditProfileScreen(
             ) {
                 if (!user.profileImageUrl.isNullOrEmpty()) {
                     AsyncImage(
-                        model = user.profileImageUrl,
-                        contentDescription = "Profile Picture",
+                        model = ImageRequest.Builder(context)
+                            .data(Constants.getCoilDataModel(user.profileImageUrl))
+                            .memoryCacheKey("${user.profileImageUrl}_${user.updatedAt}")
+                            .diskCachePolicy(CachePolicy.DISABLED)
+                            .build(),
+                        contentDescription = stringResource(R.string.cd_profile_picture),
                         modifier = Modifier.fillMaxSize(),
                         contentScale = ContentScale.Crop
                     )
                 } else {
-                    Text(text = "Tap to Add Photo", color = DpTextPrimary, style = MaterialTheme.typography.bodySmall)
+                    Text(text = stringResource(R.string.tap_to_add_photo), color = DpTextPrimary, style = MaterialTheme.typography.bodySmall)
                 }
                 if (isLoading) {
                     CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
@@ -123,7 +134,7 @@ fun EditProfileScreen(
             OutlinedTextField(
                 value = displayName,
                 onValueChange = { displayName = it },
-                label = { Text("Display Name") },
+                label = { Text(stringResource(R.string.field_display_name)) },
                 modifier = Modifier.fillMaxWidth(),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = DpPrimaryRed,
@@ -137,7 +148,7 @@ fun EditProfileScreen(
             OutlinedTextField(
                 value = bio,
                 onValueChange = { bio = it },
-                label = { Text("Bio") },
+                label = { Text(stringResource(R.string.field_bio)) },
                 modifier = Modifier.fillMaxWidth(),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = DpPrimaryRed,
@@ -150,7 +161,7 @@ fun EditProfileScreen(
             OutlinedTextField(
                 value = carBrand,
                 onValueChange = { carBrand = it },
-                label = { Text("Car Brand") },
+                label = { Text(stringResource(R.string.field_car_brand)) },
                 modifier = Modifier.fillMaxWidth(),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = DpPrimaryRed,
@@ -164,7 +175,7 @@ fun EditProfileScreen(
             OutlinedTextField(
                 value = carModel,
                 onValueChange = { carModel = it },
-                label = { Text("Car Model") },
+                label = { Text(stringResource(R.string.field_car_model)) },
                 modifier = Modifier.fillMaxWidth(),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = DpPrimaryRed,
@@ -178,7 +189,7 @@ fun EditProfileScreen(
             OutlinedTextField(
                 value = carYear,
                 onValueChange = { carYear = it },
-                label = { Text("Car Year") },
+                label = { Text(stringResource(R.string.field_car_year)) },
                 modifier = Modifier.fillMaxWidth(),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = DpPrimaryRed,
@@ -192,7 +203,7 @@ fun EditProfileScreen(
             Spacer(modifier = Modifier.weight(1f))
 
             DrivePulseButton(
-                text = "Save Changes",
+                text = stringResource(R.string.btn_save_changes),
                 onClick = {
                     val updatedUser = user.copy(
                         displayName = displayName,

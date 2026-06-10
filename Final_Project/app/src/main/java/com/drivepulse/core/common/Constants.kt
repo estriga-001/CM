@@ -39,4 +39,20 @@ object Constants {
 
     // --- Deep Links ---
     const val EXTRA_DEEP_LINK_ROUTE_ID = "extra_deep_link_route_id"
+
+    /**
+     * Converts a Base64 data URI (data:image/...) to a ByteArray for reliable loading in Coil.
+     */
+    fun getCoilDataModel(urlOrBase64: String?): Any? {
+        if (urlOrBase64 == null) return null
+        if (urlOrBase64.startsWith("data:image")) {
+            val base64Content = urlOrBase64.substringAfter("base64,")
+            return try {
+                android.util.Base64.decode(base64Content, android.util.Base64.DEFAULT)
+            } catch (e: Exception) {
+                urlOrBase64
+            }
+        }
+        return urlOrBase64
+    }
 }
