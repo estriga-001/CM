@@ -78,67 +78,8 @@ fun WeatherUI(weatherViewModel: WeatherViewModel = viewModel()) {
         return fineLocationGranted || coarseLocationGranted
     }
 
-    @SuppressLint("MissingPermission")
-    fun updateToCurrentLocationAndOpenMap() {
-        fusedLocationClient
-            .getCurrentLocation(Priority.PRIORITY_BALANCED_POWER_ACCURACY, null)
-            .addOnSuccessListener { location ->
-                if (location != null) {
-                    weatherViewModel.updateLatitude(location.latitude.toFloat())
-                    weatherViewModel.updateLongitude(location.longitude.toFloat())
-
-                } else {
-                    Toast.makeText(
-                        context,
-                        "Não foi possível obter a localização atual.",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-
-                showMap = true
-            }
-            .addOnFailureListener {
-                Toast.makeText(
-                    context,
-                    "Erro ao obter a localização.",
-                    Toast.LENGTH_SHORT
-                ).show()
-
-                showMap = true
-            }
-    }
-
-    val locationPermissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissions ->
-        val permissionGranted =
-            permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
-                    permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
-
-        if (permissionGranted) {
-            updateToCurrentLocationAndOpenMap()
-        } else {
-            Toast.makeText(
-                context,
-                "Permissão de localização recusada.",
-                Toast.LENGTH_SHORT
-            ).show()
-
-            showMap = true
-        }
-    }
-
-    fun openMapWithCurrentLocation() {
-        if (hasLocationPermission()) {
-            updateToCurrentLocationAndOpenMap()
-        } else {
-            locationPermissionLauncher.launch(
-                arrayOf(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                )
-            )
-        }
+    fun openMap() {
+        showMap = true
     }
 
     if (showMap) {
@@ -160,16 +101,14 @@ fun WeatherUI(weatherViewModel: WeatherViewModel = viewModel()) {
     }
 
     val configuration = LocalConfiguration.current
-    val day = true
+    val hour = time.substringAfter("T").substringBefore(":").toIntOrNull() ?: 12
+    val day = hour in 6..19
 
     val mapt = getWeatherCodeMap()
     val wCode = mapt[weathercode]
 
     val wImage = when (wCode) {
-        WMOWeatherCode.CLEAR_SKY,
-        WMOWeatherCode.MAINLY_CLEAR,
-        WMOWeatherCode.PARTLY_CLOUDY -> if (day) "ic_sun" else "ic_moon"
-
+        WMOWeatherCode.CLEAR_SKY -> if (day) "ic_sun" else "ic_moon"
         else -> wCode?.image ?: "ic_cloud"
     }
 
@@ -201,7 +140,7 @@ fun WeatherUI(weatherViewModel: WeatherViewModel = viewModel()) {
                 weatherViewModel.fetchWeather()
             },
             onOpenMapButtonClick = {
-                openMapWithCurrentLocation()
+                openMap()
             }
         )
     } else {
@@ -229,7 +168,7 @@ fun WeatherUI(weatherViewModel: WeatherViewModel = viewModel()) {
                 weatherViewModel.fetchWeather()
             },
             onOpenMapButtonClick = {
-                openMapWithCurrentLocation()
+                openMap()
             }
         )
     }
