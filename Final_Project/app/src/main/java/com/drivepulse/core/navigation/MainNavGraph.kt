@@ -20,7 +20,7 @@ import com.drivepulse.feature.community.CommunityViewModel
 import com.drivepulse.feature.community.screens.CommunityScreen
 import com.drivepulse.feature.createpost.CreatePostScreen
 import com.drivepulse.feature.help.HelpScreen
-import com.drivepulse.feature.home.HomeScreen
+import com.drivepulse.feature.home.HomeRoute
 import com.drivepulse.feature.map.MapScreen
 import com.drivepulse.feature.premium.PremiumScreen
 import com.drivepulse.feature.profile.EditProfileScreen
@@ -48,17 +48,35 @@ fun MainNavGraph(
         modifier = modifier
     ) {
         composable(AppDestination.HOME) {
-            HomeScreen(
+            HomeRoute(
                 onStartRun = onStartRun,
-                onNavigateToMap = {
-                    navController.navigate(AppDestination.MAP)
-                }
+                onNavigateToMap = { 
+                    navController.navigate(AppDestination.MAP) {
+                        popUpTo(AppDestination.HOME) { saveState = true }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                },
+                onNavigateToCommunity = { 
+                    navController.navigate(AppDestination.COMMUNITY) {
+                        popUpTo(AppDestination.HOME) { saveState = true }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                },
+                onNavigateToPremium = { navController.navigate(AppDestination.PREMIUM) }
             )
         }
 
         composable(AppDestination.MAP) {
-            MapScreen(
-                onPinClick = { /* TODO: open pin detail */ }
+            val context = androidx.compose.ui.platform.LocalContext.current
+            com.drivepulse.feature.map.MapRoute(
+                onPinClick = { postId ->
+                    val intent = android.content.Intent(context, com.drivepulse.feature.routedetail.RouteDetailActivity::class.java).apply {
+                        putExtra(com.drivepulse.core.common.Constants.EXTRA_ROUTE_ID, postId)
+                    }
+                    context.startActivity(intent)
+                }
             )
         }
 

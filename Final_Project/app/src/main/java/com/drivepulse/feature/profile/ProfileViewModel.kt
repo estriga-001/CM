@@ -8,6 +8,7 @@
  * - Observar o perfil do utilizador autenticado via Flow.
  * - Carregar os posts publicados pelo utilizador.
  * - Gerir upload de imagem e logout.
+ * - Calcular estatísticas agregadas (km totais, tempo total, nº de runs) em tempo real.
  */
 package com.drivepulse.feature.profile
 
@@ -18,6 +19,7 @@ import com.drivepulse.domain.model.Post
 import com.drivepulse.domain.model.User
 import com.drivepulse.domain.repository.AuthRepository
 import com.drivepulse.domain.repository.PostRepository
+import com.drivepulse.domain.repository.RunRepository
 import com.drivepulse.domain.usecase.auth.LogoutUseCase
 import com.drivepulse.domain.usecase.profile.GetUserProfileUseCase
 import com.drivepulse.domain.usecase.profile.UpdateUserProfileUseCase
@@ -30,6 +32,19 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * Estatísticas agregadas calculadas a partir das runs locais do utilizador.
+ *
+ * @property totalRuns número total de runs registadas.
+ * @property totalKm distância total percorrida em quilómetros.
+ * @property totalMinutes tempo total de condução em minutos.
+ */
+data class ProfileStats(
+    val totalRuns: Int = 0,
+    val totalKm: Double = 0.0,
+    val totalMinutes: Long = 0L
+)
+
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val logoutUseCase: LogoutUseCase,
@@ -37,7 +52,8 @@ class ProfileViewModel @Inject constructor(
     private val getUserProfileUseCase: GetUserProfileUseCase,
     private val updateUserProfileUseCase: UpdateUserProfileUseCase,
     private val uploadProfileImageUseCase: UploadProfileImageUseCase,
-    private val postRepository: PostRepository
+    private val postRepository: PostRepository,
+    private val runRepository: RunRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<ProfileUiState>(ProfileUiState.Loading)
@@ -46,6 +62,10 @@ class ProfileViewModel @Inject constructor(
     /** Posts publicados pelo utilizador actual. */
     private val _userPosts = MutableStateFlow<AppResult<List<Post>>>(AppResult.Success(emptyList()))
     val userPosts: StateFlow<AppResult<List<Post>>> = _userPosts.asStateFlow()
+
+    /** Estatísticas calculadas dinamicamente a partir das runs locais. */
+    private val _profileStats = MutableStateFlow(ProfileStats())
+    val profileStats: StateFlow<ProfileStats> = _profileStats.asStateFlow()
 
     private var currentUserId: String? = null
 
@@ -64,6 +84,7 @@ class ProfileViewModel @Inject constructor(
                     currentUserId = authUser.id
                     loadProfile(authUser.id)
                     loadUserPosts(authUser.id)
+                    loadProfileStats(authUser.id)
                 } else {
                     _uiState.value = ProfileUiState.Error("User not authenticated")
                 }
@@ -92,6 +113,25 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch {
             postRepository.getUserPosts(userId).collectLatest { result ->
                 _userPosts.value = result
+            }
+        }
+    }
+
+    /**
+     * Observa as runs locais do utilizador e calcula as estatísticas em tempo real.
+     * Usa o Room via [RunRepository.getRunsByUser] — sem queries Firestore.
+     */
+    private fun loadProfileStats(userId: String) {
+        viewModelScope.launch {
+            runRepository.getRunsByUser(userId).collectLatest { runs ->
+                val totalRuns = runs.size
+                val totalKm = runs.sumOf { it.distanceMeters.toDouble() } / 1000.0
+                val totalMinutes = runs.sumOf { it.durationSeconds } / 60L
+                _profileStats.value = ProfileStats(
+                    totalRuns = totalRuns,
+                    totalKm = totalKm,
+                    totalMinutes = totalMinutes
+                )
             }
         }
     }

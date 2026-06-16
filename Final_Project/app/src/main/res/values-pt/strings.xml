@@ -54,7 +54,8 @@
     <string name="stat_duration">Duração</string>
     <string name="stat_avg_speed">Vel. Média</string>
     <string name="stat_runs">Runs</string>
-    <string name="stat_km">Km</string>
+    <string name="stat_km">km</string>
+    <string name="stat_minutes">Min</string>
     <string name="stat_followers">Seguidores</string>
     <string name="unknown">Desconhecido</string>
 
@@ -161,4 +162,23 @@
     <string name="notification_tracking_paused">Pausado — toca para retomar</string>
     <string name="notification_channel_name">Rastreio de Percurso</string>
     <string name="notification_channel_desc">Notificação ativa durante a gravação de um percurso de condução</string>
+    <!-- Home Screen -->
+    <string name="home_title_logo">🚗 DrivePulse</string>
+    <string name="home_greeting">Olá, @%1$s! 👋</string>
+    <string name="home_greeting_fallback">Olá! 👋</string>
+    <string name="home_last_run">Última Run: %1$.1f km • %2$d min</string>
+    <string name="home_start_run">Começar Nova Corrida</string>
+    <string name="home_shortcut_map">Ver Mapa</string>
+    <string name="home_shortcut_community">Comunidade</string>
+    <string name="home_recent_runs">── As Minhas Corridas Recentes ──</string>
+    <string name="home_no_recent_runs">Ainda não há corridas recentes.</string>
+    <string name="home_premium_title">DrivePulse Premium</string>
+    <string name="home_premium_desc">Desbloqueia métricas avançadas e eventos de clube.</string>
+    <string name="home_premium_btn">Saber mais</string>
+
+    <!-- Comments Feature -->
+    <string name="comments_title">Comentários</string>
+    <string name="comments_empty">Ainda sem comentários. Sê o primeiro a comentar!</string>
+    <string name="add_comment_placeholder">Adiciona um comentário…</string>
+    <string name="btn_send">Enviar</string>
 </resources>

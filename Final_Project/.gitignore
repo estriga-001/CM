@@ -85,3 +85,6 @@ functions/.runtimeconfig.json
 *.tmp
 *.bak
 *.swp
+
+# folders
+handoffs/

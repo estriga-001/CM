@@ -63,6 +63,7 @@ fun ProfileScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val userPosts by viewModel.userPosts.collectAsState()
+    val profileStats by viewModel.profileStats.collectAsState()
     val context = LocalContext.current
 
     Box(
@@ -155,14 +156,23 @@ fun ProfileScreen(
 
                             Spacer(modifier = Modifier.height(24.dp))
 
-                            // Estatísticas
+                            // Estatísticas calculadas em tempo real a partir das runs locais
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceEvenly
                             ) {
-                                StatItem(label = stringResource(R.string.stat_runs), value = user.totalRuns.toString())
-                                StatItem(label = stringResource(R.string.stat_km), value = String.format("%.1f", user.totalKm))
-                                StatItem(label = stringResource(R.string.stat_followers), value = user.followersCount.toString())
+                                StatItem(
+                                    label = stringResource(R.string.stat_runs),
+                                    value = profileStats.totalRuns.toString()
+                                )
+                                StatItem(
+                                    label = stringResource(R.string.stat_km),
+                                    value = String.format("%.1f", profileStats.totalKm)
+                                )
+                                StatItem(
+                                    label = stringResource(R.string.stat_minutes),
+                                    value = profileStats.totalMinutes.toString()
+                                )
                             }
 
                             Spacer(modifier = Modifier.height(24.dp))
