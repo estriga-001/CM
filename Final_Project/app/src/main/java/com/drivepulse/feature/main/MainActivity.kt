@@ -15,8 +15,14 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -32,6 +38,7 @@ import com.drivepulse.core.navigation.MainNavGraph
 import androidx.compose.runtime.CompositionLocalProvider
 import com.drivepulse.data.preferences.AppTheme
 import com.drivepulse.feature.auth.AuthActivity
+import com.drivepulse.feature.routedetail.RouteDetailActivity
 import com.drivepulse.feature.run.RunRecorderActivity
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -39,6 +46,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private val mainViewModel: MainViewModel by viewModels()
+    private var routeResultMessage by mutableStateOf<String?>(null)
 
     /** Guarda referência ao NavController para navegação pós-result. */
     private var navControllerRef: androidx.navigation.NavHostController? = null
@@ -59,6 +67,37 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private val routeDetailLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode != RESULT_OK) {
+            return@registerForActivityResult
+        }
+
+        val routeUpdated = result.data?.getBooleanExtra(
+            Constants.EXTRA_ROUTE_UPDATED,
+            false
+        ) ?: false
+        val postId = result.data?.getStringExtra(Constants.EXTRA_ROUTE_ID).orEmpty()
+
+        if (!routeUpdated || postId.isBlank()) {
+            return@registerForActivityResult
+        }
+
+        val liked = result.data?.getBooleanExtra(
+            Constants.EXTRA_ROUTE_LIKED,
+            false
+        ) ?: false
+
+        routeResultMessage = getString(
+            if (liked) {
+                com.drivepulse.R.string.route_result_liked
+            } else {
+                com.drivepulse.R.string.route_result_unliked
+            }
+        )
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -77,6 +116,7 @@ class MainActivity : AppCompatActivity() {
 
             DrivePulseTheme(darkTheme = isDarkTheme) {
                 val navController = rememberNavController()
+                val snackbarHostState = remember { SnackbarHostState() }
                 navControllerRef = navController
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
                 val currentRoute = navBackStackEntry?.destination?.route ?: AppDestination.HOME
@@ -84,9 +124,18 @@ class MainActivity : AppCompatActivity() {
                 // Show bottom bar only on the 4 main tabs
                 val showBottomBar = BottomNavItem.items.any { it.route == currentRoute }
 
+                LaunchedEffect(routeResultMessage) {
+                    val message = routeResultMessage ?: return@LaunchedEffect
+                    snackbarHostState.showSnackbar(message)
+                    routeResultMessage = null
+                }
+
                 CompositionLocalProvider(LocalSessionMode provides sessionMode) {
                     AuthGate(onNavigateToAuth = { navigateToAuth() }) { withAuth ->
                         Scaffold(
+                            snackbarHost = {
+                                SnackbarHost(hostState = snackbarHostState)
+                            },
                             bottomBar = {
                                 if (showBottomBar) {
                                     DrivePulseBottomBar(
@@ -112,6 +161,9 @@ class MainActivity : AppCompatActivity() {
                                 navController = navController,
                                 onStartRun = withAuth { startRunActivity() },
                                 onNavigateToAuth = { navigateToAuth() },
+                                onOpenRouteDetail = { postId ->
+                                    openRouteDetail(postId)
+                                },
                                 modifier = Modifier.padding(innerPadding)
                             )
                         }
@@ -126,6 +178,13 @@ class MainActivity : AppCompatActivity() {
             putExtra(Constants.EXTRA_PRIVACY_MODE, "PRIVATE")
         }
         runActivityLauncher.launch(intent)
+    }
+
+    private fun openRouteDetail(postId: String) {
+        val intent = Intent(this, RouteDetailActivity::class.java).apply {
+            putExtra(Constants.EXTRA_ROUTE_ID, postId)
+        }
+        routeDetailLauncher.launch(intent)
     }
 
     private fun navigateToAuth() {

@@ -10,6 +10,7 @@ import com.drivepulse.data.remote.dto.toDomain
 import com.drivepulse.data.remote.dto.toDto
 import com.drivepulse.domain.model.Comment
 import com.drivepulse.domain.model.Post
+import com.drivepulse.domain.model.PostPage
 import com.drivepulse.domain.repository.PostRepository
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -30,9 +31,15 @@ class PostRepositoryImpl @Inject constructor(
 
     private val postsCollection = firestore.collection("posts")
 
-    override fun getFeedPosts(): Flow<AppResult<List<Post>>> = callbackFlow {
-        val listener = postsCollection
+    override fun getFeedPosts(limit: Long?): Flow<AppResult<List<Post>>> = callbackFlow {
+        var query: Query = postsCollection
             .orderBy("createdAt", Query.Direction.DESCENDING)
+
+        if (limit != null) {
+            query = query.limit(limit)
+        }
+
+        val listener = query
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
                     trySend(AppResult.Error(AppError(error.localizedMessage ?: "Error fetching posts", error)))
@@ -49,9 +56,20 @@ class PostRepositoryImpl @Inject constructor(
         awaitClose { listener.remove() }
     }
 
-    override fun getUserPosts(userId: String): Flow<AppResult<List<Post>>> = callbackFlow {
-        val listener = postsCollection
+    override fun getUserPosts(
+        userId: String,
+        limit: Long?
+    ): Flow<AppResult<List<Post>>> = callbackFlow {
+        var query: Query = postsCollection
             .whereEqualTo("userId", userId)
+
+        if (limit != null) {
+            query = query
+                .orderBy("createdAt", Query.Direction.DESCENDING)
+                .limit(limit)
+        }
+
+        val listener = query
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
                     trySend(AppResult.Error(AppError(error.localizedMessage ?: "Error fetching user posts", error)))
@@ -66,6 +84,56 @@ class PostRepositoryImpl @Inject constructor(
                 }
             }
         awaitClose { listener.remove() }
+    }
+
+    override suspend fun getFeedPostsPage(
+        pageSize: Int,
+        afterPostId: String?
+    ): AppResult<PostPage> {
+        var query: Query = postsCollection
+            .orderBy("createdAt", Query.Direction.DESCENDING)
+
+        return getPostsPage(
+            query = query,
+            pageSize = pageSize,
+            afterPostId = afterPostId
+        )
+    }
+
+    override suspend fun getUserPostsPage(
+        userId: String,
+        pageSize: Int,
+        afterPostId: String?
+    ): AppResult<PostPage> {
+        val query = postsCollection
+            .whereEqualTo("userId", userId)
+            .orderBy("createdAt", Query.Direction.DESCENDING)
+
+        return getPostsPage(
+            query = query,
+            pageSize = pageSize,
+            afterPostId = afterPostId
+        )
+    }
+
+    override suspend fun getPost(postId: String): AppResult<Post> {
+        return try {
+            val document = postsCollection.document(postId).get().await()
+            val post = document.toObject(PostDto::class.java)?.toDomain()
+
+            if (post != null) {
+                AppResult.Success(post)
+            } else {
+                AppResult.Error(AppError("Route not found"))
+            }
+        } catch (e: Exception) {
+            AppResult.Error(
+                AppError(
+                    message = e.localizedMessage ?: "Failed to load route details",
+                    throwable = e
+                )
+            )
+        }
     }
 
     override suspend fun createPost(post: Post, mediaBytes: ByteArray?): AppResult<Unit> {
@@ -169,6 +237,55 @@ class PostRepositoryImpl @Inject constructor(
             AppResult.Success(snap.exists())
         } catch (e: Exception) {
             AppResult.Error(AppError(e.localizedMessage ?: "Failed to check like status", e))
+        }
+    }
+
+    private suspend fun getPostsPage(
+        query: Query,
+        pageSize: Int,
+        afterPostId: String?
+    ): AppResult<PostPage> {
+        return try {
+            val safePageSize = pageSize.coerceAtLeast(1)
+            var pagedQuery = query
+
+            if (afterPostId != null) {
+                val cursorDocument = postsCollection.document(afterPostId).get().await()
+                if (!cursorDocument.exists()) {
+                    return AppResult.Error(AppError("Pagination cursor not found"))
+                }
+                pagedQuery = pagedQuery.startAfter(cursorDocument)
+            }
+
+            val snapshot = pagedQuery
+                .limit((safePageSize + 1).toLong())
+                .get()
+                .await()
+
+            val pageDocuments = snapshot.documents.take(safePageSize)
+            val posts = pageDocuments.mapNotNull { document ->
+                document.toObject(PostDto::class.java)?.toDomain()
+            }
+            val hasMore = snapshot.documents.size > safePageSize
+            val nextCursor = if (hasMore) {
+                pageDocuments.lastOrNull()?.id
+            } else {
+                null
+            }
+
+            AppResult.Success(
+                PostPage(
+                    posts = posts,
+                    nextCursor = nextCursor
+                )
+            )
+        } catch (exception: Exception) {
+            AppResult.Error(
+                AppError(
+                    message = exception.localizedMessage ?: "Failed to load posts page",
+                    throwable = exception
+                )
+            )
         }
     }
 

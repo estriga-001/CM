@@ -1,6 +1,5 @@
 package com.drivepulse.feature.community.screens
 
-import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -41,7 +40,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -51,6 +49,7 @@ import coil.compose.AsyncImage
 import com.drivepulse.R
 import com.drivepulse.core.common.Constants
 import com.drivepulse.core.designsystem.components.DrivePulseTopBar
+import com.drivepulse.core.designsystem.components.DrivePulseOutlinedButton
 import com.drivepulse.core.designsystem.theme.DpBackground
 import com.drivepulse.core.designsystem.theme.DpPrimaryRed
 import com.drivepulse.core.designsystem.theme.DpSurface
@@ -59,7 +58,6 @@ import com.drivepulse.core.designsystem.theme.DpTextSecondary
 import com.drivepulse.feature.community.CommunityUiState
 import com.drivepulse.feature.community.CommunityViewModel
 import com.drivepulse.feature.community.screens.components.PostCard
-import com.drivepulse.feature.routedetail.RouteDetailActivity
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -69,9 +67,9 @@ import java.util.Locale
 fun CommunityScreen(
     uiState: CommunityUiState,
     viewModel: CommunityViewModel,
+    onPostClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
     val likedPostIds by viewModel.likedPostIds.collectAsState()
     val selectedPostId by viewModel.selectedPostId.collectAsState()
     val comments by viewModel.comments.collectAsState()
@@ -91,12 +89,24 @@ fun CommunityScreen(
             }
 
             is CommunityUiState.Error -> {
-                Box(modifier = Modifier.fillMaxSize().padding(32.dp), contentAlignment = Alignment.Center) {
-                    Text(
-                        text = uiState.message,
-                        color = DpPrimaryRed,
-                        textAlign = TextAlign.Center
-                    )
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(32.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = uiState.message,
+                            color = DpPrimaryRed,
+                            textAlign = TextAlign.Center
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        DrivePulseOutlinedButton(
+                            text = stringResource(R.string.retry),
+                            onClick = viewModel::retryInitialLoad
+                        )
+                    }
                 }
             }
 
@@ -132,16 +142,40 @@ fun CommunityScreen(
                                 hasLiked = likedPostIds.contains(post.id),
                                 onLikeClick = { viewModel.toggleLike(post.id) },
                                 onCommentClick = { viewModel.selectPostForComments(post.id) },
-                                onClick = {
-                                    val intent = Intent(context, RouteDetailActivity::class.java).apply {
-                                        putExtra(Constants.EXTRA_ROUTE_ID, post.id)
-                                    }
-                                    context.startActivity(intent)
-                                }
+                                onClick = { onPostClick(post.id) }
                             )
                         }
-                        
-                        // Add some space at the bottom for the BottomBar
+
+                        if (uiState.hasMore || uiState.isLoadingMore) {
+                            item(key = "load_more") {
+                                Column(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    if (uiState.isLoadingMore) {
+                                        CircularProgressIndicator(
+                                            modifier = Modifier.size(28.dp),
+                                            color = DpPrimaryRed
+                                        )
+                                    } else {
+                                        DrivePulseOutlinedButton(
+                                            text = stringResource(R.string.load_more_posts),
+                                            onClick = viewModel::loadMorePosts
+                                        )
+                                    }
+
+                                    if (uiState.loadMoreError != null) {
+                                        Spacer(modifier = Modifier.height(8.dp))
+                                        Text(
+                                            text = stringResource(R.string.error_loading_more_posts),
+                                            color = DpPrimaryRed,
+                                            textAlign = TextAlign.Center
+                                        )
+                                    }
+                                }
+                            }
+                        }
+
                         item {
                             Spacer(modifier = Modifier.height(80.dp))
                         }

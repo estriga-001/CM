@@ -25,11 +25,13 @@ import com.drivepulse.domain.usecase.profile.GetUserProfileUseCase
 import com.drivepulse.domain.usecase.profile.UpdateUserProfileUseCase
 import com.drivepulse.domain.usecase.profile.UploadProfileImageUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -59,15 +61,18 @@ class ProfileViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<ProfileUiState>(ProfileUiState.Loading)
     val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
 
-    /** Posts publicados pelo utilizador actual. */
-    private val _userPosts = MutableStateFlow<AppResult<List<Post>>>(AppResult.Success(emptyList()))
-    val userPosts: StateFlow<AppResult<List<Post>>> = _userPosts.asStateFlow()
+    private val _userPosts = MutableStateFlow<ProfilePostsUiState>(ProfilePostsUiState.Loading)
+    val userPosts: StateFlow<ProfilePostsUiState> = _userPosts.asStateFlow()
 
     /** Estatísticas calculadas dinamicamente a partir das runs locais. */
     private val _profileStats = MutableStateFlow(ProfileStats())
     val profileStats: StateFlow<ProfileStats> = _profileStats.asStateFlow()
 
     private var currentUserId: String? = null
+    private var postsFirstPageJob: Job? = null
+    private var nextPostsCursor: String? = null
+    private var firstPageUserPosts: List<Post> = emptyList()
+    private var olderUserPosts: List<Post> = emptyList()
 
     init {
         observeUser()
@@ -81,12 +86,21 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch {
             authRepository.observeAuthState().collectLatest { authUser ->
                 if (authUser != null) {
+                    if (currentUserId == authUser.id) {
+                        return@collectLatest
+                    }
                     currentUserId = authUser.id
                     loadProfile(authUser.id)
-                    loadUserPosts(authUser.id)
+                    observeFirstUserPostsPage(authUser.id)
                     loadProfileStats(authUser.id)
                 } else {
+                    postsFirstPageJob?.cancel()
+                    currentUserId = null
+                    firstPageUserPosts = emptyList()
+                    olderUserPosts = emptyList()
+                    nextPostsCursor = null
                     _uiState.value = ProfileUiState.Error("User not authenticated")
+                    _userPosts.value = ProfilePostsUiState.Error("User not authenticated")
                 }
             }
         }
@@ -108,13 +122,119 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    /** Observa os posts publicados pelo utilizador. */
-    private fun loadUserPosts(userId: String) {
+    fun retryUserPosts() {
+        val userId = currentUserId ?: return
+        observeFirstUserPostsPage(userId)
+    }
+
+    fun loadMoreUserPosts() {
+        val userId = currentUserId ?: return
+        val cursor = nextPostsCursor ?: return
+        val currentState = _userPosts.value as? ProfilePostsUiState.Success ?: return
+
+        if (currentState.isLoadingMore || !currentState.hasMore) {
+            return
+        }
+
+        _userPosts.value = currentState.copy(
+            isLoadingMore = true,
+            loadMoreError = null
+        )
+
         viewModelScope.launch {
-            postRepository.getUserPosts(userId).collectLatest { result ->
-                _userPosts.value = result
+            when (
+                val result = postRepository.getUserPostsPage(
+                    userId = userId,
+                    pageSize = POSTS_PAGE_SIZE,
+                    afterPostId = cursor
+                )
+            ) {
+                is AppResult.Success -> {
+                    olderUserPosts = mergePosts(
+                        currentPosts = olderUserPosts,
+                        newPosts = result.data.posts
+                    )
+                    nextPostsCursor = result.data.nextCursor
+                    _userPosts.value = ProfilePostsUiState.Success(
+                        posts = combineLoadedUserPosts(),
+                        isLoadingMore = false,
+                        hasMore = nextPostsCursor != null
+                    )
+                }
+
+                is AppResult.Error -> {
+                    Timber.e(result.error.throwable, "Failed to load more profile posts")
+                    _userPosts.value = currentState.copy(
+                        isLoadingMore = false,
+                        loadMoreError = result.error.message
+                    )
+                }
             }
         }
+    }
+
+    private fun observeFirstUserPostsPage(userId: String) {
+        postsFirstPageJob?.cancel()
+        _userPosts.value = ProfilePostsUiState.Loading
+        firstPageUserPosts = emptyList()
+        olderUserPosts = emptyList()
+        nextPostsCursor = null
+
+        postsFirstPageJob = viewModelScope.launch {
+            postRepository.getUserPosts(
+                    userId = userId,
+                    limit = (POSTS_PAGE_SIZE + 1).toLong()
+                ).collectLatest { result ->
+                    when (result) {
+                        is AppResult.Success -> {
+                            updateFirstUserPostsPage(result.data)
+                        }
+
+                        is AppResult.Error -> {
+                            Timber.e(result.error.throwable, "Failed to load profile posts")
+                            val currentState = _userPosts.value
+                            if (currentState !is ProfilePostsUiState.Success) {
+                                _userPosts.value = ProfilePostsUiState.Error(result.error.message)
+                            }
+                        }
+                    }
+                }
+        }
+    }
+
+    private fun updateFirstUserPostsPage(posts: List<Post>) {
+        val visiblePosts = posts.take(POSTS_PAGE_SIZE)
+
+        if (olderUserPosts.isNotEmpty()) {
+            val currentFirstPageIds = visiblePosts.mapTo(mutableSetOf()) { post ->
+                post.id
+            }
+            val oldestVisiblePostTime = visiblePosts.minOfOrNull { post ->
+                post.createdAt
+            }
+            val shiftedPosts = firstPageUserPosts.filter { post ->
+                post.id !in currentFirstPageIds &&
+                    oldestVisiblePostTime != null &&
+                    post.createdAt <= oldestVisiblePostTime
+            }
+            olderUserPosts = mergePosts(shiftedPosts, olderUserPosts)
+        }
+
+        firstPageUserPosts = visiblePosts
+
+        if (olderUserPosts.isEmpty()) {
+            nextPostsCursor = if (posts.size > POSTS_PAGE_SIZE) {
+                visiblePosts.lastOrNull()?.id
+            } else {
+                null
+            }
+        }
+
+        _userPosts.value = ProfilePostsUiState.Success(
+            posts = combineLoadedUserPosts(),
+            isLoadingMore = false,
+            hasMore = nextPostsCursor != null
+        )
     }
 
     /**
@@ -123,14 +243,11 @@ class ProfileViewModel @Inject constructor(
      */
     private fun loadProfileStats(userId: String) {
         viewModelScope.launch {
-            runRepository.getRunsByUser(userId).collectLatest { runs ->
-                val totalRuns = runs.size
-                val totalKm = runs.sumOf { it.distanceMeters.toDouble() } / 1000.0
-                val totalMinutes = runs.sumOf { it.durationSeconds } / 60L
+            runRepository.getRunStatistics(userId).collectLatest { statistics ->
                 _profileStats.value = ProfileStats(
-                    totalRuns = totalRuns,
-                    totalKm = totalKm,
-                    totalMinutes = totalMinutes
+                    totalRuns = statistics.totalRuns,
+                    totalKm = statistics.totalDistanceMeters / 1000.0,
+                    totalMinutes = statistics.totalDurationSeconds / 60L
                 )
             }
         }
@@ -164,5 +281,27 @@ class ProfileViewModel @Inject constructor(
             logoutUseCase()
             onLogoutSuccess()
         }
+    }
+
+    private fun mergePosts(
+        currentPosts: List<Post>,
+        newPosts: List<Post>
+    ): List<Post> {
+        val existingIds = currentPosts.mapTo(mutableSetOf()) { post ->
+            post.id
+        }
+        val uniqueNewPosts = newPosts.filter { post ->
+            existingIds.add(post.id)
+        }
+        return currentPosts + uniqueNewPosts
+    }
+
+    private fun combineLoadedUserPosts(): List<Post> {
+        return mergePosts(firstPageUserPosts, olderUserPosts)
+            .sortedByDescending { post -> post.createdAt }
+    }
+
+    private companion object {
+        const val POSTS_PAGE_SIZE = 10
     }
 }

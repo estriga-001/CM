@@ -11,6 +11,17 @@ import androidx.compose.material3.Surface
 import androidx.core.content.ContextCompat
 import com.example.dam_a15044coolweatherapp.ui.WeatherUI
 
+/*
+Quando o utilizador altera a latitude ou longitude na interface, os composables chamam funções 
+do ViewModel, como updateLatitude() e updateLongitude(). 
+O ViewModel guarda esses valores no estado da aplicação. 
+Quando o utilizador carrega no botão de atualizar, a UI chama fetchWeather() no ViewModel. 
+O ViewModel usa esses valores de latitude e longitude para chamar o WeatherApiClient, 
+que está na camada data e faz o pedido à API. Quando recebe a resposta, 
+o ViewModel atualiza o uiState. Como a UI em Compose observa esse estado, 
+quando o estado muda, a interface é redesenhada automaticamente com os novos dados.
+ */
+
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {

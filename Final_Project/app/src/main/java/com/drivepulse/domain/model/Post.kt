@@ -22,6 +22,11 @@ data class Post(
     val createdAt: Long = System.currentTimeMillis()
 )
 
+data class PostPage(
+    val posts: List<Post>,
+    val nextCursor: String?
+)
+
 enum class MediaType {
     IMAGE,
     VIDEO

@@ -40,6 +40,7 @@ fun MainNavGraph(
     navController: NavHostController,
     onStartRun: () -> Unit,
     onNavigateToAuth: () -> Unit,
+    onOpenRouteDetail: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     NavHost(
@@ -69,14 +70,8 @@ fun MainNavGraph(
         }
 
         composable(AppDestination.MAP) {
-            val context = androidx.compose.ui.platform.LocalContext.current
             com.drivepulse.feature.map.MapRoute(
-                onPinClick = { postId ->
-                    val intent = android.content.Intent(context, com.drivepulse.feature.routedetail.RouteDetailActivity::class.java).apply {
-                        putExtra(com.drivepulse.core.common.Constants.EXTRA_ROUTE_ID, postId)
-                    }
-                    context.startActivity(intent)
-                }
+                onPinClick = onOpenRouteDetail
             )
         }
 
@@ -86,7 +81,8 @@ fun MainNavGraph(
             
             CommunityScreen(
                 uiState = uiState,
-                viewModel = viewModel
+                viewModel = viewModel,
+                onPostClick = onOpenRouteDetail
             )
         }
 
@@ -107,7 +103,8 @@ fun MainNavGraph(
                 onPremiumClick = {
                     navController.navigate(AppDestination.PREMIUM)
                 },
-                onLoginClick = onNavigateToAuth
+                onLoginClick = onNavigateToAuth,
+                onPostClick = onOpenRouteDetail
             )
         }
 

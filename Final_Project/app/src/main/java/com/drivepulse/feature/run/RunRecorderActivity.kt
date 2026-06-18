@@ -16,20 +16,28 @@ package com.drivepulse.feature.run
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.media.AudioManager
+import android.media.ToneGenerator
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.runtime.getValue
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.drivepulse.core.common.Constants
 import com.drivepulse.core.designsystem.theme.DrivePulseTheme
 import com.drivepulse.core.location.TrackingForegroundService
 import com.drivepulse.feature.run.screens.RunRecorderScreen
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -49,6 +57,9 @@ class RunRecorderActivity : AppCompatActivity() {
     lateinit var firebaseAuth: FirebaseAuth
 
     private val viewModel: RunRecorderViewModel by viewModels()
+    private val audioHandler = Handler(Looper.getMainLooper())
+    private var finishToneGenerator: ToneGenerator? = null
+    private var runIdWithPlayedFinishSound: String? = null
 
     // -------------------------------------------------------------------------
     // Permission launcher
@@ -79,6 +90,8 @@ class RunRecorderActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        observeRunCompletion()
 
         setContent {
             DrivePulseTheme {
@@ -115,9 +128,61 @@ class RunRecorderActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
+        audioHandler.removeCallbacksAndMessages(null)
+        releaseFinishTone()
         super.onDestroy()
         // Garante que o serviço para se a Activity for fechada abruptamente
         stopTrackingService()
+    }
+
+    private fun observeRunCompletion() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { state ->
+                    val finishedState = state as? RunRecorderUiState.Finished
+                        ?: return@collect
+
+                    if (runIdWithPlayedFinishSound == finishedState.runId) {
+                        return@collect
+                    }
+
+                    runIdWithPlayedFinishSound = finishedState.runId
+                    playRunFinishSound()
+                }
+            }
+        }
+    }
+
+    /**
+     * Feedback multimédia curto após a run ser guardada com sucesso.
+     */
+    private fun playRunFinishSound() {
+        releaseFinishTone()
+
+        try {
+            val toneGenerator = ToneGenerator(
+                AudioManager.STREAM_NOTIFICATION,
+                FINISH_TONE_VOLUME
+            )
+            finishToneGenerator = toneGenerator
+            toneGenerator.startTone(
+                ToneGenerator.TONE_PROP_ACK,
+                FINISH_TONE_DURATION_MS
+            )
+
+            audioHandler.postDelayed(
+                { releaseFinishTone() },
+                FINISH_TONE_RELEASE_DELAY_MS
+            )
+        } catch (exception: RuntimeException) {
+            Timber.w(exception, "Não foi possível tocar o som de conclusão da run")
+            releaseFinishTone()
+        }
+    }
+
+    private fun releaseFinishTone() {
+        finishToneGenerator?.release()
+        finishToneGenerator = null
     }
 
     // -------------------------------------------------------------------------
@@ -179,5 +244,11 @@ class RunRecorderActivity : AppCompatActivity() {
             this.action = action
         }
         startService(serviceIntent)
+    }
+
+    private companion object {
+        const val FINISH_TONE_VOLUME = 85
+        const val FINISH_TONE_DURATION_MS = 350
+        const val FINISH_TONE_RELEASE_DELAY_MS = 500L
     }
 }

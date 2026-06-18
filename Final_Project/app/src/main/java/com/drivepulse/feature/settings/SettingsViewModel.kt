@@ -36,6 +36,9 @@ class SettingsViewModel @Inject constructor(
     private val firebaseAuth: FirebaseAuth
 ) : ViewModel() {
 
+    val currentUserEmail: String?
+        get() = firebaseAuth.currentUser?.email
+
     /** Tema actual persistido no DataStore. */
     val currentTheme: StateFlow<AppTheme> = preferencesManager.themeFlow
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), AppTheme.SYSTEM)

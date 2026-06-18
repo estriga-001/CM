@@ -1,6 +1,8 @@
 package com.drivepulse.feature.routedetail
 
+import android.content.Intent
 import android.os.Bundle
+import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -10,8 +12,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -41,25 +47,51 @@ import java.util.*
 class RouteDetailActivity : AppCompatActivity() {
 
     private val viewModel: RouteDetailViewModel by viewModels()
+    private var postId: String = ""
+    private var routeUpdated: Boolean = false
+    private var latestLikedState: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
-        val postId = intent.getStringExtra(Constants.EXTRA_ROUTE_ID) ?: ""
+
+        postId = intent.getStringExtra(Constants.EXTRA_ROUTE_ID) ?: ""
         if (postId.isNotEmpty()) {
             viewModel.loadRouteDetail(postId)
+        }
+
+        onBackPressedDispatcher.addCallback(this) {
+            finishWithResult()
         }
 
         setContent {
             DrivePulseTheme {
                 val uiState by viewModel.uiState.collectAsState()
+                val snackbarHostState = remember { SnackbarHostState() }
+
+                LaunchedEffect(Unit) {
+                    viewModel.events.collect { event ->
+                        when (event) {
+                            is RouteDetailEvent.LikeUpdated -> {
+                                routeUpdated = true
+                                latestLikedState = event.liked
+                            }
+
+                            is RouteDetailEvent.Error -> {
+                                snackbarHostState.showSnackbar(event.message)
+                            }
+                        }
+                    }
+                }
 
                 Scaffold(
                     topBar = {
                         DrivePulseTopBar(
                             title = stringResource(R.string.title_route_detail),
-                            onBackClick = { finish() }
+                            onBackClick = ::finishWithResult
                         )
+                    },
+                    snackbarHost = {
+                        SnackbarHost(hostState = snackbarHostState)
                     },
                     containerColor = DpBackground
                 ) { innerPadding ->
@@ -91,7 +123,13 @@ class RouteDetailActivity : AppCompatActivity() {
                                 }
                             }
                             is RouteDetailUiState.Success -> {
-                                RouteDetailContent(post = state.post)
+                                RouteDetailContent(
+                                    post = state.post,
+                                    hasLiked = state.hasLiked,
+                                    canLike = state.canLike,
+                                    isLikeUpdating = state.isLikeUpdating,
+                                    onLikeClick = viewModel::toggleLike
+                                )
                             }
                         }
                     }
@@ -99,10 +137,31 @@ class RouteDetailActivity : AppCompatActivity() {
             }
         }
     }
+
+    private fun finishWithResult() {
+        if (routeUpdated) {
+            val resultIntent = Intent().apply {
+                putExtra(Constants.EXTRA_ROUTE_UPDATED, true)
+                putExtra(Constants.EXTRA_ROUTE_ID, postId)
+                putExtra(Constants.EXTRA_ROUTE_LIKED, latestLikedState)
+            }
+            setResult(RESULT_OK, resultIntent)
+        } else {
+            setResult(RESULT_CANCELED)
+        }
+
+        finish()
+    }
 }
 
 @Composable
-fun RouteDetailContent(post: Post) {
+fun RouteDetailContent(
+    post: Post,
+    hasLiked: Boolean,
+    canLike: Boolean,
+    isLikeUpdating: Boolean,
+    onLikeClick: () -> Unit
+) {
     Column(modifier = Modifier.fillMaxSize()) {
         // Top Half: Map
         Box(
@@ -213,6 +272,16 @@ fun RouteDetailContent(post: Post) {
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
+            RouteInteractionRow(
+                likesCount = post.likesCount,
+                hasLiked = hasLiked,
+                canLike = canLike,
+                isLikeUpdating = isLikeUpdating,
+                onLikeClick = onLikeClick
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
             // Stats Card
             Card(
                 modifier = Modifier.fillMaxWidth(),
@@ -258,6 +327,50 @@ fun RouteDetailContent(post: Post) {
             }
 
             Spacer(modifier = Modifier.height(32.dp))
+        }
+    }
+}
+
+@Composable
+private fun RouteInteractionRow(
+    likesCount: Int,
+    hasLiked: Boolean,
+    canLike: Boolean,
+    isLikeUpdating: Boolean,
+    onLikeClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        IconButton(
+            onClick = onLikeClick,
+            enabled = canLike && !isLikeUpdating
+        ) {
+            Icon(
+                imageVector = if (hasLiked) {
+                    Icons.Filled.Favorite
+                } else {
+                    Icons.Filled.FavoriteBorder
+                },
+                contentDescription = stringResource(R.string.cd_like),
+                tint = if (hasLiked) DpPrimaryRed else DpTextSecondary
+            )
+        }
+
+        Text(
+            text = likesCount.toString(),
+            color = DpTextSecondary,
+            style = MaterialTheme.typography.bodyMedium
+        )
+
+        if (!canLike) {
+            Text(
+                text = stringResource(R.string.route_like_sign_in_required),
+                modifier = Modifier.padding(start = 12.dp),
+                color = DpTextMuted,
+                style = MaterialTheme.typography.bodySmall
+            )
         }
     }
 }

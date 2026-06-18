@@ -16,6 +16,7 @@ import com.drivepulse.data.local.datasource.RunLocalDataSource
 import com.drivepulse.data.remote.datasource.RunRemoteDataSource
 import com.drivepulse.domain.model.Coordinate
 import com.drivepulse.domain.model.Run
+import com.drivepulse.domain.model.RunStatistics
 import com.drivepulse.domain.model.RunStatus
 import com.drivepulse.domain.repository.RunRepository
 import kotlinx.coroutines.flow.Flow
@@ -104,6 +105,16 @@ class RunRepositoryImpl @Inject constructor(
         // Lista sem coordenadas — para o feed só precisamos das stats
         return localDataSource.getRunsByUser(userId).map { entities ->
             entities.map { it.toDomain(emptyList()) }
+        }
+    }
+
+    override fun getRunStatistics(userId: String): Flow<RunStatistics> {
+        return localDataSource.getRunStatistics(userId).map { projection ->
+            RunStatistics(
+                totalRuns = projection.totalRuns,
+                totalDistanceMeters = projection.totalDistanceMeters,
+                totalDurationSeconds = projection.totalDurationSeconds
+            )
         }
     }
 

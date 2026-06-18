@@ -46,7 +46,7 @@ import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.runtime.rememberCoroutineScope
@@ -215,10 +215,9 @@ fun LoginScreen(
                             isGoogleLoading = true
                             try {
                                 val credentialManager = CredentialManager.create(context)
-                                val googleIdOption = GetGoogleIdOption.Builder()
-                                    .setFilterByAuthorizedAccounts(false)
-                                    .setServerClientId(context.getString(R.string.default_web_client_id))
-                                    .setAutoSelectEnabled(false)
+                                val googleIdOption = GetSignInWithGoogleOption.Builder(
+                                    serverClientId = context.getString(R.string.default_web_client_id)
+                                )
                                     .build()
 
                                 val request = GetCredentialRequest.Builder()
@@ -239,7 +238,7 @@ fun LoginScreen(
                             } catch (e: androidx.credentials.exceptions.GetCredentialCancellationException) {
                                 // User cancelled — don't show error
                             } catch (e: androidx.credentials.exceptions.NoCredentialException) {
-                                googleError = context.getString(R.string.error_no_google_account)
+                                googleError = context.getString(R.string.error_google_credential_unavailable)
                             } catch (e: Exception) {
                                 googleError = context.getString(R.string.error_google_signin, e.localizedMessage ?: context.getString(R.string.error_check_connection))
                             } finally {

@@ -2,6 +2,20 @@ package com.example.dam_a15044coolweatherapp.data
 
 import kotlinx.serialization.Serializable
 
+// serialização é o processo ed traduzir o estado de uma estrutura de dados ou grafico de objetos 
+// em formato binario ou texto
+
+/*
+ * Este arquivo define os Modelos de Dados (DTOs) para mapear a resposta JSON
+ * da API Open-Meteo em objetos fortemente tipados no Kotlin.
+
+ * - A anotação '@Serializable' aciona o plugin do compilador 'kotlinx.serialization'.
+ * - O plugin gera serializadores estáticos em tempo de compilação, eliminando o 
+ *   uso de Reflection em tempo de execução (ganho de performance e economia de CPU/Bateria).
+ * - Transforma fluxos de texto JSON da rede em instâncias de 'WeatherData' (Desserialização)
+ *   e vice-versa (Serialização).
+ */
+
 @Serializable
 data class WeatherData (
     val latitude: Double,

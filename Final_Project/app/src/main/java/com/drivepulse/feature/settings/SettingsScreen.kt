@@ -149,6 +149,19 @@ fun SettingsScreen(
                 icon = Icons.Filled.Lock,
                 title = stringResource(R.string.settings_account)
             ) {
+                val currentUserEmail = viewModel.currentUserEmail
+                if (!currentUserEmail.isNullOrBlank()) {
+                    Text(
+                        text = stringResource(
+                            R.string.settings_signed_in_as,
+                            currentUserEmail
+                        ),
+                        color = DpTextSecondary,
+                        fontSize = 13.sp,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                }
+
                 // Alterar password
                 SettingsActionItem(
                     label = stringResource(R.string.settings_change_password),

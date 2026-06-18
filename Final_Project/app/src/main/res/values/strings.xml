@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">DrivePulse</string>
+
+    <!-- Start Menu -->
+    <string name="start_menu_eyebrow">YOUR ROAD. YOUR STORY.</string>
+    <string name="start_menu_tagline">Track every road. Share every drive.</string>
+    <string name="start_menu_highlight">TRACK • DISCOVER • SHARE</string>
+    <string name="start_menu_sign_in">Sign in</string>
+    <string name="start_menu_guest">Explore as guest</string>
+    <string name="cd_start_menu_logo">DrivePulse car logo</string>
     
     <!-- Navigation -->
     <string name="nav_home">Home</string>
@@ -33,9 +41,32 @@
     <string name="title_help">Help</string>
     <string name="title_about">About</string>
     <string name="title_premium">Drive Clubs &amp; Events Premium</string>
+    <string name="premium_title">DrivePulse Premium</string>
+    <string name="premium_description">Take your driving community further with exclusive group experiences and deeper route insights.</string>
+    <string name="premium_plan_label">MONTHLY PLAN</string>
+    <string name="premium_price">€1</string>
+    <string name="premium_price_period">/month</string>
+    <string name="premium_cancel_anytime">Cancel anytime</string>
+    <string name="premium_benefits_title">Included with Premium</string>
+    <string name="premium_benefit_groups_title">Group events and runs</string>
+    <string name="premium_benefit_groups_description">Join exclusive automotive events and organize group driving routes.</string>
+    <string name="premium_benefit_metrics_title">Advanced metrics</string>
+    <string name="premium_benefit_metrics_description">Access detailed speed, distance and route performance insights.</string>
+    <string name="premium_benefit_history_title">Unlimited history</string>
+    <string name="premium_benefit_history_description">Keep and review your complete driving activity without limits.</string>
+    <string name="premium_benefit_badge_title">Premium profile badge</string>
+    <string name="premium_benefit_badge_description">Stand out in the community with an exclusive profile highlight.</string>
+    <string name="premium_subscribe_button">Subscribe for €1/month</string>
+    <string name="premium_subscription_active">Simulated subscription active</string>
+    <string name="premium_active_message">Premium simulation activated for this screen.</string>
+    <string name="premium_confirmation">Premium subscription simulated successfully.</string>
+    <string name="premium_simulation_notice">Academic demonstration only. No payment will be charged.</string>
     <string name="title_create_post">Create Post</string>
     <string name="title_run_recorder">Recording Run</string>
     <string name="title_route_detail">Route Details</string>
+    <string name="route_like_sign_in_required">Sign in to like this route</string>
+    <string name="route_result_liked">Route updated: like added.</string>
+    <string name="route_result_unliked">Route updated: like removed.</string>
     
     <!-- Settings Screen -->
     <string name="settings_title">Settings</string>
@@ -45,6 +76,7 @@
     <string name="settings_theme_system">System</string>
     <string name="settings_language">Language</string>
     <string name="settings_account">Account</string>
+    <string name="settings_signed_in_as">Signed in as %1$s</string>
     <string name="settings_change_password">Change password</string>
     <string name="settings_send_reset_email">Send reset email</string>
     <string name="settings_logout">Log out</string>
@@ -62,6 +94,8 @@
     <!-- Community & Feed -->
     <string name="feed_empty_title">The feed is empty</string>
     <string name="feed_empty_desc">Be the first to record and publish a route for the whole community to see!</string>
+    <string name="load_more_posts">Load more</string>
+    <string name="error_loading_more_posts">Could not load more posts. Try again.</string>
     
     <!-- Profile & Edit Profile -->
     <string name="error_loading_profile">Error loading profile</string>
@@ -116,6 +150,7 @@
     <string name="cd_post_image">Post Image</string>
     <string name="cd_like">Like</string>
     <string name="cd_comment">Comment</string>
+    <string name="cd_author_photo">Author photo</string>
     
     <!-- Onboarding / Profile Setup -->
     <string name="title_setup_profile">Set Up Your Profile</string>
@@ -142,6 +177,7 @@
     <string name="btn_continue_google">Continue with Google</string>
     <string name="error_invalid_google_credential">Invalid Google credential. Please try again.</string>
     <string name="error_no_google_account">No Google account found on this device. Add an account in Android Settings.</string>
+    <string name="error_google_credential_unavailable">Google Sign-In is temporarily unavailable. Check your connection and Google account settings, then try again.</string>
     <string name="error_google_signin">Google Sign-In error: %1$s</string>
     <string name="error_check_connection">Check your internet connection.</string>
     
@@ -196,5 +232,6 @@
     <string name="title_about_app">About DrivePulse</string>
     <string name="about_description">DrivePulse is the ultimate automotive social network, built to track, share, and discover the best driving routes.</string>
     <string name="about_authors_title">Authors</string>
+    <string name="about_author_name">Miguel Estriga</string>
     <string name="about_academic_context">This app was developed as a final project for the Mobile Computing course.</string>
 </resources>

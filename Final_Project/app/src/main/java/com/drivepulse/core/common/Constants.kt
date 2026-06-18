@@ -33,6 +33,8 @@ object Constants {
     const val EXTRA_ROUTE_ID = "extra_route_id"
     const val EXTRA_ROUTE_SOURCE = "extra_route_source"
     const val EXTRA_ROUTE_SAVED = "extra_route_saved"
+    const val EXTRA_ROUTE_UPDATED = "extra_route_updated"
+    const val EXTRA_ROUTE_LIKED = "extra_route_liked"
     const val SOURCE_MAP = "MAP"
     const val SOURCE_FEED = "FEED"
     const val SOURCE_PROFILE = "PROFILE"

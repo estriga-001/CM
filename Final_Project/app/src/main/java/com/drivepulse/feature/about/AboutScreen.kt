@@ -1,6 +1,7 @@
 package com.drivepulse.feature.about
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,15 +14,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -84,27 +83,20 @@ fun AboutScreen(
             )
             Spacer(modifier = Modifier.height(24.dp))
             
-            // Author Photo Placeholder
-            Box(
+            Image(
+                painter = painterResource(R.drawable.foto_perfil),
+                contentDescription = stringResource(R.string.cd_author_photo),
                 modifier = Modifier
                     .size(120.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.surfaceVariant),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Person,
-                    contentDescription = null,
-                    modifier = Modifier.size(64.dp),
-                    tint = DpTextSecondary
-                )
-            }
+                    .clip(CircleShape),
+                contentScale = ContentScale.Crop
+            )
             
             Spacer(modifier = Modifier.height(16.dp))
             
             // Author Name(s)
             Text(
-                text = "Miguel (Author)",
+                text = stringResource(R.string.about_author_name),
                 color = DpTextPrimary,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold

@@ -74,6 +74,7 @@ reports/
 *.gif
 !docs/**/*.png
 !docs/**/*.jpg
+!app/src/main/res/drawable/foto_perfil.png
 
 # Node/Cloud Functions if used
 functions/node_modules/

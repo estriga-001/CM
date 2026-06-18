@@ -13,3 +13,11 @@ abstract class DataProcessor(val input: String) {
     @Extract(regex = "Address: (.+)")
     abstract fun getAddress(): String ?
 }
+/*DataProcessor é uma classe abstrata, ou seja, serve como uma classe base e 
+não pode ser instanciada diretamente. Ela define uma estrutura que outras classes devem seguir. 
+Neste caso, recebe no construtor um input: String, que representa o texto de entrada de onde 
+queremos extrair dados. O val significa que esse valor fica guardado 
+como uma propriedade imutável da classe. Faz sentido esta classe ser abstrata porque 
+ela apenas define os métodos que devem existir, como getName() e getAddress(), 
+mas a implementação concreta desses métodos fica numa classe gerada ou numa subclasse, 
+como o DataProcessorExtractor. */

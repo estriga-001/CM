@@ -13,6 +13,7 @@ import com.drivepulse.data.local.dao.CoordinateDao
 import com.drivepulse.data.local.dao.RunDao
 import com.drivepulse.data.local.database.CoordinateEntity
 import com.drivepulse.data.local.database.RunEntity
+import com.drivepulse.data.local.database.RunStatisticsProjection
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -47,6 +48,10 @@ class RunLocalDataSource @Inject constructor(
 
     /** Observa todas as runs de um utilizador, ordenadas por data de criação. */
     fun getRunsByUser(userId: String): Flow<List<RunEntity>> = runDao.getRunsByUser(userId)
+
+    /** Observa apenas os totais necessários para o resumo do perfil. */
+    fun getRunStatistics(userId: String): Flow<RunStatisticsProjection> =
+        runDao.getRunStatistics(userId)
 
     /** Apaga uma run pelo ID. As coordenadas são apagadas por CASCADE. */
     suspend fun deleteRunById(runId: String) = runDao.deleteRunById(runId)

@@ -44,9 +44,9 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="${MAPS_API_KEY}" />
 
-        <!-- AuthActivity — entry point / launcher -->
+        <!-- SplashActivity — start menu / launcher -->
         <activity
-            android:name=".feature.auth.AuthActivity"
+            android:name=".feature.start.SplashActivity"
             android:exported="true"
             android:theme="@style/Theme.DrivePulse">
             <intent-filter>
@@ -54,6 +54,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- AuthActivity — authentication flow -->
+        <activity
+            android:name=".feature.auth.AuthActivity"
+            android:exported="true"
+            android:theme="@style/Theme.DrivePulse" />
 
         <!-- MainActivity — main navigation host -->
         <activity

@@ -47,3 +47,9 @@ enum class RunStatus {
     PUBLISHED,
     DISCARDED
 }
+
+data class RunStatistics(
+    val totalRuns: Int = 0,
+    val totalDistanceMeters: Double = 0.0,
+    val totalDurationSeconds: Long = 0L
+)

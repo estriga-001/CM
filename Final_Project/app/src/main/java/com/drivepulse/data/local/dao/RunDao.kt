@@ -15,6 +15,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.drivepulse.data.local.database.RunEntity
+import com.drivepulse.data.local.database.RunStatisticsProjection
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -47,6 +48,18 @@ interface RunDao {
      */
     @Query("SELECT * FROM runs WHERE userId = :userId ORDER BY createdAt DESC")
     fun getRunsByUser(userId: String): Flow<List<RunEntity>>
+
+    @Query(
+        """
+        SELECT
+            COUNT(*) AS totalRuns,
+            COALESCE(SUM(distanceMeters), 0.0) AS totalDistanceMeters,
+            COALESCE(SUM(durationSeconds), 0) AS totalDurationSeconds
+        FROM runs
+        WHERE userId = :userId
+        """
+    )
+    fun getRunStatistics(userId: String): Flow<RunStatisticsProjection>
 
     /**
      * Apaga a run. As coordenadas associadas são apagadas por CASCADE no [CoordinateEntity].

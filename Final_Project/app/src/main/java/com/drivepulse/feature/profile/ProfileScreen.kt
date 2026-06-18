@@ -36,11 +36,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.CachePolicy
 import coil.request.ImageRequest
-import com.drivepulse.core.common.AppResult
 import com.drivepulse.core.common.Constants
-import com.drivepulse.feature.routedetail.RouteDetailActivity
-import android.content.Intent
 import com.drivepulse.core.designsystem.components.DrivePulseButton
+import com.drivepulse.core.designsystem.components.DrivePulseOutlinedButton
 import com.drivepulse.core.designsystem.theme.DpBackground
 import com.drivepulse.core.designsystem.theme.DpCard
 import com.drivepulse.core.designsystem.theme.DpPrimaryRed
@@ -59,6 +57,7 @@ fun ProfileScreen(
     onAboutClick: () -> Unit,
     onPremiumClick: () -> Unit,
     onLoginClick: () -> Unit,
+    onPostClick: (String) -> Unit,
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -211,8 +210,17 @@ fun ProfileScreen(
                     }
 
                     when (val posts = userPosts) {
-                        is AppResult.Success -> {
-                            if (posts.data.isEmpty()) {
+                        is ProfilePostsUiState.Loading -> {
+                            item(key = "posts_loading") {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.padding(24.dp),
+                                    color = DpPrimaryRed
+                                )
+                            }
+                        }
+
+                        is ProfilePostsUiState.Success -> {
+                            if (posts.posts.isEmpty()) {
                                 item {
                                     Box(
                                         modifier = Modifier
@@ -228,27 +236,67 @@ fun ProfileScreen(
                                     }
                                 }
                             } else {
-                                items(posts.data, key = { it.id }) { post ->
+                                items(posts.posts, key = { it.id }) { post ->
                                     PostCard(
                                         post = post,
-                                        onClick = {
-                                            val intent = Intent(context, RouteDetailActivity::class.java).apply {
-                                                putExtra(Constants.EXTRA_ROUTE_ID, post.id)
-                                            }
-                                            context.startActivity(intent)
-                                        },
+                                        onClick = { onPostClick(post.id) },
                                         modifier = Modifier.padding(bottom = 12.dp)
                                     )
                                 }
                             }
+
+                            if (posts.hasMore || posts.isLoadingMore) {
+                                item(key = "profile_load_more") {
+                                    Column(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ) {
+                                        if (posts.isLoadingMore) {
+                                            CircularProgressIndicator(
+                                                modifier = Modifier
+                                                    .padding(16.dp)
+                                                    .size(28.dp),
+                                                color = DpPrimaryRed
+                                            )
+                                        } else {
+                                            DrivePulseOutlinedButton(
+                                                text = stringResource(R.string.load_more_posts),
+                                                onClick = viewModel::loadMoreUserPosts
+                                            )
+                                        }
+
+                                        if (posts.loadMoreError != null) {
+                                            Spacer(modifier = Modifier.height(8.dp))
+                                            Text(
+                                                text = stringResource(R.string.error_loading_more_posts),
+                                                color = DpPrimaryRed,
+                                                textAlign = TextAlign.Center
+                                            )
+                                        }
+                                    }
+                                }
+                            }
                         }
-                        is AppResult.Error -> {
+
+                        is ProfilePostsUiState.Error -> {
                             item {
-                                Text(
-                                    text = stringResource(R.string.error_loading_posts),
-                                    color = DpPrimaryRed,
-                                    modifier = Modifier.padding(16.dp)
-                                )
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(16.dp),
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Text(
+                                        text = stringResource(R.string.error_loading_posts),
+                                        color = DpPrimaryRed,
+                                        textAlign = TextAlign.Center
+                                    )
+                                    Spacer(modifier = Modifier.height(12.dp))
+                                    DrivePulseOutlinedButton(
+                                        text = stringResource(R.string.retry),
+                                        onClick = viewModel::retryUserPosts
+                                    )
+                                }
                             }
                         }
                     }

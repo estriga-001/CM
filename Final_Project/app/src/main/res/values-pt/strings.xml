@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">DrivePulse</string>
+
+    <!-- Start Menu -->
+    <string name="start_menu_eyebrow">A TUA ESTRADA. A TUA HISTÓRIA.</string>
+    <string name="start_menu_tagline">Regista cada estrada. Partilha cada percurso.</string>
+    <string name="start_menu_highlight">REGISTA • DESCOBRE • PARTILHA</string>
+    <string name="start_menu_sign_in">Iniciar sessão</string>
+    <string name="start_menu_guest">Explorar como convidado</string>
+    <string name="cd_start_menu_logo">Logótipo automóvel do DrivePulse</string>
     
     <!-- Navigation -->
     <string name="nav_home">Início</string>
@@ -33,9 +41,32 @@
     <string name="title_help">Ajuda</string>
     <string name="title_about">Sobre</string>
     <string name="title_premium">Drive Clubs &amp; Events Premium</string>
+    <string name="premium_title">DrivePulse Premium</string>
+    <string name="premium_description">Leva a tua comunidade automóvel mais longe com experiências de grupo exclusivas e métricas detalhadas.</string>
+    <string name="premium_plan_label">PLANO MENSAL</string>
+    <string name="premium_price">1€</string>
+    <string name="premium_price_period">/mês</string>
+    <string name="premium_cancel_anytime">Cancela quando quiseres</string>
+    <string name="premium_benefits_title">Incluído no Premium</string>
+    <string name="premium_benefit_groups_title">Eventos e runs em grupo</string>
+    <string name="premium_benefit_groups_description">Participa em eventos automóveis exclusivos e organiza percursos em grupo.</string>
+    <string name="premium_benefit_metrics_title">Métricas avançadas</string>
+    <string name="premium_benefit_metrics_description">Consulta dados detalhados de velocidade, distância e desempenho dos percursos.</string>
+    <string name="premium_benefit_history_title">Histórico ilimitado</string>
+    <string name="premium_benefit_history_description">Guarda e consulta toda a tua atividade de condução sem limites.</string>
+    <string name="premium_benefit_badge_title">Badge Premium no perfil</string>
+    <string name="premium_benefit_badge_description">Destaca o teu perfil na comunidade com uma identificação exclusiva.</string>
+    <string name="premium_subscribe_button">Subscrever por 1€/mês</string>
+    <string name="premium_subscription_active">Subscrição simulada ativa</string>
+    <string name="premium_active_message">A simulação Premium está ativa neste ecrã.</string>
+    <string name="premium_confirmation">Subscrição Premium simulada com sucesso.</string>
+    <string name="premium_simulation_notice">Demonstração académica. Não será efetuado qualquer pagamento.</string>
     <string name="title_create_post">Criar Publicação</string>
     <string name="title_run_recorder">A Gravar Run</string>
     <string name="title_route_detail">Detalhes da Rota</string>
+    <string name="route_like_sign_in_required">Inicia sessão para gostar desta rota</string>
+    <string name="route_result_liked">Rota atualizada: gosto adicionado.</string>
+    <string name="route_result_unliked">Rota atualizada: gosto removido.</string>
     
     <!-- Settings Screen -->
     <string name="settings_title">Definições</string>
@@ -45,6 +76,7 @@
     <string name="settings_theme_system">Sistema</string>
     <string name="settings_language">Idioma</string>
     <string name="settings_account">Conta</string>
+    <string name="settings_signed_in_as">Sessão iniciada como %1$s</string>
     <string name="settings_change_password">Alterar palavra-passe</string>
     <string name="settings_send_reset_email">Envia email de redefinição</string>
     <string name="settings_logout">Terminar Sessão</string>
@@ -62,6 +94,8 @@
     <!-- Community & Feed -->
     <string name="feed_empty_title">O feed está vazio</string>
     <string name="feed_empty_desc">Sê o primeiro a gravar e publicar uma rota para toda a comunidade ver!</string>
+    <string name="load_more_posts">Carregar mais</string>
+    <string name="error_loading_more_posts">Não foi possível carregar mais publicações. Tenta novamente.</string>
     
     <!-- Profile & Edit Profile -->
     <string name="error_loading_profile">Erro ao carregar perfil</string>
@@ -116,6 +150,7 @@
     <string name="cd_post_image">Imagem do Post</string>
     <string name="cd_like">Gostar</string>
     <string name="cd_comment">Comentar</string>
+    <string name="cd_author_photo">Fotografia do autor</string>
     
     <!-- Onboarding / Profile Setup -->
     <string name="title_setup_profile">Configura o teu Perfil</string>
@@ -142,6 +177,7 @@
     <string name="btn_continue_google">Continuar com Google</string>
     <string name="error_invalid_google_credential">Credencial Google inválida. Tenta novamente.</string>
     <string name="error_no_google_account">Nenhuma conta Google encontrada neste dispositivo. Adiciona uma conta nas Definições do Android.</string>
+    <string name="error_google_credential_unavailable">O início de sessão Google está temporariamente indisponível. Verifica a ligação e as definições da conta Google e tenta novamente.</string>
     <string name="error_google_signin">Erro Google Sign-In: %1$s</string>
     <string name="error_check_connection">Verifica a ligação à internet.</string>
     
@@ -196,5 +232,6 @@
     <string name="title_about_app">Sobre o DrivePulse</string>
     <string name="about_description">O DrivePulse é a derradeira rede social automóvel, criada para registar, partilhar e descobrir os melhores percursos de condução.</string>
     <string name="about_authors_title">Autores</string>
+    <string name="about_author_name">Miguel Estriga</string>
     <string name="about_academic_context">Esta aplicação foi desenvolvida como projeto final para a cadeira de Computação Móvel.</string>
 </resources>

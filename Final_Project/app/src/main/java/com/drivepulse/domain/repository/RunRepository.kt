@@ -11,6 +11,7 @@ package com.drivepulse.domain.repository
 
 import com.drivepulse.domain.model.Coordinate
 import com.drivepulse.domain.model.Run
+import com.drivepulse.domain.model.RunStatistics
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -62,6 +63,11 @@ interface RunRepository {
      * Observa a lista de todas as runs de um utilizador, ordenadas por data de criação.
      */
     fun getRunsByUser(userId: String): Flow<List<Run>>
+
+    /**
+     * Observa os totais agregados das runs sem carregar todas as linhas em memória.
+     */
+    fun getRunStatistics(userId: String): Flow<RunStatistics>
 
     /**
      * Apaga uma run e todas as suas coordenadas associadas.
