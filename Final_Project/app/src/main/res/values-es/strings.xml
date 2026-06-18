@@ -181,4 +181,20 @@
     <string name="comments_empty">Aún sin comentarios. ¡Sé el primero en comentar!</string>
     <string name="add_comment_placeholder">Añadir un comentario…</string>
     <string name="btn_send">Enviar</string>
+
+    <!-- Help & About -->
+    <string name="btn_help">Ayuda</string>
+    <string name="title_help_faq">Ayuda &amp; FAQ</string>
+    <string name="help_faq_1_q">¿Cómo grabo una carrera?</string>
+    <string name="help_faq_1_a">Toca el botón "+" en la barra de navegación inferior para abrir el grabador y luego toca "Empezar Carrera". Tu ruta será rastreada por GPS.</string>
+    <string name="help_faq_2_q">¿Qué es DrivePulse Premium?</string>
+    <string name="help_faq_2_a">Premium te da acceso a métricas avanzadas, eventos de club exclusivos y carreras en grupo por solo 1€/mes.</string>
+    <string name="help_faq_3_q">¿Cómo cambio mi foto de perfil?</string>
+    <string name="help_faq_3_a">Ve a tu Perfil y toca "Editar Perfil". Podrás elegir una nueva foto de tu galería.</string>
+    
+    <string name="btn_about">Acerca de</string>
+    <string name="title_about_app">Acerca de DrivePulse</string>
+    <string name="about_description">DrivePulse es la red social automotriz definitiva, creada para registrar, compartir y descubrir las mejores rutas de conducción.</string>
+    <string name="about_authors_title">Autores</string>
+    <string name="about_academic_context">Esta aplicación fue desarrollada como proyecto final para la asignatura de Computación Móvil.</string>
 </resources>

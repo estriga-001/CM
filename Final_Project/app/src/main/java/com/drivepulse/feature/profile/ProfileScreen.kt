@@ -182,6 +182,10 @@ fun ProfileScreen(
                             Spacer(modifier = Modifier.height(8.dp))
                             DrivePulseButton(text = stringResource(R.string.btn_settings), onClick = onSettingsClick)
                             Spacer(modifier = Modifier.height(8.dp))
+                            DrivePulseButton(text = stringResource(R.string.btn_help), onClick = onHelpClick)
+                            Spacer(modifier = Modifier.height(8.dp))
+                            DrivePulseButton(text = stringResource(R.string.btn_about), onClick = onAboutClick)
+                            Spacer(modifier = Modifier.height(8.dp))
                             DrivePulseButton(text = stringResource(R.string.btn_premium), onClick = onPremiumClick)
                             Spacer(modifier = Modifier.height(8.dp))
                             DrivePulseButton(

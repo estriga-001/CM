@@ -181,4 +181,20 @@
     <string name="comments_empty">No comments yet. Be the first to comment!</string>
     <string name="add_comment_placeholder">Add a comment…</string>
     <string name="btn_send">Send</string>
+
+    <!-- Help & About -->
+    <string name="btn_help">Help</string>
+    <string name="title_help_faq">Help &amp; FAQ</string>
+    <string name="help_faq_1_q">How do I record a run?</string>
+    <string name="help_faq_1_a">Tap the "+" button in the bottom navigation bar to open the run recorder, then tap "Start Run". Your route will be tracked via GPS.</string>
+    <string name="help_faq_2_q">What is DrivePulse Premium?</string>
+    <string name="help_faq_2_a">Premium gives you access to advanced metrics, exclusive club events, and group runs for just 1€/month.</string>
+    <string name="help_faq_3_q">How do I change my profile picture?</string>
+    <string name="help_faq_3_a">Go to your Profile and tap "Edit Profile". You can choose a new picture from your device.</string>
+    
+    <string name="btn_about">About</string>
+    <string name="title_about_app">About DrivePulse</string>
+    <string name="about_description">DrivePulse is the ultimate automotive social network, built to track, share, and discover the best driving routes.</string>
+    <string name="about_authors_title">Authors</string>
+    <string name="about_academic_context">This app was developed as a final project for the Mobile Computing course.</string>
 </resources>
