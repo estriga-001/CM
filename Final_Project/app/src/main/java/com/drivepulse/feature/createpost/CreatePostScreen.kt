@@ -28,6 +28,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -36,6 +38,8 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AddAPhoto
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -55,6 +59,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -211,6 +216,40 @@ fun CreatePostScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
+            Text(
+                text = stringResource(R.string.field_tags_optional),
+                color = DpTextPrimary,
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(
+                    items = POST_TAG_OPTIONS,
+                    key = { option -> option.first }
+                ) { option ->
+                    val tag = option.first
+                    val labelResId = option.second
+                    FilterChip(
+                        selected = tag in uiState.selectedTags,
+                        onClick = { viewModel.onTagToggled(tag) },
+                        label = {
+                            Text(text = stringResource(labelResId))
+                        },
+                        colors = FilterChipDefaults.filterChipColors(
+                            containerColor = DpCard,
+                            labelColor = DpTextSecondary,
+                            selectedContainerColor = DpPrimaryRed,
+                            selectedLabelColor = Color.White
+                        )
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
             // Seleção de foto
             Text(stringResource(R.string.field_photo_optional), color = DpTextPrimary, fontWeight = FontWeight.Bold, fontSize = 16.sp)
             Spacer(modifier = Modifier.height(8.dp))
@@ -292,3 +331,19 @@ private fun formatDuration(totalSeconds: Long): String {
     val s = totalSeconds % 60
     return if (h > 0) "%02d:%02d:%02d".format(h, m, s) else "%02d:%02d".format(m, s)
 }
+
+private val POST_TAG_OPTIONS = listOf(
+    "gym" to R.string.tag_gym,
+    "cruise" to R.string.tag_cruise,
+    "hotlap" to R.string.tag_hotlap,
+    "trip" to R.string.tag_trip,
+    "touge" to R.string.tag_touge,
+    "trackday" to R.string.tag_trackday,
+    "mountain" to R.string.tag_mountain,
+    "city" to R.string.tag_city,
+    "highway" to R.string.tag_highway,
+    "event" to R.string.tag_event,
+    "training" to R.string.tag_training,
+    "spot" to R.string.tag_spot,
+    "night" to R.string.tag_night
+)

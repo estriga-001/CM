@@ -17,7 +17,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.drivepulse.core.designsystem.theme.DpDanger
 import com.drivepulse.core.designsystem.theme.DpPrimaryRed
 import com.drivepulse.core.designsystem.theme.DpTextPrimary
 
@@ -80,37 +79,6 @@ fun DrivePulseOutlinedButton(
         border = BorderStroke(1.dp, DpPrimaryRed),
         colors = ButtonDefaults.outlinedButtonColors(
             contentColor = DpPrimaryRed
-        )
-    ) {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.labelLarge
-        )
-    }
-}
-
-/**
- * Danger button for destructive actions (e.g. delete account).
- *
- * @param text button label.
- * @param onClick callback when button is pressed.
- * @param modifier optional Modifier.
- */
-@Composable
-fun DrivePulseDangerButton(
-    text: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Button(
-        onClick = onClick,
-        modifier = modifier
-            .fillMaxWidth()
-            .height(52.dp),
-        shape = MaterialTheme.shapes.medium,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = DpDanger,
-            contentColor = DpTextPrimary
         )
     ) {
         Text(

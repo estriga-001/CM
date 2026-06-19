@@ -17,6 +17,7 @@ data class PostDto(
     val runCoordinates: List<Coordinate> = emptyList(),
     val mediaUrl: String? = null,
     val mediaType: String? = null,
+    val tags: List<String> = emptyList(),
     val likesCount: Int = 0,
     val commentsCount: Int = 0,
     val createdAt: Long = 0L
@@ -42,6 +43,7 @@ fun PostDto.toDomain(): Post {
                 null
             }
         },
+        tags = tags,
         likesCount = likesCount,
         commentsCount = commentsCount,
         createdAt = createdAt
@@ -62,6 +64,7 @@ fun Post.toDto(): PostDto {
         runCoordinates = runCoordinates,
         mediaUrl = mediaUrl,
         mediaType = mediaType?.name,
+        tags = tags,
         likesCount = likesCount,
         commentsCount = commentsCount,
         createdAt = createdAt

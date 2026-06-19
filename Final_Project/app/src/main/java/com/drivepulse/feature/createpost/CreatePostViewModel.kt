@@ -40,6 +40,7 @@ data class CreatePostUiState(
     val isLoading: Boolean = true,
     val description: String = "",
     val mediaBytes: ByteArray? = null,
+    val selectedTags: Set<String> = emptySet(),
     val runId: String? = null,
     val distanceMeters: Float = 0f,
     val durationSeconds: Long = 0L,
@@ -113,6 +114,17 @@ class CreatePostViewModel @Inject constructor(
         _uiState.update { it.copy(mediaBytes = bytes) }
     }
 
+    fun onTagToggled(tag: String) {
+        _uiState.update { currentState ->
+            val updatedTags = if (tag in currentState.selectedTags) {
+                currentState.selectedTags - tag
+            } else {
+                currentState.selectedTags + tag
+            }
+            currentState.copy(selectedTags = updatedTags)
+        }
+    }
+
     /**
      * Publica o post no Firestore.
      * Recolhe os dados do utilizador atual, constrói o Post e delega ao PostRepository.
@@ -142,6 +154,7 @@ class CreatePostViewModel @Inject constructor(
                     runCoordinates = state.runCoordinates,
                     mediaUrl = null, // Será preenchido pelo PostRepositoryImpl após upload
                     mediaType = if (state.mediaBytes != null) MediaType.IMAGE else null,
+                    tags = state.selectedTags.sorted(),
                     createdAt = System.currentTimeMillis()
                 )
 

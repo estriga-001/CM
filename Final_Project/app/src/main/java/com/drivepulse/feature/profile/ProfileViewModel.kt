@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.drivepulse.core.common.AppResult
 import com.drivepulse.domain.model.Post
+import com.drivepulse.domain.model.Run
 import com.drivepulse.domain.model.User
 import com.drivepulse.domain.repository.AuthRepository
 import com.drivepulse.domain.repository.PostRepository
@@ -68,8 +69,12 @@ class ProfileViewModel @Inject constructor(
     private val _profileStats = MutableStateFlow(ProfileStats())
     val profileStats: StateFlow<ProfileStats> = _profileStats.asStateFlow()
 
+    private val _savedRuns = MutableStateFlow<List<Run>>(emptyList())
+    val savedRuns: StateFlow<List<Run>> = _savedRuns.asStateFlow()
+
     private var currentUserId: String? = null
     private var postsFirstPageJob: Job? = null
+    private var savedRunsJob: Job? = null
     private var nextPostsCursor: String? = null
     private var firstPageUserPosts: List<Post> = emptyList()
     private var olderUserPosts: List<Post> = emptyList()
@@ -93,12 +98,15 @@ class ProfileViewModel @Inject constructor(
                     loadProfile(authUser.id)
                     observeFirstUserPostsPage(authUser.id)
                     loadProfileStats(authUser.id)
+                    loadSavedRuns(authUser.id)
                 } else {
                     postsFirstPageJob?.cancel()
+                    savedRunsJob?.cancel()
                     currentUserId = null
                     firstPageUserPosts = emptyList()
                     olderUserPosts = emptyList()
                     nextPostsCursor = null
+                    _savedRuns.value = emptyList()
                     _uiState.value = ProfileUiState.Error("User not authenticated")
                     _userPosts.value = ProfilePostsUiState.Error("User not authenticated")
                 }
@@ -253,6 +261,17 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
+    private fun loadSavedRuns(userId: String) {
+        savedRunsJob?.cancel()
+        savedRunsJob = viewModelScope.launch {
+            runRepository
+                .getRecentCompletedRuns(userId, SAVED_RUNS_LIMIT)
+                .collectLatest { runs ->
+                    _savedRuns.value = runs
+                }
+        }
+    }
+
     /** Atualiza o perfil do utilizador no Firestore. */
     fun updateUser(updatedUser: User, onComplete: (Boolean) -> Unit) {
         viewModelScope.launch {
@@ -261,7 +280,7 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    /** Faz upload de uma imagem de perfil comprimida para o Firebase Storage. */
+    /** Comprime e guarda a imagem de perfil através do repositório de utilizadores. */
     fun uploadImage(imageBytes: ByteArray, onComplete: (Boolean) -> Unit) {
         val userId = currentUserId
         if (userId == null) {
@@ -303,5 +322,6 @@ class ProfileViewModel @Inject constructor(
 
     private companion object {
         const val POSTS_PAGE_SIZE = 10
+        const val SAVED_RUNS_LIMIT = 20
     }
 }

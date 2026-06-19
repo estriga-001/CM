@@ -9,7 +9,6 @@
 package com.drivepulse.data.local.dao
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -43,11 +42,20 @@ interface RunDao {
     @Query("SELECT * FROM runs WHERE id = :runId")
     fun getRunById(runId: String): Flow<RunEntity?>
 
-    /**
-     * Observa todas as runs de um utilizador, ordenadas da mais recente para a mais antiga.
-     */
-    @Query("SELECT * FROM runs WHERE userId = :userId ORDER BY createdAt DESC")
-    fun getRunsByUser(userId: String): Flow<List<RunEntity>>
+    @Query(
+        """
+        SELECT * FROM runs
+        WHERE userId = :userId
+          AND endTime IS NOT NULL
+          AND status != 'DISCARDED'
+        ORDER BY createdAt DESC
+        LIMIT :limit
+        """
+    )
+    fun getRecentCompletedRuns(
+        userId: String,
+        limit: Int
+    ): Flow<List<RunEntity>>
 
     @Query(
         """
@@ -61,15 +69,4 @@ interface RunDao {
     )
     fun getRunStatistics(userId: String): Flow<RunStatisticsProjection>
 
-    /**
-     * Apaga a run. As coordenadas associadas são apagadas por CASCADE no [CoordinateEntity].
-     */
-    @Delete
-    suspend fun deleteRun(run: RunEntity)
-
-    /**
-     * Apaga uma run diretamente pelo ID (alternativa ao @Delete para quando só temos o ID).
-     */
-    @Query("DELETE FROM runs WHERE id = :runId")
-    suspend fun deleteRunById(runId: String)
 }

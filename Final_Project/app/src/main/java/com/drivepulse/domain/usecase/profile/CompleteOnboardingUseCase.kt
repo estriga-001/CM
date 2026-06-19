@@ -2,6 +2,7 @@ package com.drivepulse.domain.usecase.profile
 
 import com.drivepulse.core.common.AppResult
 import com.drivepulse.domain.repository.UserRepository
+import com.drivepulse.domain.validation.CarYearValidator
 import javax.inject.Inject
 
 /**
@@ -52,6 +53,13 @@ class CompleteOnboardingUseCase @Inject constructor(
         }
         if (carModel.isBlank()) {
             return AppResult.Error(com.drivepulse.core.common.AppError("Car model is required."))
+        }
+        if (!CarYearValidator.isValid(carYear)) {
+            return AppResult.Error(
+                com.drivepulse.core.common.AppError(
+                    "Car year must be between ${CarYearValidator.MIN_YEAR} and ${CarYearValidator.maxYear}."
+                )
+            )
         }
 
         return userRepository.completeOnboarding(

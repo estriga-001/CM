@@ -60,29 +60,16 @@ interface RunRepository {
     fun getRunById(runId: String): Flow<Run?>
 
     /**
-     * Observa a lista de todas as runs de um utilizador, ordenadas por data de criação.
+     * Observa as runs concluídas mais recentes para apresentação no perfil.
      */
-    fun getRunsByUser(userId: String): Flow<List<Run>>
+    fun getRecentCompletedRuns(
+        userId: String,
+        limit: Int
+    ): Flow<List<Run>>
 
     /**
      * Observa os totais agregados das runs sem carregar todas as linhas em memória.
      */
     fun getRunStatistics(userId: String): Flow<RunStatistics>
 
-    /**
-     * Apaga uma run e todas as suas coordenadas associadas.
-     */
-    suspend fun deleteRun(runId: String)
-
-    /**
-     * Publica uma run local no feed da comunidade (cloud).
-     * @param runId O ID local da run a publicar.
-     * @param userName O nome de exibição do utilizador.
-     */
-    suspend fun publishRun(runId: String, userName: String)
-
-    /**
-     * Observa a lista global de runs publicadas pela comunidade.
-     */
-    fun getCommunityRuns(): Flow<List<Run>>
 }

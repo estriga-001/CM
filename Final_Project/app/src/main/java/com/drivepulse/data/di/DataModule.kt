@@ -15,16 +15,12 @@ import com.drivepulse.data.local.dao.RunDao
 import com.drivepulse.data.local.database.DrivePulseDatabase
 import com.drivepulse.data.repository.AuthRepositoryImpl
 import com.drivepulse.data.repository.RunRepositoryImpl
-import com.drivepulse.data.remote.datasource.RunRemoteDataSource
-import com.drivepulse.data.remote.datasource.RunRemoteDataSourceImpl
 import com.drivepulse.domain.repository.AuthRepository
 import com.drivepulse.domain.repository.RunRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.ktx.storage
 import com.drivepulse.domain.repository.PostRepository
 import com.drivepulse.data.repository.PostRepositoryImpl
 import com.drivepulse.domain.repository.UserRepository
@@ -63,25 +59,8 @@ object DataModule {
 
     @Provides
     @Singleton
-    fun provideFirebaseStorage(): FirebaseStorage {
-        return Firebase.storage
-    }
-
-    @Provides
-    @Singleton
-    fun provideUserRepository(
-        firestore: FirebaseFirestore,
-        storage: FirebaseStorage
-    ): UserRepository {
-        return UserRepositoryImpl(firestore, storage)
-    }
-
-    @Provides
-    @Singleton
-    fun provideRunRemoteDataSource(
-        impl: RunRemoteDataSourceImpl
-    ): RunRemoteDataSource {
-        return impl
+    fun provideUserRepository(firestore: FirebaseFirestore): UserRepository {
+        return UserRepositoryImpl(firestore)
     }
 
     // -------------------------------------------------------------------------

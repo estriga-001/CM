@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.drivepulse.core.common.AppResult
 import com.drivepulse.domain.usecase.profile.CheckUsernameUseCase
 import com.drivepulse.domain.usecase.profile.CompleteOnboardingUseCase
+import com.drivepulse.domain.validation.CarYearValidator
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -84,6 +85,12 @@ class ProfileSetupViewModel @Inject constructor(
 
         if (_usernameState.value !is UsernameState.Available) {
             _uiState.value = OnboardingUiState.Error("Please choose a valid and available username.")
+            return
+        }
+        if (!CarYearValidator.isValid(carYear)) {
+            _uiState.value = OnboardingUiState.Error(
+                "Car year must be between ${CarYearValidator.MIN_YEAR} and ${CarYearValidator.maxYear}."
+            )
             return
         }
 

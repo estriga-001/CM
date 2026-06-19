@@ -14,8 +14,9 @@ import com.drivepulse.domain.model.PostPage
 import com.drivepulse.domain.repository.PostRepository
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreException
+import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
-import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -25,8 +26,7 @@ import java.util.UUID
 import javax.inject.Inject
 
 class PostRepositoryImpl @Inject constructor(
-    private val firestore: FirebaseFirestore,
-    private val storage: FirebaseStorage
+    private val firestore: FirebaseFirestore
 ) : PostRepository {
 
     private val postsCollection = firestore.collection("posts")
@@ -69,9 +69,47 @@ class PostRepositoryImpl @Inject constructor(
                 .limit(limit)
         }
 
+        var fallbackListener: ListenerRegistration? = null
+        var fallbackStarted = false
+
         val listener = query
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
+                    if (
+                        limit != null &&
+                        !fallbackStarted &&
+                        isMissingIndexError(error)
+                    ) {
+                        fallbackStarted = true
+                        fallbackListener = postsCollection
+                            .whereEqualTo("userId", userId)
+                            .addSnapshotListener { fallbackSnapshot, fallbackError ->
+                                if (fallbackError != null) {
+                                    trySend(
+                                        AppResult.Error(
+                                            AppError(
+                                                fallbackError.localizedMessage
+                                                    ?: "Error fetching user posts",
+                                                fallbackError
+                                            )
+                                        )
+                                    )
+                                    return@addSnapshotListener
+                                }
+
+                                if (fallbackSnapshot != null) {
+                                    val posts = fallbackSnapshot.documents
+                                        .mapNotNull { document ->
+                                            document.toObject(PostDto::class.java)?.toDomain()
+                                        }
+                                        .sortedByDescending { post -> post.createdAt }
+                                        .take(limit.coerceAtMost(Int.MAX_VALUE.toLong()).toInt())
+                                    trySend(AppResult.Success(posts))
+                                }
+                            }
+                        return@addSnapshotListener
+                    }
+
                     trySend(AppResult.Error(AppError(error.localizedMessage ?: "Error fetching user posts", error)))
                     return@addSnapshotListener
                 }
@@ -83,7 +121,10 @@ class PostRepositoryImpl @Inject constructor(
                     trySend(AppResult.Success(posts))
                 }
             }
-        awaitClose { listener.remove() }
+        awaitClose {
+            listener.remove()
+            fallbackListener?.remove()
+        }
     }
 
     override suspend fun getFeedPostsPage(
@@ -109,11 +150,21 @@ class PostRepositoryImpl @Inject constructor(
             .whereEqualTo("userId", userId)
             .orderBy("createdAt", Query.Direction.DESCENDING)
 
-        return getPostsPage(
+        val result = getPostsPage(
             query = query,
             pageSize = pageSize,
             afterPostId = afterPostId
         )
+
+        if (result is AppResult.Error && isMissingIndexError(result.error.throwable)) {
+            return getUserPostsPageWithoutCompositeIndex(
+                userId = userId,
+                pageSize = pageSize,
+                afterPostId = afterPostId
+            )
+        }
+
+        return result
     }
 
     override suspend fun getPost(postId: String): AppResult<Post> {
@@ -287,6 +338,66 @@ class PostRepositoryImpl @Inject constructor(
                 )
             )
         }
+    }
+
+    private suspend fun getUserPostsPageWithoutCompositeIndex(
+        userId: String,
+        pageSize: Int,
+        afterPostId: String?
+    ): AppResult<PostPage> {
+        return try {
+            val safePageSize = pageSize.coerceAtLeast(1)
+            val snapshot = postsCollection
+                .whereEqualTo("userId", userId)
+                .get()
+                .await()
+            val allPosts = snapshot.documents
+                .mapNotNull { document ->
+                    document.toObject(PostDto::class.java)?.toDomain()
+                }
+                .sortedByDescending { post -> post.createdAt }
+
+            val startIndex = if (afterPostId == null) {
+                0
+            } else {
+                val cursorIndex = allPosts.indexOfFirst { post ->
+                    post.id == afterPostId
+                }
+                if (cursorIndex == -1) {
+                    return AppResult.Error(AppError("Pagination cursor not found"))
+                }
+                cursorIndex + 1
+            }
+
+            val remainingPosts = allPosts.drop(startIndex)
+            val posts = remainingPosts.take(safePageSize)
+            val hasMore = remainingPosts.size > safePageSize
+
+            AppResult.Success(
+                PostPage(
+                    posts = posts,
+                    nextCursor = if (hasMore) posts.lastOrNull()?.id else null
+                )
+            )
+        } catch (exception: Exception) {
+            AppResult.Error(
+                AppError(
+                    message = exception.localizedMessage ?: "Failed to load user posts page",
+                    throwable = exception
+                )
+            )
+        }
+    }
+
+    private fun isMissingIndexError(throwable: Throwable?): Boolean {
+        val firestoreError = throwable as? FirebaseFirestoreException
+        if (firestoreError?.code == FirebaseFirestoreException.Code.FAILED_PRECONDITION) {
+            return true
+        }
+
+        return throwable?.message
+            ?.contains("index", ignoreCase = true)
+            ?: false
     }
 
     private fun compressAndResizeImage(imageBytes: ByteArray, maxDimension: Int): ByteArray {

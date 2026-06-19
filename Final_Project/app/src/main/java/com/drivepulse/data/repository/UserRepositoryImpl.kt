@@ -8,7 +8,6 @@ import com.drivepulse.data.remote.dto.toDto
 import com.drivepulse.domain.model.User
 import com.drivepulse.domain.repository.UserRepository
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -18,8 +17,7 @@ import java.util.UUID
 import javax.inject.Inject
 
 class UserRepositoryImpl @Inject constructor(
-    private val firestore: FirebaseFirestore,
-    private val storage: FirebaseStorage
+    private val firestore: FirebaseFirestore
 ) : UserRepository {
 
     private val usersCollection = firestore.collection("users")

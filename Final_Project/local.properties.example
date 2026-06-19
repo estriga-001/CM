@@ -7,5 +7,4 @@
 #Tue May 26 16:23:43 WEST 2026
 sdk.dir=C\:\\Users\\migue\\AppData\\Local\\Android\\Sdk
 
-MAPS_API_KEY="
-OPEN_METEO_BASE_URL=
+MAPS_API_KEY=your_google_maps_api_key_here

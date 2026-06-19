@@ -21,7 +21,6 @@ import androidx.lifecycle.viewModelScope
 import com.drivepulse.core.location.TrackingForegroundService
 import com.drivepulse.domain.model.Coordinate
 import com.drivepulse.domain.usecase.run.FinishRunUseCase
-import com.drivepulse.domain.usecase.run.PublishRunUseCase
 import com.drivepulse.domain.usecase.run.StartRunUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -43,8 +42,7 @@ import javax.inject.Inject
 @HiltViewModel
 class RunRecorderViewModel @Inject constructor(
     private val startRunUseCase: StartRunUseCase,
-    private val finishRunUseCase: FinishRunUseCase,
-    private val publishRunUseCase: PublishRunUseCase
+    private val finishRunUseCase: FinishRunUseCase
 ) : ViewModel() {
 
     // -------------------------------------------------------------------------
@@ -162,26 +160,6 @@ class RunRecorderViewModel @Inject constructor(
             } catch (e: Exception) {
                 Timber.e(e, "❌ Erro ao finalizar run")
                 _uiState.update { RunRecorderUiState.Error("Erro ao guardar a run.") }
-            }
-        }
-    }
-
-    /**
-     * Publica a rota finalizada no feed comunitário.
-     */
-    fun onPublishRun() {
-        val currentState = _uiState.value as? RunRecorderUiState.Finished ?: return
-        
-        // Coloca num estado temporário de loading se necessário, para este protótipo vamos
-        // usar um estado simples ou apenas invocar e navegar no sucesso.
-        viewModelScope.launch {
-            try {
-                publishRunUseCase(currentState.runId)
-                // Se sucesso, atualizar a UI para um estado de finalizado com sucesso
-                _uiState.update { currentState.copy(isPublished = true) }
-            } catch (e: Exception) {
-                Timber.e(e, "❌ Erro ao publicar rota")
-                _uiState.update { RunRecorderUiState.Error("Não foi possível publicar a rota. Verifica a internet.") }
             }
         }
     }

@@ -20,27 +20,17 @@
     <!-- Auth & General -->
     <string name="login">Entrar</string>
     <string name="register">Registar</string>
-    <string name="logout">Sair</string>
     <string name="cancel">Cancelar</string>
     <string name="retry">Tentar novamente</string>
     <string name="continue_as_guest">Continuar como Visitante</string>
     
     <!-- AuthGate Dialog -->
-    <string name="auth_required_title">Autenticação Necessária</string>
-    <string name="auth_required_message">Precisas de iniciar sessão ou criar uma conta para usar esta funcionalidade. Queres entrar agora?</string>
     <string name="auth_gate_title">Acesso Restrito</string>
     <string name="auth_gate_message">Para aceder a esta funcionalidade (como iniciar runs ou publicar), precisas de criar uma conta gratuita ou fazer login.</string>
     <string name="btn_login_register">Fazer Login / Registo</string>
     
     <!-- Mock Screen Titles -->
-    <string name="title_home">Início</string>
-    <string name="title_map">Mapa</string>
     <string name="title_community">Comunidade</string>
-    <string name="title_profile">Perfil</string>
-    <string name="title_settings">Definições</string>
-    <string name="title_help">Ajuda</string>
-    <string name="title_about">Sobre</string>
-    <string name="title_premium">Drive Clubs &amp; Events Premium</string>
     <string name="premium_title">DrivePulse Premium</string>
     <string name="premium_description">Leva a tua comunidade automóvel mais longe com experiências de grupo exclusivas e métricas detalhadas.</string>
     <string name="premium_plan_label">PLANO MENSAL</string>
@@ -62,8 +52,7 @@
     <string name="premium_confirmation">Subscrição Premium simulada com sucesso.</string>
     <string name="premium_simulation_notice">Demonstração académica. Não será efetuado qualquer pagamento.</string>
     <string name="title_create_post">Criar Publicação</string>
-    <string name="title_run_recorder">A Gravar Run</string>
-    <string name="title_route_detail">Detalhes da Rota</string>
+    <string name="title_route_detail">Detalhes da run</string>
     <string name="route_like_sign_in_required">Inicia sessão para gostar desta rota</string>
     <string name="route_result_liked">Rota atualizada: gosto adicionado.</string>
     <string name="route_result_unliked">Rota atualizada: gosto removido.</string>
@@ -88,7 +77,6 @@
     <string name="stat_runs">Runs</string>
     <string name="stat_km">km</string>
     <string name="stat_minutes">Min</string>
-    <string name="stat_followers">Seguidores</string>
     <string name="unknown">Desconhecido</string>
 
     <!-- Community & Feed -->
@@ -103,8 +91,11 @@
     <string name="btn_settings">Definições</string>
     <string name="btn_premium">Premium</string>
     <string name="btn_logout">Terminar Sessão</string>
+    <string name="run_history_title">Histórico de runs</string>
+    <string name="run_history_empty">Ainda não existem runs guardadas.</string>
+    <string name="run_history_item_title">Run guardada</string>
     <string name="my_posts">As Minhas Publicações</string>
-    <string name="profile_no_posts_yet">Ainda não publicaste nenhuma rota.\nGrava uma run e partilha com a comunidade!</string>
+    <string name="profile_no_posts_yet">Sem publicações ainda.</string>
     <string name="error_loading_posts">Erro ao carregar publicações.</string>
     <string name="title_edit_profile">Editar Perfil</string>
     <string name="tap_to_add_photo">Toca para adicionar foto</string>
@@ -113,19 +104,19 @@
     <string name="field_car_brand">Marca do Carro</string>
     <string name="field_car_model">Modelo do Carro</string>
     <string name="field_car_year">Ano do Carro</string>
+    <string name="error_car_year_range">Introduz um ano entre %1$d e %2$d.</string>
+    <string name="error_updating_profile">Não foi possível atualizar o perfil. Tenta novamente.</string>
     <string name="btn_save_changes">Guardar Alterações</string>
     <string name="toast_photo_updated">Foto atualizada!</string>
     <string name="toast_photo_update_error">Erro a atualizar foto. Verifica a ligação ou o tamanho da imagem.</string>
     
     <!-- Run Recorder -->
-    <string name="run_ready_to_record">Pronto para gravar</string>
-    <string name="run_press_start_hint">Pressiona Start para iniciar o rastreio GPS</string>
-    <string name="run_paused">⏸ PAUSADO</string>
-    <string name="run_published">Run Publicada!</string>
-    <string name="run_saved_locally">Run Guardada Localmente</string>
-    <string name="btn_publish_to_feed">Publicar no Feed da Comunidade</string>
-    <string name="btn_save_only">Apenas Guardar</string>
-    <string name="btn_back_to_home">Voltar à Home</string>
+    <string name="run_ready_to_record">Pronto para iniciar uma run</string>
+    <string name="run_press_start_hint">Pressiona Iniciar para começar o rastreio GPS</string>
+    <string name="run_paused">⏸ RUN PAUSADA</string>
+    <string name="run_saved_locally">Run guardada localmente</string>
+    <string name="btn_publish_to_feed">Publicar run na comunidade</string>
+    <string name="btn_save_only">Guardar run</string>
     <string name="location_permission_title">Permissão de Localização</string>
     <string name="location_permission_desc">O DrivePulse precisa de acesso à tua localização para gravar o percurso.</string>
     <string name="access_denied_title">Acesso Negado</string>
@@ -137,6 +128,20 @@
     <string name="field_description">Descrição</string>
     <string name="placeholder_describe_route">Descreve a tua rota...</string>
     <string name="field_photo_optional">Foto (opcional)</string>
+    <string name="field_tags_optional">Tags (opcional)</string>
+    <string name="tag_gym">Ginásio</string>
+    <string name="tag_cruise">Passeio</string>
+    <string name="tag_hotlap">Hotlap</string>
+    <string name="tag_trip">Viagem</string>
+    <string name="tag_touge">Touge</string>
+    <string name="tag_trackday">Trackday</string>
+    <string name="tag_mountain">Serra</string>
+    <string name="tag_city">Cidade</string>
+    <string name="tag_highway">Autoestrada</string>
+    <string name="tag_event">Evento</string>
+    <string name="tag_training">Treino</string>
+    <string name="tag_spot">Spot</string>
+    <string name="tag_night">Noite</string>
     <string name="publishing">A publicar...</string>
     <string name="btn_publish">Publicar</string>
     <string name="no_map_available">Nenhum mapa disponível para esta rota</string>
@@ -176,15 +181,11 @@
     <string name="divider_or">OU</string>
     <string name="btn_continue_google">Continuar com Google</string>
     <string name="error_invalid_google_credential">Credencial Google inválida. Tenta novamente.</string>
-    <string name="error_no_google_account">Nenhuma conta Google encontrada neste dispositivo. Adiciona uma conta nas Definições do Android.</string>
     <string name="error_google_credential_unavailable">O início de sessão Google está temporariamente indisponível. Verifica a ligação e as definições da conta Google e tenta novamente.</string>
     <string name="error_google_signin">Erro Google Sign-In: %1$s</string>
     <string name="error_check_connection">Verifica a ligação à internet.</string>
     
     <!-- Route Detail stats -->
-    <string name="stat_runs_count">Runs</string>
-    <string name="format_km">%.2f km</string>
-    <string name="format_speed">%.1f km/h</string>
 
     <!-- Run Control Buttons -->
     <string name="cd_start_run">Iniciar Run</string>
@@ -203,11 +204,11 @@
     <string name="home_greeting">Olá, @%1$s! 👋</string>
     <string name="home_greeting_fallback">Olá! 👋</string>
     <string name="home_last_run">Última Run: %1$.1f km • %2$d min</string>
-    <string name="home_start_run">Começar Nova Corrida</string>
+    <string name="home_start_run">Iniciar nova run</string>
     <string name="home_shortcut_map">Ver Mapa</string>
     <string name="home_shortcut_community">Comunidade</string>
-    <string name="home_recent_runs">── As Minhas Corridas Recentes ──</string>
-    <string name="home_no_recent_runs">Ainda não há corridas recentes.</string>
+    <string name="home_recent_runs">── As minhas runs recentes ──</string>
+    <string name="home_no_recent_runs">Ainda não há runs recentes.</string>
     <string name="home_premium_title">DrivePulse Premium</string>
     <string name="home_premium_desc">Desbloqueia métricas avançadas e eventos de clube.</string>
     <string name="home_premium_btn">Saber mais</string>
@@ -222,7 +223,7 @@
     <string name="btn_help">Ajuda</string>
     <string name="title_help_faq">Ajuda &amp; FAQ</string>
     <string name="help_faq_1_q">Como gravo uma run?</string>
-    <string name="help_faq_1_a">Toca no botão "+" na barra de navegação inferior para abrir o gravador e depois toca em "Começar Corrida". O teu percurso será registado por GPS.</string>
+    <string name="help_faq_1_a">Toca no botão "+" na barra de navegação inferior para abrir o gravador e depois toca em "Iniciar run". O teu percurso será registado por GPS.</string>
     <string name="help_faq_2_q">O que é o DrivePulse Premium?</string>
     <string name="help_faq_2_a">O Premium dá-te acesso a métricas avançadas, eventos de clube exclusivos e runs em grupo por apenas 1€/mês.</string>
     <string name="help_faq_3_q">Como mudo a minha foto de perfil?</string>

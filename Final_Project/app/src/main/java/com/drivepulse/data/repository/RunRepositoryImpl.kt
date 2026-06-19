@@ -13,7 +13,6 @@ package com.drivepulse.data.repository
 import com.drivepulse.data.local.database.CoordinateEntity
 import com.drivepulse.data.local.database.RunEntity
 import com.drivepulse.data.local.datasource.RunLocalDataSource
-import com.drivepulse.data.remote.datasource.RunRemoteDataSource
 import com.drivepulse.domain.model.Coordinate
 import com.drivepulse.domain.model.Run
 import com.drivepulse.domain.model.RunStatistics
@@ -34,8 +33,7 @@ import javax.inject.Singleton
  */
 @Singleton
 class RunRepositoryImpl @Inject constructor(
-    private val localDataSource: RunLocalDataSource,
-    private val remoteDataSource: RunRemoteDataSource
+    private val localDataSource: RunLocalDataSource
 ) : RunRepository {
 
     // -------------------------------------------------------------------------
@@ -83,10 +81,6 @@ class RunRepositoryImpl @Inject constructor(
         localDataSource.updateRun(updated)
     }
 
-    override suspend fun deleteRun(runId: String) {
-        localDataSource.deleteRunById(runId)
-    }
-
     // -------------------------------------------------------------------------
     // Read operations (reactive Flow)
     // -------------------------------------------------------------------------
@@ -101,11 +95,17 @@ class RunRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getRunsByUser(userId: String): Flow<List<Run>> {
-        // Lista sem coordenadas — para o feed só precisamos das stats
-        return localDataSource.getRunsByUser(userId).map { entities ->
-            entities.map { it.toDomain(emptyList()) }
-        }
+    override fun getRecentCompletedRuns(
+        userId: String,
+        limit: Int
+    ): Flow<List<Run>> {
+        return localDataSource
+            .getRecentCompletedRuns(userId, limit.coerceAtLeast(1))
+            .map { entities ->
+                entities.map { entity ->
+                    entity.toDomain(emptyList())
+                }
+            }
     }
 
     override fun getRunStatistics(userId: String): Flow<RunStatistics> {
@@ -116,27 +116,6 @@ class RunRepositoryImpl @Inject constructor(
                 totalDurationSeconds = projection.totalDurationSeconds
             )
         }
-    }
-
-    // -------------------------------------------------------------------------
-    // Remote operations (Firestore)
-    // -------------------------------------------------------------------------
-
-    override suspend fun publishRun(runId: String, userName: String) {
-        // 1. Obter a Run local completa (com coordenadas)
-        val runEntity = localDataSource.getRunById(runId).first() ?: return
-        val coordinates = localDataSource.getCoordinatesForRun(runId).first()
-        val run = runEntity.toDomain(coordinates)
-
-        // 2. Publicar na cloud
-        remoteDataSource.publishRun(run, userName)
-
-        // 3. Atualizar o estado local para PUBLISHED
-        localDataSource.updateRun(runEntity.copy(status = RunStatus.PUBLISHED.name))
-    }
-
-    override fun getCommunityRuns(): Flow<List<Run>> {
-        return remoteDataSource.getCommunityRuns()
     }
 
     // -------------------------------------------------------------------------

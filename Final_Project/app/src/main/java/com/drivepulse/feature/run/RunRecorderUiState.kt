@@ -70,8 +70,7 @@ sealed interface RunRecorderUiState {
         val runId: String,
         val durationSeconds: Long,
         val distanceMeters: Float,
-        val avgSpeedKmh: Float,
-        val isPublished: Boolean = false
+        val avgSpeedKmh: Float
     ) : RunRecorderUiState
 
     /**

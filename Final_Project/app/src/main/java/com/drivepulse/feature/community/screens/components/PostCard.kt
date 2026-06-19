@@ -3,6 +3,7 @@ package com.drivepulse.feature.community.screens.components
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -24,6 +26,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -82,6 +85,10 @@ fun PostCard(
                 )
             }
 
+            if (post.tags.isNotEmpty()) {
+                PostTags(tags = post.tags)
+            }
+
             if (!post.mediaUrl.isNullOrEmpty()) {
                 AsyncImage(
                     model = Constants.getCoilDataModel(post.mediaUrl),
@@ -105,6 +112,39 @@ fun PostCard(
                 onLikeClick = onLikeClick,
                 onCommentClick = onCommentClick
             )
+        }
+    }
+}
+
+@Composable
+private fun PostTags(tags: List<String>) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .horizontalScroll(rememberScrollState())
+            .padding(horizontal = 16.dp, vertical = 6.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        tags.forEach { tag ->
+            val labelResource = tagLabelResource(tag)
+            val label = if (labelResource != null) {
+                stringResource(labelResource)
+            } else {
+                tag
+            }
+
+            Surface(
+                shape = RoundedCornerShape(50),
+                color = DpPrimaryRed.copy(alpha = 0.16f)
+            ) {
+                Text(
+                    text = "#$label",
+                    color = DpPrimaryRed,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
+                )
+            }
         }
     }
 }
@@ -349,3 +389,22 @@ private data class NormalizedPoint(
     val x: Float,
     val y: Float
 )
+
+private fun tagLabelResource(tag: String): Int? {
+    return when (tag) {
+        "gym" -> R.string.tag_gym
+        "cruise" -> R.string.tag_cruise
+        "hotlap" -> R.string.tag_hotlap
+        "trip" -> R.string.tag_trip
+        "touge" -> R.string.tag_touge
+        "trackday" -> R.string.tag_trackday
+        "mountain" -> R.string.tag_mountain
+        "city" -> R.string.tag_city
+        "highway" -> R.string.tag_highway
+        "event" -> R.string.tag_event
+        "training" -> R.string.tag_training
+        "spot" -> R.string.tag_spot
+        "night" -> R.string.tag_night
+        else -> null
+    }
+}

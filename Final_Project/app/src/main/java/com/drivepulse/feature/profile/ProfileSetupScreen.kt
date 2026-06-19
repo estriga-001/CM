@@ -24,6 +24,7 @@ import com.drivepulse.core.designsystem.theme.DpPrimaryRed
 import com.drivepulse.core.designsystem.theme.DpTextPrimary
 import androidx.compose.ui.res.stringResource
 import com.drivepulse.R
+import com.drivepulse.domain.validation.CarYearValidator
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,6 +42,11 @@ fun ProfileSetupScreen(
     var brand by remember { mutableStateOf("") }
     var model by remember { mutableStateOf("") }
     var yearStr by remember { mutableStateOf("") }
+    var yearTouched by remember { mutableStateOf(false) }
+
+    val parsedYear = yearStr.toIntOrNull()
+    val isYearValid = parsedYear != null && CarYearValidator.isValid(parsedYear)
+    val showYearError = yearTouched && !isYearValid
 
     val scrollState = rememberScrollState()
 
@@ -208,11 +214,28 @@ fun ProfileSetupScreen(
 
             OutlinedTextField(
                 value = yearStr,
-                onValueChange = { yearStr = it },
+                onValueChange = { newValue ->
+                    if (newValue.length <= 4 && newValue.all(Char::isDigit)) {
+                        yearStr = newValue
+                        yearTouched = true
+                    }
+                },
                 label = { Text(stringResource(R.string.field_car_year_hint)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
+                isError = showYearError,
+                supportingText = {
+                    if (showYearError) {
+                        Text(
+                            text = stringResource(
+                                R.string.error_car_year_range,
+                                CarYearValidator.MIN_YEAR,
+                                CarYearValidator.maxYear
+                            )
+                        )
+                    }
+                },
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedTextColor = DpTextPrimary,
                     unfocusedTextColor = DpTextPrimary,
@@ -234,11 +257,23 @@ fun ProfileSetupScreen(
 
             Button(
                 onClick = {
-                    val year = yearStr.toIntOrNull() ?: 0
-                    onSubmit(username, firstName, lastName, brand, model, year)
+                    yearTouched = true
+                    val validYear = parsedYear
+                    if (validYear != null && CarYearValidator.isValid(validYear)) {
+                        onSubmit(
+                            username,
+                            firstName,
+                            lastName,
+                            brand,
+                            model,
+                            validYear
+                        )
+                    }
                 },
                 modifier = Modifier.fillMaxWidth().height(48.dp),
-                enabled = uiState !is OnboardingUiState.Loading && usernameState is UsernameState.Available,
+                enabled = uiState !is OnboardingUiState.Loading &&
+                    usernameState is UsernameState.Available &&
+                    isYearValid,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = DpPrimaryRed,
                     disabledContainerColor = DpPrimaryRed.copy(alpha = 0.5f)

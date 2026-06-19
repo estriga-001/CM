@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
@@ -16,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
@@ -30,6 +32,7 @@ import com.drivepulse.core.common.Constants
 
 import androidx.compose.ui.res.stringResource
 import com.drivepulse.R
+import com.drivepulse.domain.validation.CarYearValidator
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -53,8 +56,23 @@ fun EditProfileScreen(
     var bio by remember { mutableStateOf(user.bio) }
     var carBrand by remember { mutableStateOf(user.selectedCarBrand) }
     var carModel by remember { mutableStateOf(user.selectedCarModel) }
-    var carYear by remember { mutableStateOf(user.selectedCarYear.toString()) }
+    var carYear by remember {
+        mutableStateOf(
+            user.selectedCarYear
+                .takeIf { it > 0 }
+                ?.toString()
+                .orEmpty()
+        )
+    }
     var isLoading by remember { mutableStateOf(false) }
+    var yearTouched by remember { mutableStateOf(false) }
+    var saveError by remember { mutableStateOf<String?>(null) }
+
+    val parsedCarYear = carYear.toIntOrNull()
+    val hasCarData = carBrand.isNotBlank() || carModel.isNotBlank() || carYear.isNotBlank()
+    val isCarYearValid = !hasCarData ||
+        (parsedCarYear != null && CarYearValidator.isValid(parsedCarYear))
+    val showYearError = yearTouched && !isCarYearValid
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
@@ -188,23 +206,56 @@ fun EditProfileScreen(
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
                 value = carYear,
-                onValueChange = { carYear = it },
+                onValueChange = { newValue ->
+                    if (newValue.length <= 4 && newValue.all(Char::isDigit)) {
+                        carYear = newValue
+                        yearTouched = true
+                        saveError = null
+                    }
+                },
                 label = { Text(stringResource(R.string.field_car_year)) },
                 modifier = Modifier.fillMaxWidth(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = DpPrimaryRed,
                     focusedLabelColor = DpPrimaryRed,
                     unfocusedTextColor = DpTextPrimary,
                     focusedTextColor = DpTextPrimary
                 ),
+                isError = showYearError,
+                supportingText = {
+                    if (showYearError) {
+                        Text(
+                            text = stringResource(
+                                R.string.error_car_year_range,
+                                CarYearValidator.MIN_YEAR,
+                                CarYearValidator.maxYear
+                            )
+                        )
+                    }
+                },
                 singleLine = true
             )
 
             Spacer(modifier = Modifier.weight(1f))
 
+            if (saveError != null) {
+                Text(
+                    text = saveError!!,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.padding(bottom = 12.dp)
+                )
+            }
+
+            val profileUpdateError = stringResource(R.string.error_updating_profile)
             DrivePulseButton(
                 text = stringResource(R.string.btn_save_changes),
                 onClick = {
+                    yearTouched = true
+                    if (!isCarYearValid) {
+                        return@DrivePulseButton
+                    }
+
                     val updatedUser = user.copy(
                         displayName = displayName,
                         bio = bio,
@@ -213,12 +264,17 @@ fun EditProfileScreen(
                         selectedCarYear = carYear.toIntOrNull() ?: 0
                     )
                     isLoading = true
-                    viewModel.updateUser(updatedUser) {
+                    saveError = null
+                    viewModel.updateUser(updatedUser) { success ->
                         isLoading = false
-                        onBackClick()
+                        if (success) {
+                            onBackClick()
+                        } else {
+                            saveError = profileUpdateError
+                        }
                     }
                 },
-                enabled = !isLoading,
+                enabled = !isLoading && isCarYearValid,
                 modifier = Modifier.fillMaxWidth()
             )
         }

@@ -34,10 +34,4 @@ interface CoordinateDao {
     @Query("SELECT * FROM run_coordinates WHERE runId = :runId ORDER BY timestamp ASC")
     fun getCoordinatesForRun(runId: String): Flow<List<CoordinateEntity>>
 
-    /**
-     * Retorna o número total de pontos capturados para uma run.
-     * Útil para calcular qualidade do track antes de publicar.
-     */
-    @Query("SELECT COUNT(*) FROM run_coordinates WHERE runId = :runId")
-    suspend fun getCoordinateCount(runId: String): Int
 }

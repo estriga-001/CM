@@ -46,15 +46,14 @@ class RunLocalDataSource @Inject constructor(
     /** Observa uma run pelo ID. Emite null se não encontrada. */
     fun getRunById(runId: String): Flow<RunEntity?> = runDao.getRunById(runId)
 
-    /** Observa todas as runs de um utilizador, ordenadas por data de criação. */
-    fun getRunsByUser(userId: String): Flow<List<RunEntity>> = runDao.getRunsByUser(userId)
+    fun getRecentCompletedRuns(
+        userId: String,
+        limit: Int
+    ): Flow<List<RunEntity>> = runDao.getRecentCompletedRuns(userId, limit)
 
     /** Observa apenas os totais necessários para o resumo do perfil. */
     fun getRunStatistics(userId: String): Flow<RunStatisticsProjection> =
         runDao.getRunStatistics(userId)
-
-    /** Apaga uma run pelo ID. As coordenadas são apagadas por CASCADE. */
-    suspend fun deleteRunById(runId: String) = runDao.deleteRunById(runId)
 
     // -------------------------------------------------------------------------
     // Coordinate operations
@@ -68,7 +67,4 @@ class RunLocalDataSource @Inject constructor(
     fun getCoordinatesForRun(runId: String): Flow<List<CoordinateEntity>> =
         coordinateDao.getCoordinatesForRun(runId)
 
-    /** Retorna o número de pontos capturados para uma run. */
-    suspend fun getCoordinateCount(runId: String): Int =
-        coordinateDao.getCoordinateCount(runId)
 }

@@ -17,6 +17,7 @@ data class Post(
     val runCoordinates: List<Coordinate> = emptyList(), // Compressed or sampled polyline
     val mediaUrl: String?,
     val mediaType: MediaType?,
+    val tags: List<String> = emptyList(),
     val likesCount: Int = 0,
     val commentsCount: Int = 0,
     val createdAt: Long = System.currentTimeMillis()

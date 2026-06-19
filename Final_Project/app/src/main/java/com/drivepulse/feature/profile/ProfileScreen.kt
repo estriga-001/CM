@@ -17,6 +17,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -44,10 +47,14 @@ import com.drivepulse.core.designsystem.theme.DpCard
 import com.drivepulse.core.designsystem.theme.DpPrimaryRed
 import com.drivepulse.core.designsystem.theme.DpTextPrimary
 import com.drivepulse.core.designsystem.theme.DpTextSecondary
+import com.drivepulse.domain.model.Run
 import com.drivepulse.feature.community.screens.components.PostCard
 
 import androidx.compose.ui.res.stringResource
 import com.drivepulse.R
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun ProfileScreen(
@@ -63,6 +70,7 @@ fun ProfileScreen(
     val uiState by viewModel.uiState.collectAsState()
     val userPosts by viewModel.userPosts.collectAsState()
     val profileStats by viewModel.profileStats.collectAsState()
+    val savedRuns by viewModel.savedRuns.collectAsState()
     val context = LocalContext.current
 
     Box(
@@ -196,6 +204,45 @@ fun ProfileScreen(
                         }
                     }
 
+                    item {
+                        Text(
+                            text = stringResource(R.string.run_history_title),
+                            color = DpTextPrimary,
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 12.dp)
+                        )
+                    }
+
+                    if (savedRuns.isEmpty()) {
+                        item(key = "saved_runs_empty") {
+                            Text(
+                                text = stringResource(R.string.run_history_empty),
+                                color = DpTextSecondary,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 20.dp)
+                            )
+                        }
+                    } else {
+                        items(
+                            items = savedRuns,
+                            key = { run -> "saved_run_${run.id}" }
+                        ) { run ->
+                            SavedRunCard(
+                                run = run,
+                                modifier = Modifier.padding(bottom = 12.dp)
+                            )
+                        }
+                    }
+
+                    item {
+                        Spacer(modifier = Modifier.height(20.dp))
+                    }
+
                     // --- Secção: As Minhas Publicações ---
                     item {
                         Text(
@@ -301,10 +348,6 @@ fun ProfileScreen(
                         }
                     }
 
-                    // Espaço para o BottomBar
-                    item {
-                        Spacer(modifier = Modifier.height(80.dp))
-                    }
                 }
             }
         }
@@ -322,4 +365,71 @@ fun StatItem(label: String, value: String) {
         )
         Text(text = label, color = DpTextSecondary, style = MaterialTheme.typography.bodySmall)
     }
+}
+
+@Composable
+private fun SavedRunCard(
+    run: Run,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(14.dp),
+        colors = CardDefaults.cardColors(containerColor = DpCard)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.run_history_item_title),
+                color = DpTextPrimary,
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.titleMedium
+            )
+            Text(
+                text = formatRunDate(run.startTime),
+                color = DpTextSecondary,
+                style = MaterialTheme.typography.bodySmall
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                StatItem(
+                    label = stringResource(R.string.stat_distance),
+                    value = "%.2f km".format(run.distanceMeters / 1000f)
+                )
+                StatItem(
+                    label = stringResource(R.string.stat_duration),
+                    value = formatRunDuration(run.durationSeconds)
+                )
+                StatItem(
+                    label = stringResource(R.string.stat_avg_speed),
+                    value = "%.1f km/h".format(run.avgSpeedKmh)
+                )
+            }
+        }
+    }
+}
+
+private fun formatRunDuration(totalSeconds: Long): String {
+    val hours = totalSeconds / 3600
+    val minutes = (totalSeconds % 3600) / 60
+    val seconds = totalSeconds % 60
+
+    return if (hours > 0) {
+        "%02d:%02d:%02d".format(hours, minutes, seconds)
+    } else {
+        "%02d:%02d".format(minutes, seconds)
+    }
+}
+
+private fun formatRunDate(timestamp: Long): String {
+    val formatter = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault())
+    return formatter.format(Date(timestamp))
 }

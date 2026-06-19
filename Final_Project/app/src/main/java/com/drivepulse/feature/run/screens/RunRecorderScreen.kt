@@ -294,7 +294,7 @@ private fun FinishedContent(
         Text(text = "✅", fontSize = 64.sp)
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = if (state.isPublished) stringResource(R.string.run_published) else stringResource(R.string.run_saved_locally),
+            text = stringResource(R.string.run_saved_locally),
             color = DpTextPrimary,
             fontSize = 26.sp,
             fontWeight = FontWeight.Bold,
@@ -318,30 +318,20 @@ private fun FinishedContent(
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        if (!state.isPublished) {
-            Button(
-                onClick = onPublish,
-                colors = ButtonDefaults.buttonColors(containerColor = DpPrimaryRed),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(stringResource(R.string.btn_publish_to_feed), color = Color.White, fontWeight = FontWeight.Bold)
-            }
-            Spacer(modifier = Modifier.height(8.dp))
-            Button(
-                onClick = onDone,
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(stringResource(R.string.btn_save_only), color = DpTextSecondary)
-            }
-        } else {
-            Button(
-                onClick = onDone,
-                colors = ButtonDefaults.buttonColors(containerColor = DpPrimaryRed),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(stringResource(R.string.btn_back_to_home), color = Color.White, fontWeight = FontWeight.Bold)
-            }
+        Button(
+            onClick = onPublish,
+            colors = ButtonDefaults.buttonColors(containerColor = DpPrimaryRed),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(stringResource(R.string.btn_publish_to_feed), color = Color.White, fontWeight = FontWeight.Bold)
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        Button(
+            onClick = onDone,
+            colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(stringResource(R.string.btn_save_only), color = DpTextSecondary)
         }
     }
 }

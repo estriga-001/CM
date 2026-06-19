@@ -20,27 +20,17 @@
     <!-- Auth & General -->
     <string name="login">Login</string>
     <string name="register">Register</string>
-    <string name="logout">Logout</string>
     <string name="cancel">Cancel</string>
     <string name="retry">Retry</string>
     <string name="continue_as_guest">Continue as Guest</string>
     
     <!-- AuthGate Dialog -->
-    <string name="auth_required_title">Authentication Required</string>
-    <string name="auth_required_message">You need to log in or create an account to use this feature. Would you like to log in now?</string>
     <string name="auth_gate_title">Restricted Access</string>
     <string name="auth_gate_message">To access this feature (such as starting runs or publishing), you need to create a free account or log in.</string>
     <string name="btn_login_register">Log In / Register</string>
     
     <!-- Mock Screen Titles -->
-    <string name="title_home">Home</string>
-    <string name="title_map">Map</string>
     <string name="title_community">Community</string>
-    <string name="title_profile">Profile</string>
-    <string name="title_settings">Settings</string>
-    <string name="title_help">Help</string>
-    <string name="title_about">About</string>
-    <string name="title_premium">Drive Clubs &amp; Events Premium</string>
     <string name="premium_title">DrivePulse Premium</string>
     <string name="premium_description">Take your driving community further with exclusive group experiences and deeper route insights.</string>
     <string name="premium_plan_label">MONTHLY PLAN</string>
@@ -62,8 +52,7 @@
     <string name="premium_confirmation">Premium subscription simulated successfully.</string>
     <string name="premium_simulation_notice">Academic demonstration only. No payment will be charged.</string>
     <string name="title_create_post">Create Post</string>
-    <string name="title_run_recorder">Recording Run</string>
-    <string name="title_route_detail">Route Details</string>
+    <string name="title_route_detail">Run Details</string>
     <string name="route_like_sign_in_required">Sign in to like this route</string>
     <string name="route_result_liked">Route updated: like added.</string>
     <string name="route_result_unliked">Route updated: like removed.</string>
@@ -88,7 +77,6 @@
     <string name="stat_runs">Runs</string>
     <string name="stat_km">km</string>
     <string name="stat_minutes">Min</string>
-    <string name="stat_followers">Followers</string>
     <string name="unknown">Unknown</string>
 
     <!-- Community & Feed -->
@@ -103,8 +91,11 @@
     <string name="btn_settings">Settings</string>
     <string name="btn_premium">Premium</string>
     <string name="btn_logout">Log Out</string>
+    <string name="run_history_title">Run history</string>
+    <string name="run_history_empty">No saved runs yet.</string>
+    <string name="run_history_item_title">Saved run</string>
     <string name="my_posts">My Posts</string>
-    <string name="profile_no_posts_yet">You haven\'t published any routes yet.\nRecord a run and share it with the community!</string>
+    <string name="profile_no_posts_yet">No posts yet.</string>
     <string name="error_loading_posts">Error loading posts.</string>
     <string name="title_edit_profile">Edit Profile</string>
     <string name="tap_to_add_photo">Tap to add photo</string>
@@ -113,19 +104,19 @@
     <string name="field_car_brand">Car Brand</string>
     <string name="field_car_model">Car Model</string>
     <string name="field_car_year">Car Year</string>
+    <string name="error_car_year_range">Enter a year between %1$d and %2$d.</string>
+    <string name="error_updating_profile">Could not update the profile. Try again.</string>
     <string name="btn_save_changes">Save Changes</string>
     <string name="toast_photo_updated">Photo updated!</string>
     <string name="toast_photo_update_error">Error updating photo. Check connection or image size.</string>
     
     <!-- Run Recorder -->
-    <string name="run_ready_to_record">Ready to record</string>
+    <string name="run_ready_to_record">Ready to start a run</string>
     <string name="run_press_start_hint">Press Start to begin GPS tracking</string>
     <string name="run_paused">⏸ PAUSED</string>
-    <string name="run_published">Run Published!</string>
     <string name="run_saved_locally">Run Saved Locally</string>
-    <string name="btn_publish_to_feed">Publish to Community Feed</string>
-    <string name="btn_save_only">Save Only</string>
-    <string name="btn_back_to_home">Back to Home</string>
+    <string name="btn_publish_to_feed">Publish run to Community</string>
+    <string name="btn_save_only">Save run</string>
     <string name="location_permission_title">Location Permission</string>
     <string name="location_permission_desc">DrivePulse needs access to your location to record the path.</string>
     <string name="access_denied_title">Access Denied</string>
@@ -137,6 +128,20 @@
     <string name="field_description">Description</string>
     <string name="placeholder_describe_route">Describe your route...</string>
     <string name="field_photo_optional">Photo (optional)</string>
+    <string name="field_tags_optional">Tags (optional)</string>
+    <string name="tag_gym">Gym</string>
+    <string name="tag_cruise">Cruise</string>
+    <string name="tag_hotlap">Hotlap</string>
+    <string name="tag_trip">Trip</string>
+    <string name="tag_touge">Touge</string>
+    <string name="tag_trackday">Trackday</string>
+    <string name="tag_mountain">Mountain</string>
+    <string name="tag_city">City</string>
+    <string name="tag_highway">Highway</string>
+    <string name="tag_event">Event</string>
+    <string name="tag_training">Training</string>
+    <string name="tag_spot">Spot</string>
+    <string name="tag_night">Night</string>
     <string name="publishing">Publishing...</string>
     <string name="btn_publish">Publish</string>
     <string name="no_map_available">No map available for this route</string>
@@ -176,15 +181,11 @@
     <string name="divider_or">OR</string>
     <string name="btn_continue_google">Continue with Google</string>
     <string name="error_invalid_google_credential">Invalid Google credential. Please try again.</string>
-    <string name="error_no_google_account">No Google account found on this device. Add an account in Android Settings.</string>
     <string name="error_google_credential_unavailable">Google Sign-In is temporarily unavailable. Check your connection and Google account settings, then try again.</string>
     <string name="error_google_signin">Google Sign-In error: %1$s</string>
     <string name="error_check_connection">Check your internet connection.</string>
     
     <!-- Route Detail stats -->
-    <string name="stat_runs_count">Runs</string>
-    <string name="format_km">%.2f km</string>
-    <string name="format_speed">%.1f km/h</string>
 
     <!-- Run Control Buttons -->
     <string name="cd_start_run">Start Run</string>
