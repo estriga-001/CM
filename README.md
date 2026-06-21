@@ -8,6 +8,7 @@ A estrutura está concebida para integrar múltiplos Assignments (**A1**, **A2**
 * [Assignment 1 (A1)](#assignment-1-a1)
 * [Assignment 2 (A2)](#assignment-2-a2)
 * [Assignment 3 (A3)](#assignment-3-a3)
+* [Assignment 4 (A4)](#assignment-4-a4)
 
 ---
 
@@ -333,3 +334,196 @@ A3/Section3-Android/
             ├── mipmap-*/
             └── xml/
 ```
+
+---
+
+## Assignment 4 (A4)
+
+Este quarto bloco de trabalhos foca-se em três áreas centrais do desenvolvimento móvel moderno: **Kotlin Flows/Coroutines**, integração com **LLMs** através de chamadas HTTP em Kotlin, e utilização de **Firebase** para autenticação e persistência remota de dados.
+
+De acordo com o enunciado extraído do PDF, o objetivo era ganhar experiência prática em código assíncrono (`threads`, `callbacks`, `coroutines`, `flows` e `channels`), configurar chamadas a modelos de linguagem como OpenAI/Gemini/Groq, controlar parâmetros de geração como `temperature` e `maxTokens`, realizar análise de sentimento e aplicar Firebase num projeto Android.
+
+### Índice de Tarefas (A4)
+1. [Kotlin Flows e Coroutines](#1-kotlin-flows-e-coroutines)
+2. [Acesso a LLMs com Kotlin](#2-acesso-a-llms-com-kotlin)
+3. [Firebase - Notes Pro XMLViews](#3-firebase---notes-pro-xmlviews)
+
+---
+
+### 1. Kotlin Flows e Coroutines
+
+**Explicação do Código:**
+
+A pasta `A4/s1` contém a implementação do tutorial oficial **Introduction to Coroutines and Channels**, adaptado para comparar diferentes estratégias de acesso assíncrono à API do GitHub. A aplicação usa uma interface Swing (`ContributorsUI`) que permite escolher variantes de execução e observar o impacto de cada abordagem na responsividade da UI.
+
+O código começa com uma versão bloqueante (`Request1Blocking.kt`), que usa chamadas síncronas de Retrofit com `.execute()` e demonstra porque a UI congela quando o trabalho de rede corre na thread principal. A seguir são implementadas alternativas com thread de background, callbacks e funções `suspend`, permitindo perceber a evolução de um modelo imperativo bloqueante para um modelo assíncrono mais legível e seguro.
+
+A versão com coroutines (`Request4Suspend.kt`) transforma os pedidos HTTP em chamadas suspensas, mantendo um fluxo sequencial de leitura fácil sem bloquear a thread. A versão concorrente (`Request5Concurrent.kt`) usa `coroutineScope`, `async` e `awaitAll()` para lançar pedidos de contribuidores em paralelo, reduzindo o tempo total quando existem vários repositórios. A função `aggregate()` centraliza a consolidação dos resultados, agrupando utilizadores repetidos e somando as contribuições antes de ordenar por ordem decrescente.
+
+Para progresso incremental, `Request6Progress.kt` atualiza a UI à medida que cada repositório é processado. Já `Request7Channels.kt` usa `Channel<List<User>>` para separar produtores e consumidor: cada coroutine produtora envia resultados assim que termina, e a coroutine consumidora agrega e publica o progresso sem esperar pela ordem original dos pedidos. Foi também criada a estrutura `LoadingStateData`/`LoadingStateHolder` com `MutableStateFlow` e `StateFlow`, deixando uma base reativa para representar estados de loading (`isLoading`, `progress`, `message`) de forma observável.
+
+**Porque foi feito assim:**
+
+A sequência das variantes mostra, de forma controlada, os problemas de bloqueio, complexidade e cancelamento que aparecem em código assíncrono tradicional. As coroutines tornam o fluxo mais previsível, os `async` permitem paralelizar trabalho independente, e os `channels` resolvem melhor o caso de progresso incremental porque aceitam resultados assim que estes ficam disponíveis.
+
+**Estrutura de Ficheiros:**
+```text
+A4/s1/
+├── src/
+│   ├── contributors/
+│   │   ├── Contributors.kt
+│   │   ├── ContributorsUI.kt
+│   │   ├── GitHubService.kt
+│   │   ├── Params.kt
+│   │   └── main.kt
+│   ├── samples/
+│   │   ├── ChannelsSample.kt
+│   │   └── ConcurrencySample.kt
+│   └── tasks/
+│       ├── Aggregation.kt
+│       ├── LoadingStateData.kt
+│       ├── Request1Blocking.kt
+│       ├── Request2Background.kt
+│       ├── Request3Callbacks.kt
+│       ├── Request4Suspend.kt
+│       ├── Request5Concurrent.kt
+│       ├── Request6Progress.kt
+│       └── Request7Channels.kt
+├── test/
+│   ├── contributors/
+│   ├── samples/
+│   └── tasks/
+├── Documentacao_Coroutines.md
+├── build.gradle
+└── settings.gradle
+```
+
+**Como executar/verificar:**
+```powershell
+cd A4\s1
+.\gradlew test
+.\gradlew run
+```
+
+---
+
+### 2. Acesso a LLMs com Kotlin
+
+**Explicação do Código:**
+
+A pasta `A4/AISimpleCalls` contém uma aplicação Kotlin de linha de comandos para comunicar com diferentes fornecedores de LLM através de uma interface comum (`AIAssistant`). A aplicação lê configuração local a partir de `config.properties`, cria a implementação correta através de `AIAssistantFactory` e permite interagir com o modelo num ciclo de perguntas e respostas.
+
+A interface `AIAssistant` concentra o contrato comum: leitura da API key, construção de prompts, chamada HTTP com `OkHttp`, parsing da resposta, configuração de logs e retry com **exponential backoff** quando ocorre rate limit (`HTTP 429`). Também foram adicionadas propriedades configuráveis para `TEMPERATURE` e `MAX_TOKENS`, com valores de fallback (`0.7` e `800`) para evitar falhas quando a configuração não existe ou está inválida.
+
+Foram implementadas variantes para **OpenAI**, **Gemini** e **Groq**. A implementação `AIAssistantGroq` usa o endpoint OpenAI-compatible da Groq, permitindo testar o trabalho com um provider de free tier. As classes `AIAssistantOpenAIClasses.kt` e `AIAssistantGeminiClasses.kt` usam `data class` e `Gson` para estruturar pedidos/respostas JSON de forma mais robusta do que montar strings manualmente.
+
+A análise de sentimento foi implementada em `analyzeSentiment(input: String)`, que força o modelo a responder apenas com JSON contendo `rating` de 1 a 7 e `justification`. O teste `SentimentTest.kt` valida respostas positivas, neutras e negativas, verificando se o JSON é parseável, se contém as chaves esperadas e se a escala devolvida está dentro dos intervalos aceitáveis. O teste `TemperatureTest.kt` compara respostas para o mesmo prompt com temperatura baixa (`0.1`) e alta (`1.8`), demonstrando o efeito prático deste parâmetro na criatividade/variabilidade da resposta.
+
+**Porque foi feito assim:**
+
+A interface comum evita duplicação entre providers e permite trocar de modelo apenas através de configuração. O uso de `Properties`, `Gson` e `OkHttp` mantém a solução simples, explícita e testável. Os testes não tentam comparar texto gerado de forma rígida, porque respostas de LLM são não determinísticas; em vez disso validam propriedades observáveis, como resposta não vazia, JSON válido e rating dentro da escala definida.
+
+**Estrutura de Ficheiros:**
+```text
+A4/AISimpleCalls/
+├── src/main/kotlin/dam/
+│   ├── AIAssistant.kt
+│   ├── AIAssistantFactory.kt
+│   ├── AIAssistantGemini.kt
+│   ├── AIAssistantGeminiClasses.kt
+│   ├── AIAssistantGroq.kt
+│   ├── AIAssistantOpenAI.kt
+│   ├── AIAssistantOpenAIClasses.kt
+│   ├── Main.kt
+│   └── Utils.kt
+├── src/test/kotlin/dam/
+│   ├── SentimentTest.kt
+│   └── TemperatureTest.kt
+├── src/main/resources/
+│   └── logback.xml
+├── commands.txt
+├── build.gradle.kts
+└── settings.gradle.kts
+```
+
+**Configuração esperada (`config.properties` local):**
+```properties
+OPENAI_API_KEY=your-openai-key
+GEMINI_API_KEY=your-gemini-key
+GROQ_API_KEY=your-groq-key
+AI_LLM=GROQ
+LOG_LEVEL=OFF
+TEMPERATURE=0.7
+MAX_TOKENS=800
+```
+
+> O ficheiro `config.properties` é ignorado pelo Git para não expor chaves privadas.
+
+**Como executar/verificar:**
+```powershell
+cd A4\AISimpleCalls
+.\gradlew run
+.\gradlew cleanTest test --info
+.\gradlew cleanTest test --tests "dam.TemperatureTest" --info
+.\gradlew cleanTest test --tests "dam.SentimentTest" --info
+```
+
+---
+
+### 3. Firebase - Notes Pro XMLViews
+
+**Explicação do Código:**
+
+A pasta `A4/NotesProXMLViews3` contém uma aplicação Android em Kotlin/Java baseada em **XML Views** para demonstrar autenticação e persistência com Firebase. O projeto integra `FirebaseAuth`, `FirebaseFirestore`, `Firebase Analytics` e o plugin `com.google.gms.google-services`, com configuração através de `google-services.json`.
+
+O fluxo começa em `SplashActivity`, que espera brevemente e decide se o utilizador segue para `LoginActivity` ou para `MainActivity` consoante exista sessão Firebase ativa. Em `CreateAccountActivity`, o utilizador cria uma conta com email/password, os dados são validados localmente, é enviado email de verificação e a sessão é terminada para obrigar à validação. Em `LoginActivity`, o login só permite avançar quando o Firebase autentica o utilizador e o email já está verificado.
+
+A área de notas é composta por `MainActivity` e `NoteDetailsActivity`. A `MainActivity` apresenta a estrutura principal com `RecyclerView`, botão flutuante para criar notas e menu. A criação/edição/remoção de notas fica em `NoteDetailsActivity`, que constrói um objeto `Note` com `title`, `content` e `timestamp` e grava no Firestore. A classe `Utility` centraliza operações reutilizáveis como `showToast()`, formatação de timestamps e obtenção da coleção correta para o utilizador autenticado:
+
+```text
+notes/{uid}/my_notes/{noteId}
+```
+
+Esta organização garante que cada utilizador trabalha dentro da sua própria subcoleção, evitando misturar notas de contas diferentes.
+
+**Porque foi feito assim:**
+
+O Firebase Authentication resolve o ciclo de conta/login/verificação sem implementar backend próprio. O Firestore dá uma base documental simples para guardar notas por utilizador, e as XML Views mantêm a implementação próxima do tutorial, separando ecrãs em activities claras: splash, login, criação de conta, lista de notas e detalhes da nota.
+
+**Estrutura de Ficheiros:**
+```text
+A4/NotesProXMLViews3/
+├── app/src/main/
+│   ├── AndroidManifest.xml
+│   ├── java/com/notes/notesproxmlviews/
+│   │   ├── SplashActivity.kt
+│   │   ├── LoginActivity.kt
+│   │   ├── CreateAccountActivity.kt
+│   │   ├── MainActivity.kt
+│   │   ├── NoteDetailsActivity.kt
+│   │   ├── Note.java
+│   │   └── Utility.java
+│   └── res/
+│       ├── layout/
+│       │   ├── activity_splash.xml
+│       │   ├── activity_login.xml
+│       │   ├── activity_create_account.xml
+│       │   ├── activity_main.xml
+│       │   └── activity_note_details.xml
+│       ├── drawable/
+│       ├── values/
+│       ├── values-night/
+│       └── xml/
+├── app/google-services.json
+├── gradle/libs.versions.toml
+├── build.gradle.kts
+└── settings.gradle.kts
+```
+
+**Como executar/verificar:**
+```powershell
+cd A4\NotesProXMLViews3
+.\gradlew assembleDebug
+```
+
+Para executar a app num dispositivo/emulador, é necessário ter o projeto Firebase configurado e o ficheiro `app/google-services.json` válido para o package `notes.pro`.

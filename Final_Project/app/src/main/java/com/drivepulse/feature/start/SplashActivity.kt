@@ -9,6 +9,7 @@ import com.drivepulse.core.common.SessionMode
 import com.drivepulse.core.designsystem.theme.DrivePulseTheme
 import com.drivepulse.feature.auth.AuthActivity
 import com.drivepulse.feature.main.MainActivity
+import com.google.firebase.auth.FirebaseAuth
 
 /**
  * Entry point that lets the user choose how to start DrivePulse.
@@ -17,6 +18,11 @@ class SplashActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        if (FirebaseAuth.getInstance().currentUser != null) {
+            openAuthenticatedSession()
+            return
+        }
 
         setContent {
             DrivePulseTheme(darkTheme = true) {
@@ -38,5 +44,13 @@ class SplashActivity : AppCompatActivity() {
             putExtra(Constants.EXTRA_SESSION_MODE, SessionMode.GUEST.name)
         }
         startActivity(intent)
+    }
+
+    private fun openAuthenticatedSession() {
+        val intent = Intent(this, MainActivity::class.java).apply {
+            putExtra(Constants.EXTRA_SESSION_MODE, SessionMode.AUTHENTICATED.name)
+        }
+        startActivity(intent)
+        finish()
     }
 }

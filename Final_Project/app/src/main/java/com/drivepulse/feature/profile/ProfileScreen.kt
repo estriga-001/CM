@@ -6,7 +6,7 @@
  *
  * Mostra:
  * - Avatar, nome, bio, carro
- * - Estatísticas (runs, km, followers)
+ * - Estatísticas (runs, km, tempo)
  * - Lista das publicações do utilizador
  * - Botões de ação (Editar, Settings, Premium, Logout)
  */

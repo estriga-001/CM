@@ -2,42 +2,41 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="062b691f-f682-4808-9fe7-b10355bfb39b" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../A2/Section2-Android/dam_A15044coolweatherapp/app/src/main/java/com/example/dam_a15044coolweatherapp/WeatherData.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../A2/Section2-Android/dam_A15044coolweatherapp/app/src/main/java/com/example/dam_a15044coolweatherapp/WeatherData.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../A2/Section2-Android/dam_A15044coolweatherapp/app/src/main/java/com/example/dam_a15044coolweatherapp/WeatherViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../A2/Section2-Android/dam_A15044coolweatherapp/app/src/main/java/com/example/dam_a15044coolweatherapp/WeatherViewModel.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../A2/Section2-Android/dam_A15044coolweatherapp/app/src/main/res/layout-land/activity_main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../A2/Section2-Android/dam_A15044coolweatherapp/app/src/main/res/layout-land/activity_main.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../A2/Section2-Android/dam_A15044coolweatherapp/app/src/main/res/layout/activity_main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../A2/Section2-Android/dam_A15044coolweatherapp/app/src/main/res/layout/activity_main.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../A3/GreetingProcessorProject/.gradle/9.2.1/checksums/checksums.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../A3/GreetingProcessorProject/.gradle/9.2.1/checksums/checksums.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../A3/GreetingProcessorProject/.gradle/9.2.1/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/../A3/GreetingProcessorProject/.gradle/9.2.1/fileHashes/fileHashes.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../A3/GreetingProcessorProject/.gradle/9.2.1/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../A3/GreetingProcessorProject/.gradle/9.2.1/fileHashes/fileHashes.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../A3/GreetingProcessorProject/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../A3/GreetingProcessorProject/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Final_Project/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Final_Project/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Final_Project/.idea/gradle.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Final_Project/.idea/migrations.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Final_Project/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Final_Project/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Final_Project/app/src/main/java/com/drivepulse/data/remote/dto/UserDto.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Final_Project/app/src/main/java/com/drivepulse/data/remote/dto/UserDto.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Final_Project/app/src/main/java/com/drivepulse/domain/model/User.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Final_Project/app/src/main/java/com/drivepulse/domain/model/User.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Final_Project/app/src/main/java/com/drivepulse/feature/profile/ProfileScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Final_Project/app/src/main/java/com/drivepulse/feature/profile/ProfileScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Final_Project/app/src/main/java/com/drivepulse/feature/start/SplashActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Final_Project/app/src/main/java/com/drivepulse/feature/start/SplashActivity.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="EmbeddingIndexingInfo">
+    <option name="cachedIndexableFilesCount" value="1148" />
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "estriga-001"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;estriga-001&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "git@github.com:estriga-001/CM_TP1.git",
-    "accountId": "57f1ae6a-55d8-4025-b758-c26ce91d0b76"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;git@github.com:estriga-001/CM_TP1.git&quot;,
+    &quot;accountId&quot;: &quot;57f1ae6a-55d8-4025-b758-c26ce91d0b76&quot;
   }
-}]]></component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 2
-}]]></component>
+}</component>
+  <component name="McpProjectServerCommands">
+    <commands />
+    <urls />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 2
+}</component>
   <component name="ProjectId" id="3Dcqv0r1pv6cQFCKu6xFUy5ypms" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -46,6 +45,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.MCP Project settings loaded": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "main",
