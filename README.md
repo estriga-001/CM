@@ -9,6 +9,7 @@ A estrutura está concebida para integrar múltiplos Assignments (**A1**, **A2**
 * [Assignment 2 (A2)](#assignment-2-a2)
 * [Assignment 3 (A3)](#assignment-3-a3)
 * [Assignment 4 (A4)](#assignment-4-a4)
+* [Final Project - DrivePulse](#final-project---drivepulse)
 
 ---
 
@@ -527,3 +528,160 @@ cd A4\NotesProXMLViews3
 ```
 
 Para executar a app num dispositivo/emulador, é necessário ter o projeto Firebase configurado e o ficheiro `app/google-services.json` válido para o package `notes.pro`.
+
+---
+
+## Final Project - DrivePulse
+
+O `Final_Project` corresponde ao projeto final da unidade curricular e contém a aplicação **DrivePulse**, uma aplicação Android nativa em Kotlin orientada para a comunidade automóvel. A app combina ideias de tracking de percursos, feed social, mapa, perfil de utilizador e funcionalidades de apoio à condução, permitindo ao utilizador entrar, autenticar-se, explorar a aplicação, iniciar uma run, consultar mapa, publicar conteúdo, editar perfil e aceder às áreas de ajuda, premium, definições e informação sobre a app.
+
+A implementação foi construída com **Jetpack Compose**, **MVVM**, **Clean Architecture**, **Repository Pattern**, **Hilt**, **Room**, **DataStore**, **Firebase Authentication/Firestore**, Google Maps e serviços de localização. A separação de pastas foi pensada para que cada parte da aplicação tenha uma responsabilidade clara: a UI fica organizada por funcionalidades, as regras de negócio ficam isoladas no domínio, e os detalhes de persistência, Firebase e APIs ficam concentrados na camada de dados.
+
+### Índice do Final Project
+1. [Introdução ao Final Project](#introdução-ao-final-project)
+2. [Arquitetura e organização do Final Project](#arquitetura-e-organização-do-final-project)
+3. [Estrutura de pastas do Final Project](#estrutura-de-pastas-do-final-project)
+4. [Fluxo funcional em Media_Relatorio](#fluxo-funcional-em-media_relatorio)
+5. [Como executar/verificar o Final Project](#como-executarverificar-o-final-project)
+
+---
+
+### Introdução ao Final Project
+
+O objetivo do DrivePulse é demonstrar uma aplicação móvel completa, com vários ecrãs e fluxos reais de utilização. A app começa com um ecrã de entrada, permite login/registo, apresenta uma área principal com navegação inferior e organiza as principais funcionalidades em secções como Home, Map, Run, Community e Profile.
+
+O projeto também inclui funcionalidades complementares necessárias para uma experiência mais completa: criação de posts, visualização de detalhes de rotas, edição de perfil, definições, página premium, FAQ/ajuda e página "About". A pasta `Media_Relatorio` documenta estes fluxos através de imagens, permitindo acompanhar visualmente a navegação desde a abertura da aplicação até à execução das suas principais funções.
+
+---
+
+### Arquitetura e organização do Final Project
+
+A organização segue uma abordagem de **Clean Architecture + MVVM**. A aplicação está dividida em camadas para evitar misturar interface, regras de negócio e detalhes técnicos de persistência ou rede.
+
+- **`feature/`** contém a camada de apresentação. Cada funcionalidade tem o seu próprio ecrã Compose, ViewModel e estados de UI quando necessário. Esta separação torna mais simples evoluir um ecrã sem afetar os restantes.
+- **`domain/`** contém os modelos centrais, interfaces de repositórios, use cases e validações. Esta camada representa as regras da aplicação e não deve depender diretamente de Android, Compose, Firebase ou Room.
+- **`data/`** contém as implementações concretas dos repositórios, os DAOs, entidades Room, DTOs, DataStore, Firebase/Firestore e módulos de injeção de dependências. Esta camada traduz dados externos ou locais para modelos usados pelo domínio.
+- **`core/`** contém código transversal usado por várias funcionalidades, como navegação, design system, componentes comuns, localização, sessão e utilitários partilhados.
+
+Esta divisão foi escolhida para melhorar a manutenção do projeto. Ao separar responsabilidades, a UI apenas observa estado e envia eventos para ViewModels; os ViewModels chamam use cases; os use cases usam interfaces do domínio; e os repositórios concretos tratam de Room, Firebase, DataStore ou serviços externos. Assim, a aplicação fica mais testável, mais fácil de navegar e mais resistente a alterações futuras.
+
+Fluxo arquitetural simplificado:
+
+```text
+Composable Screen
+    -> ViewModel
+    -> Domain UseCase
+    -> Repository Interface
+    -> Repository Implementation
+    -> Room / Firebase / DataStore / Location / Maps
+```
+
+---
+
+### Estrutura de pastas do Final Project
+
+```text
+Final_Project/
+├── app/
+│   ├── build.gradle.kts
+│   ├── google-services.json
+│   └── src/
+│       ├── main/
+│       │   ├── AndroidManifest.xml
+│       │   ├── java/com/drivepulse/
+│       │   │   ├── DrivePulseApplication.kt
+│       │   │   ├── core/
+│       │   │   ├── data/
+│       │   │   ├── domain/
+│       │   │   └── feature/
+│       │   └── res/
+│       ├── test/
+│       └── androidTest/
+├── docs/
+├── gradle/
+├── handoffs/
+├── build.gradle.kts
+├── settings.gradle.kts
+├── gradle.properties
+├── local.properties.example
+└── ENIDH_CM_FinalProject_2026.pdf
+
+Media_Relatorio/
+└── imagens do fluxo funcional da aplicação
+```
+
+**Descrição das pastas principais:**
+
+- **`Final_Project/app/`** é o módulo Android principal. Contém o código da aplicação, recursos, manifesto, dependências e configuração do Firebase.
+- **`Final_Project/app/src/main/java/com/drivepulse/`** é o package principal da app. Aqui fica todo o código Kotlin organizado por camadas.
+- **`core/common/`** guarda tipos e componentes partilhados, como `Result`, `SessionMode`, constantes e componentes comuns de autenticação.
+- **`core/designsystem/`** centraliza a identidade visual da app: tema, cores, tipografia, espaçamentos, shapes e componentes reutilizáveis como botões, cards, top bar e bottom bar.
+- **`core/location/`** trata da localização, tracking GPS e serviço em foreground usado durante a gravação de runs.
+- **`core/navigation/`** define destinos, itens da bottom navigation e o grafo de navegação principal em Compose.
+- **`data/di/`** contém módulos Hilt para injeção de dependências, permitindo fornecer repositórios, base de dados, DAOs e serviços de localização sem acoplamento direto.
+- **`data/local/`** contém a persistência local com Room, incluindo DAOs, entidades, base de dados e data sources para runs e coordenadas.
+- **`data/preferences/`** usa DataStore para preferências locais, como idioma, tema e opções persistentes da aplicação.
+- **`data/remote/`** contém DTOs e modelos usados na comunicação com serviços remotos, principalmente Firebase/Firestore.
+- **`data/repository/`** implementa os repositórios definidos no domínio, coordenando dados locais e remotos.
+- **`domain/model/`** define as entidades principais da aplicação, como utilizador, post, run, coordenada e comentário.
+- **`domain/repository/`** define contratos que a camada de dados implementa. Isto permite que o domínio dependa de abstrações em vez de depender diretamente de Firebase, Room ou Android.
+- **`domain/usecase/`** agrupa ações de negócio reutilizáveis, como login, registo, logout, gestão de perfil e início/fim de uma run.
+- **`domain/validation/`** concentra regras de validação, por exemplo validações relacionadas com dados do carro/perfil.
+- **`feature/start/`** contém o fluxo inicial da app, incluindo splash/start menu e escolha de entrada.
+- **`feature/auth/`** contém login, registo, navegação de autenticação, ViewModel e estados associados.
+- **`feature/main/`** funciona como host principal da aplicação depois da entrada, integrando a navegação inferior.
+- **`feature/home/`** apresenta o ecrã inicial da área autenticada/guest, com resumo e acesso às funcionalidades principais.
+- **`feature/map/`** contém o ecrã de mapa e a lógica associada à visualização geográfica.
+- **`feature/run/`** contém a gravação de percursos, estatísticas da run, botões de controlo e Activity dedicada ao tracking.
+- **`feature/community/`** contém o feed social, posts e componentes reutilizáveis do feed.
+- **`feature/createpost/`** permite criar publicações para a comunidade.
+- **`feature/profile/`** contém perfil, edição de perfil, onboarding/setup e respetivos ViewModels.
+- **`feature/routedetail/`** contém o detalhe de uma rota, separado por ser um fluxo próprio que pode ser aberto a partir de diferentes partes da app.
+- **`feature/settings/`** contém o ecrã de definições e preferências do utilizador.
+- **`feature/premium/`** contém a área premium/eventos/funcionalidades extra da aplicação.
+- **`feature/help/`** e **`feature/about/`** contêm páginas informativas e de apoio ao utilizador.
+- **`app/src/main/res/`** contém recursos Android: imagens em `drawable/`, ícones em `mipmap-*`, strings e temas em `values/`, traduções em `values-pt/` e `values-es/`, tema noturno em `values-night/` e configurações XML em `xml/`.
+- **`Final_Project/docs/`** guarda documentação técnica, como regras de desenvolvimento, arquitetura e guia de estilo da UI.
+- **`Final_Project/handoffs/`** contém documentação de entrega e verificação académica do projeto.
+- **`Final_Project/gradle/`** contém o Gradle Wrapper, garantindo que o projeto pode ser compilado com uma versão consistente do Gradle.
+
+Pastas como `.gradle/`, `.idea/`, `.kotlin/`, `build/` e `app/build/` são geradas localmente por Gradle/Android Studio e não fazem parte da arquitetura funcional da aplicação.
+
+---
+
+### Fluxo funcional em Media_Relatorio
+
+A pasta `Media_Relatorio`, localizada na raiz do repositório, contém imagens `.jfif` usadas para documentar visualmente o fluxo da aplicação. Esta pasta foi criada fora de `Final_Project` porque serve como material de relatório/demonstração e não como recurso compilado pela app Android.
+As imagens representam a utilização da app por ordem funcional, desde a entrada até à execução das principais funcionalidades. No README, são incluídas com caminhos relativos para a pasta `Media_Relatorio/`.
+
+| Passo | Ecrã / funcionalidade | Imagem |
+|---:|---|---|
+| 1 | Launch / entrada na aplicação | <img src="Media_Relatorio/Launch.jfif" alt="Launch / entrada na aplicação" width="220" /> |
+| 2 | Login | <img src="Media_Relatorio/Login.jfif" alt="Ecrã de login" width="220" /> |
+| 3 | Registo | <img src="Media_Relatorio/Registo.jfif" alt="Ecrã de registo" width="220" /> |
+| 4 | Home | <img src="Media_Relatorio/Home.jfif" alt="Ecrã Home" width="220" /> |
+| 5 | Mapa | <img src="Media_Relatorio/Map.jfif" alt="Ecrã de mapa" width="220" /> |
+| 6 | Run | <img src="Media_Relatorio/Run.jfif" alt="Ecrã de run" width="220" /> |
+| 7 | Iniciar run | <img src="Media_Relatorio/Init_Run.jfif" alt="Início de run" width="220" /> |
+| 8 | Finalizar run | <img src="Media_Relatorio/Finish_Run.jfif" alt="Finalização de run" width="220" /> |
+| 9 | Comunidade | <img src="Media_Relatorio/Community.jfif" alt="Ecrã de comunidade" width="220" /> |
+| 10 | Criar publicação | <img src="Media_Relatorio/Create_Post.jfif" alt="Criação de publicação" width="220" /> |
+| 11 | Perfil | <img src="Media_Relatorio/Profile.jfif" alt="Ecrã de perfil" width="220" /> |
+| 12 | Editar perfil | <img src="Media_Relatorio/Edit_Prof.jfif" alt="Edição de perfil" width="220" /> |
+| 13 | Definições | <img src="Media_Relatorio/Settings.jfif" alt="Ecrã de definições" width="220" /> |
+| 14 | Premium | <img src="Media_Relatorio/Premium_page.jfif" alt="Página premium" width="220" /> |
+| 15 | Ajuda / FAQ | <img src="Media_Relatorio/Help_faq.jfif" alt="Ecrã de ajuda e FAQ" width="220" /> |
+| 16 | About | <img src="Media_Relatorio/About.jfif" alt="Página About" width="220" /> |
+
+Esta organização permite consultar rapidamente o percurso completo do utilizador: abertura da aplicação, autenticação/registo, navegação pela home, mapa, gravação de percurso, publicação na comunidade, gestão de perfil, definições e páginas informativas.
+
+---
+
+### Como executar/verificar o Final Project
+
+```powershell
+cd Final_Project
+.\gradlew.bat :app:assembleDebug
+```
+
+Para executar a aplicação no Android Studio, é necessário abrir a pasta `Final_Project`, garantir que o SDK Android está configurado e que o ficheiro `local.properties` contém a chave `MAPS_API_KEY` quando for necessário usar Google Maps. O ficheiro `app/google-services.json` deve corresponder ao package `com.drivepulse` para que Firebase Authentication e Firestore funcionem corretamente.
