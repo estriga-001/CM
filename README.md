@@ -655,23 +655,23 @@ A pasta `Media_Relatorio`, localizada na raiz do repositório, contém imagens `
 As imagens representam a utilização da app por ordem funcional, desde a entrada até à execução das principais funcionalidades. No README, são incluídas com caminhos relativos para a pasta `Media_Relatorio/`.
 
 | Passo | Ecrã / funcionalidade | Imagem |
-|---:|---|---|
-| 1 | Launch / entrada na aplicação | <img src="Media_Relatorio/Launch.jfif" alt="Launch / entrada na aplicação" width="220" /> |
-| 2 | Login | <img src="Media_Relatorio/Login.jfif" alt="Ecrã de login" width="220" /> |
-| 3 | Registo | <img src="Media_Relatorio/Registo.jfif" alt="Ecrã de registo" width="220" /> |
-| 4 | Home | <img src="Media_Relatorio/Home.jfif" alt="Ecrã Home" width="220" /> |
-| 5 | Mapa | <img src="Media_Relatorio/Map.jfif" alt="Ecrã de mapa" width="220" /> |
-| 6 | Run | <img src="Media_Relatorio/Run.jfif" alt="Ecrã de run" width="220" /> |
-| 7 | Iniciar run | <img src="Media_Relatorio/Init_Run.jfif" alt="Início de run" width="220" /> |
-| 8 | Finalizar run | <img src="Media_Relatorio/Finish_Run.jfif" alt="Finalização de run" width="220" /> |
-| 9 | Comunidade | <img src="Media_Relatorio/Community.jfif" alt="Ecrã de comunidade" width="220" /> |
-| 10 | Criar publicação | <img src="Media_Relatorio/Create_Post.jfif" alt="Criação de publicação" width="220" /> |
-| 11 | Perfil | <img src="Media_Relatorio/Profile.jfif" alt="Ecrã de perfil" width="220" /> |
-| 12 | Editar perfil | <img src="Media_Relatorio/Edit_Prof.jfif" alt="Edição de perfil" width="220" /> |
-| 13 | Definições | <img src="Media_Relatorio/Settings.jfif" alt="Ecrã de definições" width="220" /> |
-| 14 | Premium | <img src="Media_Relatorio/Premium_page.jfif" alt="Página premium" width="220" /> |
-| 15 | Ajuda / FAQ | <img src="Media_Relatorio/Help_faq.jfif" alt="Ecrã de ajuda e FAQ" width="220" /> |
-| 16 | About | <img src="Media_Relatorio/About.jfif" alt="Página About" width="220" /> |
+|------:|---|---|
+|     1 | Launch / entrada na aplicação | <img src="Media_Relatorio/Launch.jfif" alt="Launch / entrada na aplicação" width="220" /> |
+|     2 | Login | <img src="Media_Relatorio/Login.jfif" alt="Ecrã de login" width="220" /> |
+|     3 | Registo | <img src="Media_Relatorio/Registo.jfif" alt="Ecrã de registo" width="220" /> |
+|     4 | Home | <img src="Media_Relatorio/Home.jfif" alt="Ecrã Home" width="220" /> |
+|     5 | Mapa | <img src="Media_Relatorio/Map.jfif" alt="Ecrã de mapa" width="220" /> |
+|     6 | Iniciar run | <img src="Media_Relatorio/Init_Run.jfif" alt="Início de run" width="220" /> |
+|     7 | Run | <img src="Media_Relatorio/Run.jfif" alt="Ecrã de run" width="220" /> |
+|     8 | Finalizar run | <img src="Media_Relatorio/Finish_Run.jfif" alt="Finalização de run" width="220" /> |
+|     9 | Criar publicação | <img src="Media_Relatorio/Create_Post.jfif" alt="Criação de publicação" width="220" /> |
+|    10 | Comunidade | <img src="Media_Relatorio/Community.jfif" alt="Ecrã de comunidade" width="220" /> |
+|    11 | Perfil | <img src="Media_Relatorio/Profile.jfif" alt="Ecrã de perfil" width="220" /> |
+|    12 | Editar perfil | <img src="Media_Relatorio/Edit_Prof.jfif" alt="Edição de perfil" width="220" /> |
+|    13 | Definições | <img src="Media_Relatorio/Settings.jfif" alt="Ecrã de definições" width="220" /> |
+|    14 | Premium | <img src="Media_Relatorio/Premium_page.jfif" alt="Página premium" width="220" /> |
+|    15 | Ajuda / FAQ | <img src="Media_Relatorio/Help_faq.jfif" alt="Ecrã de ajuda e FAQ" width="220" /> |
+|    16 | About | <img src="Media_Relatorio/About.jfif" alt="Página About" width="220" /> |
 
 Esta organização permite consultar rapidamente o percurso completo do utilizador: abertura da aplicação, autenticação/registo, navegação pela home, mapa, gravação de percurso, publicação na comunidade, gestão de perfil, definições e páginas informativas.
 
