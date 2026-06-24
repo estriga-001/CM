@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="062b691f-f682-4808-9fe7-b10355bfb39b" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/../Final_Project/app/src/main/java/com/drivepulse/data/remote/dto/UserDto.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Final_Project/app/src/main/java/com/drivepulse/data/remote/dto/UserDto.kt" afterDir="false" />
@@ -48,9 +51,16 @@
     "RunOnceActivity.MCP Project settings loaded": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
     "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/migue/Desktop/faculdade/2-ano/2-SEMESTRE/Comp-Movel/Assignments/A4"
+    "last_opened_file_path": "D:/CM/CM/A4",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm"
   }
 }]]></component>
   <component name="SharedIndexes">
@@ -69,5 +79,8 @@
       <updated>1778591932414</updated>
     </task>
     <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
   </component>
 </project>
