@@ -62,7 +62,8 @@
             android:exported="false"
             android:theme="@style/Theme.DrivePulse" />
 
-        <!-- RunRecorderActivity — GPS tracking during a run -->
+        <!-- RunRecorderActivity — parte visual/interativa da gravação da run, mostra
+        botoes, estatisticas, perde permissoes e responde a açoes do user-->
         <activity
             android:name=".feature.run.RunRecorderActivity"
             android:exported="false"
@@ -76,7 +77,9 @@
             android:exported="false"
             android:theme="@style/Theme.DrivePulse" />
 
-        <!-- Tracking Foreground Service -->
+        <!-- Tracking Foreground Service, componente que faz o tracking gps continuo
+        corre com foreground service, com uma notificação visivel, para reduzir o risco
+        de o android matar o tracking-->
         <service
             android:name=".core.location.TrackingForegroundService"
             android:exported="false"
