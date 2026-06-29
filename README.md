@@ -1285,6 +1285,321 @@ Como o estado é observado pela UI Compose:
 - eventos one-shot usam `SharedFlow` em `RouteDetailViewModel`;
 - dados Firestore/Room/DataStore chegam por `Flow`.
 
+### 12.1 Diagramas Mermaid dos fluxos técnicos
+
+Os diagramas seguintes documentam os principais fluxos da aplicação DrivePulse com base nos nomes reais encontrados no projeto `Final_Project/app/src/main/java/com/drivepulse/`. As etiquetas genéricas aparecem apenas quando representam tecnologia Android/Firebase ou uma ação do sistema, como pedido de permissões, transação Firestore ou listener de snapshot.
+
+#### 12.1.1 Fluxo geral de telas da aplicação
+
+```mermaid
+flowchart TD
+    A["SplashActivity"] --> B{"FirebaseAuth.currentUser existe?"}
+
+    B -- "Sim" --> C["openAuthenticatedSession()"]
+    C --> D["MainActivity<br/>SessionMode.AUTHENTICATED"]
+
+    B -- "Nao" --> E["StartMenuScreen"]
+    E -->|Entrar / Registar| F["AuthActivity"]
+    E -->|Continuar como guest| G["MainActivity<br/>SessionMode.GUEST"]
+
+    F --> H["AuthNavGraph"]
+    H --> I["AuthViewModel<br/>CheckSessionUseCase"]
+    I --> J["AuthRepositoryImpl.checkCurrentSession()"]
+    J --> K["FirebaseAuth + Firestore users/{uid}"]
+
+    H --> L["LoginScreen"]
+    H --> M["RegisterScreen"]
+
+    L -->|Login OK e username preenchido| D
+    L -->|Login OK e username vazio| N["ProfileSetupScreen"]
+    L -->|Continuar como guest| G
+
+    M -->|Registo OK| N
+    H -->|SessionRestored e username preenchido| D
+    H -->|SessionRestored e username vazio| N
+
+    N --> O["ProfileSetupViewModel"]
+    O --> P["CompleteOnboardingUseCase"]
+    P --> Q["UserRepositoryImpl.completeOnboarding()"]
+    Q --> R["Firestore transaction<br/>usernames/{username} + users/{uid}"]
+    R --> D
+
+    D --> S["CompositionLocalProvider<br/>LocalSessionMode"]
+    G --> S
+    S --> T["AuthGate<br/>fornece withAuth"]
+    T --> U["MainNavGraph"]
+
+    U --> V["HomeRoute / HomeScreen"]
+    U --> W["MapRoute / MapScreen"]
+    U --> X["CommunityScreen"]
+    U --> Y["ProfileScreen"]
+
+    Y --> Z["SettingsScreen"]
+    Y --> AA["EditProfileScreen"]
+    Y --> AB["HelpScreen"]
+    Y --> AC["AboutScreen"]
+
+    V --> AD["PremiumScreen"]
+    Y --> AD
+
+    U --> AE["CreatePostScreen<br/>create_post/{runId}"]
+    U --> AF["RouteDetailActivity<br/>via onOpenRouteDetail"]
+
+    V --> AG["Botao Run / onStartRun"]
+    AH["DrivePulseBottomBar<br/>botao central Run"] --> AG
+    AG --> AI["AuthGate.withAuth"]
+
+    AI -->|AUTHENTICATED| AJ["RunRecorderActivity"]
+    AI -->|GUEST| AK["AlertDialog<br/>Login / Registo"]
+```
+
+Descrição técnica: a app começa sempre na `SplashActivity`. Se já existir sessão Firebase, entra diretamente na `MainActivity`; caso contrário mostra o `StartMenuScreen`. O modo guest é passado por `SessionMode.GUEST`, e ações protegidas como iniciar uma run passam pelo `AuthGate`. O onboarding real acontece no `ProfileSetupScreen` quando o utilizador existe mas ainda tem username vazio.
+
+#### 12.1.2 Fluxo detalhado da Run / Tracking GPS
+
+```mermaid
+flowchart TD
+    A["Botao Run<br/>DrivePulseBottomBar ou HomeScreen"] --> B["AuthGate.withAuth"]
+
+    B -->|Guest| C["AlertDialog<br/>ir para AuthActivity"]
+    B -->|AUTHENTICATED| D["MainActivity.startRunActivity()<br/>ActivityResultLauncher"]
+
+    D --> E["RunRecorderActivity"]
+    E --> F["RunRecorderScreen<br/>IdleContent"]
+    F -->|Start| G{"ACCESS_FINE_LOCATION concedida?"}
+
+    G -- "Nao" --> H["ActivityResultContracts.RequestPermission"]
+    H -->|Negada| I["RunRecorderViewModel.onPermissionDenied()<br/>StateFlow PermissionDenied"]
+    H -->|Concedida| J["onPermissionsGranted(userId)"]
+
+    G -- "Sim" --> J
+
+    J --> K["RunRecorderViewModel<br/>viewModelScope.launch"]
+    K --> L["StartRunUseCase"]
+    L --> M["RunRepositoryImpl.createRun()"]
+    M --> N["RunLocalDataSource.insertRun()"]
+    N --> O["Room<br/>RunDao / tabela runs"]
+
+    K --> P["MutableStateFlow<br/>RunRecorderUiState.Tracking"]
+    K --> Q["timerJob<br/>viewModelScope + delay(1000)"]
+    K --> R["locationJob<br/>collect SharedFlow"]
+    K --> S["callback onStartService(runId)"]
+
+    S --> T["startForegroundService(ACTION_START)"]
+    T --> U["TrackingForegroundService.onStartCommand"]
+    U --> V["startForeground(notification)"]
+    U --> W["serviceScope<br/>CoroutineScope(SupervisorJob + Dispatchers.IO)"]
+
+    W --> X["locationTracker.getLocationUpdates().collect"]
+    X --> Y["FusedLocationTracker"]
+    Y --> Z["callbackFlow"]
+    Z --> AA["FusedLocationProviderClient<br/>requestLocationUpdates(..., Looper.getMainLooper())"]
+    AA --> Z
+    Z -->|trySend Location| X
+
+    X --> AB["MutableSharedFlow Location<br/>TrackingForegroundService.locationFlow"]
+    X --> AC["Coordinate"]
+    AC --> AD["SaveCoordinateUseCase"]
+    AD --> AE["RunRepositoryImpl.addCoordinate()"]
+    AE --> AF["Room<br/>CoordinateDao / tabela run_coordinates"]
+
+    AB --> R
+    R --> AG["Calcula distanceTo,<br/>velocidade e polyline"]
+    AG --> P
+
+    P --> AH["UI collectAsStateWithLifecycle"]
+    AH --> AI["LaunchedEffect(lastCoord)<br/>anima camara do GoogleMap"]
+
+    F -->|Pause| AJ["onPauseRun()<br/>cancela timerJob<br/>isPaused = true"]
+    AJ --> AK["startService(ACTION_PAUSE)<br/>updateNotification"]
+    AK --> AL["Nota real do codigo:<br/>servico continua a recolher e guardar coordenadas"]
+
+    F -->|Resume| AM["onResumeRun()<br/>reinicia timerJob"]
+    AM --> AN["startService(ACTION_RESUME)<br/>updateNotification"]
+
+    F -->|Finish| AO["onFinishRun()<br/>cancela timerJob e locationJob"]
+    AO --> AP["FinishRunUseCase"]
+    AP --> AQ["RunRepositoryImpl.finishRun()<br/>first() + updateRun()"]
+    AQ --> O
+
+    F --> AR["startService(ACTION_STOP)"]
+    AR --> AS["TrackingForegroundService.stopSelf / onDestroy"]
+    AS --> AT["serviceScope.cancel()"]
+    AT --> AU["callbackFlow awaitClose<br/>removeLocationUpdates(callback)"]
+
+    AO --> AV["StateFlow<br/>RunRecorderUiState.Finished"]
+    AV --> AW["RunRecorderActivity.lifecycleScope<br/>repeatOnLifecycle STARTED"]
+    AW --> AX["playRunFinishSound()"]
+
+    AV --> AY{"Utilizador escolhe"}
+    AY -->|Guardar apenas| AZ["finish()<br/>run fica local em DRAFT"]
+    AY -->|Publicar| BA["setResult(RESULT_OK, EXTRA_RUN_ID)"]
+    BA --> BB["MainActivity.runActivityLauncher"]
+    BB --> BC["navigate create_post/{runId}<br/>CreatePostScreen"]
+```
+
+Descrição técnica: a gravação tem duas partes. A UI e as métricas vivem no `RunRecorderViewModel`, expostas por `StateFlow`. O GPS contínuo vive no `TrackingForegroundService`, em foreground, com notificação persistente. O serviço usa `CoroutineScope(SupervisorJob + Dispatchers.IO)`, recebe localizações pelo `FusedLocationTracker`, transforma callbacks Android em `Flow` com `callbackFlow`, guarda pontos no Room via `SaveCoordinateUseCase` e emite a localização por `SharedFlow` para atualizar a UI.
+
+Nota técnica: no código atual, ao pausar, o ViewModel pausa o cronómetro e ignora pontos para as métricas da UI, mas o `TrackingForegroundService` continua a recolher e guardar coordenadas no Room.
+
+#### 12.1.3 Fluxo de Login e Registo
+
+```mermaid
+flowchart TD
+    A["StartMenuScreen"] -->|Entrar / Registar| B["AuthActivity"]
+    B --> C["AuthNavGraph"]
+
+    C --> D["AuthViewModel<br/>StateFlow de AuthState"]
+    D -->|init| E["viewModelScope.launch<br/>CheckSessionUseCase"]
+    E --> F["AuthRepositoryImpl.checkCurrentSession()"]
+    F --> G["FirebaseAuth.currentUser"]
+    F --> H["Firestore users/{uid}"]
+
+    C --> I["LoginScreen"]
+    C --> J["RegisterScreen"]
+
+    I -->|login(email,password)| D
+    J -->|register(email,password,confirm)| D
+    I -->|Continuar como guest| K["MainActivity<br/>SessionMode.GUEST"]
+
+    D -->|login| L["LoginUseCase"]
+    D -->|register| M["RegisterUseCase"]
+
+    L --> N["AuthRepositoryImpl.login()"]
+    M --> O["AuthRepositoryImpl.register()"]
+
+    N --> P["FirebaseAuth.signInWithEmailAndPassword().await()"]
+    O --> Q["FirebaseAuth.createUserWithEmailAndPassword().await()"]
+
+    P --> R["ensureUserDocumentAndGetProfile()"]
+    Q --> R
+    R --> H
+
+    H --> S["MutableStateFlow<br/>AuthState.Success ou SessionRestored"]
+    S --> T["LoginScreen / AuthNavGraph<br/>LaunchedEffect(uiState)"]
+
+    T -->|username preenchido| U["MainActivity<br/>SessionMode.AUTHENTICATED"]
+    T -->|username vazio| V["ProfileSetupScreen"]
+    J -->|Registo OK| V
+
+    V --> W["ProfileSetupViewModel<br/>StateFlow OnboardingUiState<br/>StateFlow UsernameState"]
+
+    V -->|onCheckUsername| X["usernameCheckJob<br/>cancel + viewModelScope.launch + delay(500)"]
+    X --> Y["CheckUsernameUseCase"]
+    Y --> Z["UserRepositoryImpl.isUsernameAvailable()"]
+    Z --> AA["Firestore usernames/{username}"]
+
+    V -->|onSubmit| AB["ProfileSetupViewModel.submitOnboarding()"]
+    AB --> AC["CompleteOnboardingUseCase"]
+    AC --> AD["UserRepositoryImpl.completeOnboarding()"]
+    AD --> AE["Firestore transaction<br/>reserva usernames/{username}<br/>atualiza users/{uid}"]
+
+    AE --> AF["OnboardingUiState.Success"]
+    AF --> AG["AuthNavGraph<br/>LaunchedEffect(setupUiState)"]
+    AG --> U
+```
+
+Descrição técnica: o `AuthViewModel` concentra login, registo e restore de sessão. Usa `viewModelScope.launch` para chamar os use cases e expõe `StateFlow<AuthState>`. Os ecrãs reagem ao estado com `LaunchedEffect`. No registo, o documento `users/{uid}` é criado com username vazio, obrigando a passar pelo `ProfileSetupScreen`. O username tem debounce com `Job` cancelável e a gravação final usa transação Firestore.
+
+#### 12.1.4 Fluxo da Comunidade / Feed
+
+```mermaid
+flowchart TD
+    A["MainNavGraph<br/>rota community"] --> B["hiltViewModel<br/>CommunityViewModel"]
+    B --> C["init<br/>observeFirstPage()<br/>observeCurrentUserProfile()"]
+
+    C --> D["viewModelScope.launch<br/>postRepository.getFeedPosts(limit=11).collectLatest"]
+    D --> E["PostRepositoryImpl.getFeedPosts()"]
+    E --> F["callbackFlow"]
+    F --> G["Firestore posts<br/>orderBy createdAt DESC<br/>addSnapshotListener"]
+    G --> F
+    F --> H["Flow com AppResult de posts"]
+    H --> I["CommunityViewModel.collectLatest"]
+    I --> J["MutableStateFlow<br/>CommunityUiState.Success"]
+
+    J --> K["MainNavGraph<br/>collectAsStateWithLifecycle"]
+    K --> L["CommunityScreen"]
+    L --> M["LazyColumn<br/>PostCard"]
+
+    L --> N["collectAsState<br/>likedPostIds<br/>selectedPostId<br/>comments"]
+
+    C --> O{"currentUserId existe?"}
+    O -- "Sim" --> P["UserRepositoryImpl.getUserProfile(userId).collectLatest"]
+    P --> Q["Firestore users/{uid}<br/>callbackFlow snapshot listener"]
+    O -- "Nao" --> R["Guest<br/>pode ler feed"]
+
+    M -->|Like| S{"FirebaseAuth.currentUser?.uid existe?"}
+    S -- "Nao" --> T["Guest<br/>nao escreve like"]
+    S -- "Sim" --> U["updateLikeState()<br/>otimista no StateFlow"]
+    U --> V["PostRepositoryImpl.toggleLike()"]
+    V --> W["Firestore transaction<br/>posts/{postId}/likes/{uid}<br/>likesCount +/- 1"]
+
+    M -->|Comentario| X["selectPostForComments(postId)"]
+    X --> Y["cancela commentsJob anterior"]
+    Y --> Z["commentsJob<br/>viewModelScope.launch<br/>getComments(postId).collectLatest"]
+
+    Z --> AA["PostRepositoryImpl.getComments()"]
+    AA --> AB["callbackFlow + snapshot listener"]
+    AB --> AC["Firestore<br/>posts/{postId}/comments<br/>orderBy createdAt ASC"]
+    AC --> AB
+    AB --> AD["MutableStateFlow<br/>List Comment"]
+    AD --> AE["ModalBottomSheet<br/>comentarios"]
+
+    AE -->|Enviar comentario| AF{"currentUserId existe?"}
+    AF -- "Nao" --> AG["Guest<br/>nao escreve comentario"]
+    AF -- "Sim" --> AH["PostRepositoryImpl.addComment()"]
+    AH --> AI["Firestore transaction<br/>set comment<br/>commentsCount + 1"]
+
+    L -->|Load more| AJ["loadMorePosts()"]
+    AJ --> AK["PostRepositoryImpl.getFeedPostsPage()<br/>get().await() + cursor"]
+    AK --> J
+```
+
+Descrição técnica: o feed é reativo. O `PostRepositoryImpl` usa `callbackFlow` para converter o `addSnapshotListener` do Firestore num `Flow`. O `CommunityViewModel` recolhe com `collectLatest` em `viewModelScope` e expõe `CommunityUiState` por `StateFlow`. Likes e comentários usam transações Firestore para manter contadores consistentes. Em guest, o feed continua visível, mas likes e comentários não escrevem porque não existe `currentUserId`.
+
+#### 12.1.5 Fluxo de dados por camadas
+
+```mermaid
+flowchart LR
+    A["Composable / Screen<br/>LoginScreen, RunRecorderScreen,<br/>CommunityScreen, ProfileScreen"] -->|eventos UI| B["ViewModel<br/>AuthViewModel, RunRecorderViewModel,<br/>CommunityViewModel, ProfileViewModel"]
+
+    B -->|viewModelScope<br/>coroutines e Jobs| C["UseCase<br/>LoginUseCase, RegisterUseCase,<br/>StartRunUseCase, FinishRunUseCase,<br/>SaveCoordinateUseCase"]
+
+    C --> D["Repository Interface<br/>AuthRepository, UserRepository,<br/>RunRepository, PostRepository"]
+    D --> E["Repository Implementation<br/>AuthRepositoryImpl, UserRepositoryImpl,<br/>RunRepositoryImpl, PostRepositoryImpl"]
+
+    E --> F["Firebase Auth<br/>sessao, login, registo"]
+    E --> G["Firestore<br/>users, usernames, posts,<br/>likes, comments"]
+    E --> H["Room<br/>DrivePulseDatabase<br/>RunDao, CoordinateDao"]
+    E --> I["DataStore<br/>PreferencesManager<br/>themeFlow, languageFlow"]
+
+    J["Fused Location Provider"] --> K["FusedLocationTracker"]
+    K --> L["callbackFlow<br/>Flow de Location"]
+    L --> M["TrackingForegroundService<br/>Foreground Service"]
+    M -->|serviceScope<br/>SupervisorJob + Dispatchers.IO| N["SaveCoordinateUseCase"]
+    N --> D
+
+    M --> O["SharedFlow<br/>TrackingForegroundService.locationFlow"]
+    O --> P["RunRecorderViewModel<br/>locationJob collect"]
+    P --> Q["MutableStateFlow<br/>RunRecorderUiState"]
+
+    E --> R["Flow / callbackFlow<br/>Firestore snapshots e Room queries"]
+    R --> B
+
+    B --> S["StateFlow de UiState"]
+    S --> T["collectAsStateWithLifecycle<br/>ou collectAsState"]
+    T --> A
+
+    B --> U["SharedFlow de eventos<br/>ex: RouteDetailEvent"]
+    U --> A
+
+    V["Hilt<br/>DataModule + LocationModule"] --> D
+    V --> E
+    V --> K
+```
+
+Descrição técnica: a app segue Clean Architecture com MVVM. A UI envia eventos para o ViewModel, o ViewModel chama use cases, os use cases dependem de interfaces de repositório e as implementações concretas ficam na camada Data. Firebase, Firestore, Room, DataStore e Fused Location Provider ficam fora da UI. O estado volta à UI por `StateFlow`. Eventos pontuais e localizações partilhadas usam `SharedFlow`. APIs de callback, como Firebase listeners e GPS, são convertidas para `Flow` com `callbackFlow`.
+
 ### 13. Permissões Android
 
 Permissões declaradas em `AndroidManifest.xml`:
