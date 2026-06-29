@@ -1458,8 +1458,8 @@ flowchart TD
     C --> I["LoginScreen"]
     C --> J["RegisterScreen"]
 
-    I -->|login(email,password)| D
-    J -->|register(email,password,confirm)| D
+    I -->|login email password| D
+    J -->|register email password confirm| D
     I -->|Continuar como guest| K["MainActivity<br/>SessionMode.GUEST"]
 
     D -->|login| L["LoginUseCase"]
